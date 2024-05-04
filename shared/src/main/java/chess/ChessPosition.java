@@ -33,4 +33,12 @@ public class ChessPosition {
         return col;
         //throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public String toString() {
+        return "ChessPosition{" +
+                "row=" + row +
+                ", col=" + col +
+                '}';
+    }
 }

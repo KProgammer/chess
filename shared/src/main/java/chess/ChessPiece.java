@@ -3,6 +3,7 @@ package chess;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents a single chess piece
@@ -12,11 +13,10 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    private ChessPiece piece_of_interest;               //Placeholder used to figure out what moves a piece can make.
     private final ChessGame.TeamColor pieceColor;           //A value that holds the team
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -58,14 +58,15 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //Get the piece that we are interested in moving
-        piece_of_interest = board.getPiece(myPosition);
+        //Placeholder used to figure out what moves a piece can make.
+        ChessPiece piece_of_interest = board.getPiece(myPosition);
 
         // Stores the list of moves
-        ArrayList<Integer> List_of_Moves = new ArrayList<Integer>();
+        ArrayList<ChessMove> List_of_Moves = new ArrayList<>();
 
         // Stores the possible positions for each piece
-        int pos_row;
-        int pos_col;
+        int pos_row = myPosition.getRow();
+        int pos_col = myPosition.getColumn();
 
         //Identify the type of piece (KING, QUEEN, etc.) and the find the moves it can do.
         if (piece_of_interest.type == PieceType.KING){
@@ -75,10 +76,51 @@ public class ChessPiece {
 
         }
         else if (piece_of_interest.type == PieceType.BISHOP){
-            //Working on implementing this code
-            //while((pos_row < 9) && (pos_col<9)){
-            //    List_of_Moves.add([pos_row,pos_col]);
-           // }
+            //This loop looks for all possible moves in the upper right diagonal direction.
+            while((pos_row < 8) && (pos_col < 8)){
+                pos_row += 1;
+                pos_col += 1;
+                ChessPosition move = new ChessPosition(pos_row, pos_col);
+                List_of_Moves.add(new ChessMove(myPosition,move,null));
+
+            }
+
+            //This code resets pos_row and pos_col to the current position of the piece
+            pos_row = myPosition.getRow();
+            pos_col = myPosition.getColumn();
+
+            //This loop looks for all possible moves in the lower right diagonal direction.
+            while((pos_row > 1) && (pos_col < 8)){
+                pos_row -= 1;
+                pos_col += 1;
+                ChessPosition move = new ChessPosition(pos_row, pos_col);
+                List_of_Moves.add(new ChessMove(myPosition,move,null));
+            }
+
+            //This code resets pos_row and pos_col to the current position of the piece
+            pos_row = myPosition.getRow();
+            pos_col = myPosition.getColumn();
+
+            //This loop looks for all possible moves in the lower left diagonal direction.
+            while((pos_row > 1) && (pos_col > 1)){
+                pos_row -= 1;
+                pos_col -= 1;
+                ChessPosition move = new ChessPosition(pos_row, pos_col);
+                List_of_Moves.add(new ChessMove(myPosition,move,null));
+            }
+
+            //This code resets pos_row and pos_col to the current position of the piece
+            pos_row = myPosition.getRow();
+            pos_col = myPosition.getColumn();
+
+            //This loop looks for all possible moves in the upper left diagonal direction.
+            while((pos_row < 8) && (pos_col > 1)){
+                pos_row += 1;
+                pos_col -= 1;
+                ChessPosition move = new ChessPosition(pos_row, pos_col);
+                List_of_Moves.add(new ChessMove(myPosition,move,null));
+            }
+
         }
         else if (piece_of_interest.type == PieceType.KNIGHT){
 
@@ -90,7 +132,16 @@ public class ChessPiece {
 
         }
 
-        return new ArrayList<>();
+        return List_of_Moves;
         //throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
+    }
 }
+
