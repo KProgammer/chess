@@ -78,10 +78,6 @@ public class ChessPiece {
         // Stores the list of moves
         ArrayList<ChessMove> List_of_Moves = new ArrayList<>();
 
-        // Stores the possible positions for each piece
-        int pos_row = myPosition.getRow();
-        int pos_col = myPosition.getColumn();
-
         //Identify the type of piece (KING, QUEEN, etc.) and the find the moves it can do.
         if (piece_of_interest.type == PieceType.KING){
 
@@ -90,50 +86,11 @@ public class ChessPiece {
 
         }
         else if (piece_of_interest.type == PieceType.BISHOP){
-            //This loop looks for all possible moves in the upper right diagonal direction.
-            while((pos_row < 8) && (pos_col < 8)){
-                pos_row += 1;
-                pos_col += 1;
-                ChessPosition move = new ChessPosition(pos_row, pos_col);
-                List_of_Moves.add(new ChessMove(myPosition,move,null));
+            // This line goes to the MoveBishop class and calculates the possible moves
+            MoveBishop Bishop = new MoveBishop(board,myPosition);
 
-            }
-
-            //This code resets pos_row and pos_col to the current position of the piece
-            pos_row = myPosition.getRow();
-            pos_col = myPosition.getColumn();
-
-            //This loop looks for all possible moves in the lower right diagonal direction.
-            while((pos_row > 1) && (pos_col < 8)){
-                pos_row -= 1;
-                pos_col += 1;
-                ChessPosition move = new ChessPosition(pos_row, pos_col);
-                List_of_Moves.add(new ChessMove(myPosition,move,null));
-            }
-
-            //This code resets pos_row and pos_col to the current position of the piece
-            pos_row = myPosition.getRow();
-            pos_col = myPosition.getColumn();
-
-            //This loop looks for all possible moves in the lower left diagonal direction.
-            while((pos_row > 1) && (pos_col > 1)){
-                pos_row -= 1;
-                pos_col -= 1;
-                ChessPosition move = new ChessPosition(pos_row, pos_col);
-                List_of_Moves.add(new ChessMove(myPosition,move,null));
-            }
-
-            //This code resets pos_row and pos_col to the current position of the piece
-            pos_row = myPosition.getRow();
-            pos_col = myPosition.getColumn();
-
-            //This loop looks for all possible moves in the upper left diagonal direction.
-            while((pos_row < 8) && (pos_col > 1)){
-                pos_row += 1;
-                pos_col -= 1;
-                ChessPosition move = new ChessPosition(pos_row, pos_col);
-                List_of_Moves.add(new ChessMove(myPosition,move,null));
-            }
+            // This line retrieves the calculated possible moves.
+            List_of_Moves = Bishop.pieceMoves(myPosition);
 
         }
         else if (piece_of_interest.type == PieceType.KNIGHT){
