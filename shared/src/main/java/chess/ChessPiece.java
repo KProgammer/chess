@@ -99,7 +99,11 @@ public class ChessPiece {
 
         }
         else if (piece_of_interest.type == PieceType.KNIGHT){
+            // This line goes to the MoveKnight class and calculates the possible moves
+            MoveKnight Knight = new MoveKnight(board,myPosition);
 
+            // This line retrieves the calculated possible moves.
+            List_of_Moves = Knight.pieceMoves(myPosition);
         }
         else if (piece_of_interest.type == PieceType.ROOK){
 
