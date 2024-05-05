@@ -81,7 +81,11 @@ public class ChessPiece {
 
         //Identify the type of piece (KING, QUEEN, etc.) and the find the moves it can do.
         if (piece_of_interest.type == PieceType.KING){
+            // This line goes to the MoveKing class and calculates the possible moves
+            MoveKing King = new MoveKing(board,myPosition);
 
+            // This line retrieves the calculated possible moves.
+            List_of_Moves = King.pieceMoves(myPosition);
         }
         else if (piece_of_interest.type == PieceType.QUEEN){
 
