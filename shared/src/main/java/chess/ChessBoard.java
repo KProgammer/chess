@@ -43,7 +43,18 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-
+        //Add white pawns to row 2 and black pawns to row 7
+        for (int i = 1;i < 7; i++){
+            for(int j = 0;j < 7;j++){
+                if(i<=2) {
+                    addPiece(new ChessPosition(i, j), new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.PAWN));
+                }
+                else{
+                    addPiece(new ChessPosition(i, j), new ChessPiece(ChessGame.TeamColor.BLACK,ChessPiece.PieceType.PAWN));
+                }
+            }
+            i += 4;
+        }
         //throw new RuntimeException("Not implemented");
     }
 
