@@ -88,7 +88,11 @@ public class ChessPiece {
             List_of_Moves = King.pieceMoves(myPosition);
         }
         else if (piece_of_interest.type == PieceType.QUEEN){
+            // This line goes to the MovePawn class and calculates the possible moves
+            MoveQueen Queen = new MoveQueen(board,myPosition);
 
+            // This line retrieves the calculated possible moves.
+            List_of_Moves = Queen.pieceMoves(myPosition);
         }
         else if (piece_of_interest.type == PieceType.BISHOP){
             // This line goes to the MoveBishop class and calculates the possible moves
