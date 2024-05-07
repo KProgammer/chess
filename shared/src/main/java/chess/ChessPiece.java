@@ -109,6 +109,11 @@ public class ChessPiece {
 
         }
         else if (piece_of_interest.type == PieceType.PAWN){
+            // This line goes to the MovePawn class and calculates the possible moves
+            MovePawn Pawn = new MovePawn(board,myPosition);
+
+            // This line retrieves the calculated possible moves.
+            List_of_Moves = Pawn.pieceMoves(myPosition);
 
         }
 

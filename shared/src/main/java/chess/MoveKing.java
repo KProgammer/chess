@@ -88,6 +88,5 @@ public class MoveKing {
         else {
             return isEmpty;
         }
-
     }
 }
