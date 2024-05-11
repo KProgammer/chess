@@ -10,9 +10,12 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares = new ChessPiece[8][8];
+    private ChessPiece[][] squares;
     public ChessBoard() {
-        
+        this.squares = new ChessPiece[8][8];
+
+        //Make it so the board starts out a full set of pieces instead of starting out empty.
+        resetBoard();
     }
 
     /**
