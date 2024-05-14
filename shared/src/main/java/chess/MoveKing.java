@@ -33,7 +33,7 @@ public class MoveKing extends ChessPiece {
         this.king = new ChessPiece(board.getPiece(position).getTeamColor(), ChessPiece.PieceType.KING);
     }
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
         //Calculate moves for the king
         for(int i = -1; i < 2; i++){
             for (int j = -1; j < 2; j++){
@@ -51,7 +51,7 @@ public class MoveKing extends ChessPiece {
                 pos_col += j;
 
                 //Attempt to add the move
-                AddPiece(pos_row,pos_col);
+                AddPiece(Piece_Moves,pos_row,pos_col);
             }
         }
 

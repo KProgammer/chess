@@ -169,7 +169,7 @@ public class ChessPiece {
      * @param col the col the piece is in
      * @return If there should be no more moves in the direction of the given move, this will return false
      */
-    public void AddPiece(int row, int col) {
+    public void AddPiece(ArrayList<ChessMove> Piece_Moves, int row, int col) {
         //Check to see if the space exists on the board and whether it is occupied by an piece of the same team.
         if ((row < 1) || (row > 8) || (col < 1) || (col > 8) ||
                 (board.getPiece(new ChessPosition(row,col)) != null &&

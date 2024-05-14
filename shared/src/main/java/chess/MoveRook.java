@@ -28,7 +28,7 @@ public class MoveRook extends ChessPiece {
         cur_game.setBoard(board);
     }
 
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
 
         //Calculate moves for the right or towards col 8
         while(pos_col < 8){
@@ -41,7 +41,7 @@ public class MoveRook extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -63,7 +63,7 @@ public class MoveRook extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -85,7 +85,7 @@ public class MoveRook extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -107,7 +107,7 @@ public class MoveRook extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {

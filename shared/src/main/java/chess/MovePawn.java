@@ -41,20 +41,20 @@ public class MovePawn extends ChessPiece {
      * @param myPosition The starting position of the pawn
      * @return A list of all the possible moves the king can make
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
     //If the piece is starting it may move up to two spaces if there are no pieces in the way
         if(pos_row == 2 || pos_row == 7){
         if((pos_row == 2) &&
                 (pawn.getTeamColor() == ChessGame.TeamColor.WHITE) &&
                 (board.getPiece(new ChessPosition((pos_row+1),pos_col)) == null) &&
                 (board.getPiece(new ChessPosition((pos_row+2),pos_col)) == null)){
-            AddPiece((pos_row+2),pos_col);
+            AddPiece(Piece_Moves,(pos_row+2),pos_col);
         }
         if((pos_row == 7) &&
                 (pawn.getTeamColor() == ChessGame.TeamColor.BLACK) &&
                 (board.getPiece(new ChessPosition((pos_row-1),pos_col)) == null) &&
                 (board.getPiece(new ChessPosition((pos_row-2),pos_col)) == null)){
-            AddPiece((pos_row-2),pos_col);
+            AddPiece(Piece_Moves,(pos_row-2),pos_col);
         }
     }
 
@@ -88,7 +88,7 @@ public class MovePawn extends ChessPiece {
         }
 
         //Otherwise attempt to add the piece.
-        AddPiece(pos_row,pos_col);
+        AddPiece(Piece_Moves,pos_row,pos_col);
     }
 
         return Piece_Moves;

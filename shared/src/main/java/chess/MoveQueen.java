@@ -32,7 +32,7 @@ public class MoveQueen extends ChessPiece {
         this.queen = new ChessPiece(board.getPiece(position).getTeamColor(), ChessPiece.PieceType.QUEEN);
     }
 
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
 
         //Calculate moves for the upper right diagonal or towards row 8, col 8
         while(pos_row < 8 && pos_col < 8){
@@ -46,7 +46,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -68,7 +68,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -91,7 +91,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -113,7 +113,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -136,7 +136,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -158,7 +158,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -181,7 +181,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -203,7 +203,7 @@ public class MoveQueen extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {

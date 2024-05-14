@@ -38,7 +38,7 @@ public class MoveKnight extends ChessPiece {
      * @param myPosition The starting position of the knight
      * @return A list of all the possible moves the knight can make
      */
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
         //These two for loops traverse from left to right through the squares around the knight starting
         //on the direction facing the first row. They use addition and subtraction to get to the squares
         //shown below.
@@ -75,7 +75,7 @@ public class MoveKnight extends ChessPiece {
                 pos_col += j;
 
                 //Attempt to add the move
-                AddPiece(pos_row,pos_col);
+                AddPiece(Piece_Moves,pos_row,pos_col);
             }
         }
 

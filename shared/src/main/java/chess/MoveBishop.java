@@ -45,7 +45,7 @@ public class MoveBishop extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -68,7 +68,7 @@ public class MoveBishop extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -91,7 +91,7 @@ public class MoveBishop extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
@@ -114,7 +114,7 @@ public class MoveBishop extends ChessPiece {
             }
 
             //Attempt to add the move
-            AddPiece(pos_row,pos_col);
+            AddPiece(Piece_Moves,pos_row,pos_col);
 
             //if there is any piece you must stop advancing
             if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
