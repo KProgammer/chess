@@ -16,10 +16,39 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;           //A value that holds the team
     private final PieceType type;
+    private final ChessBoard board;
+    private final ChessPosition position;
+    private ArrayList<ChessMove> Piece_Moves;
+    private int pos_row;
+    private int pos_col;
+    private ChessGame cur_game;
+    private ChessPiece bishop;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+        board = null;
+        position = null;
+    }
+
+    public ChessPiece(ChessBoard board, ChessPosition position){
+
+        this.board = board;
+        this.position = position;
+
+        //Stores the list of moves the king can make
+        this.Piece_Moves = new ArrayList<>();
+
+        // Stores the possible positions for each piece
+        this.pos_row= position.getRow();
+        this.pos_col = position.getColumn();
+
+        //This is used to track the current game
+        this.cur_game = new ChessGame();
+        cur_game.setBoard(board);
+
+        this.type = board.getPiece(position).getPieceType();
+        this.pieceColor = board.getPiece(position).getTeamColor();
     }
 
     @Override
@@ -127,6 +156,113 @@ public class ChessPiece {
 
         return List_of_Moves;
         //throw new RuntimeException("Not implemented");
+    }
+
+    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition){
+        return new ArrayList<>();
+    }
+
+    /**
+     * Adds a move to the list of valid moves
+     *
+     * @param row The row the piece is in
+     * @param col the col the piece is in
+     * @return If there should be no more moves in the direction of the given move, this will return false
+     */
+    public void AddPiece(int row, int col) {
+        //Check to see if the space exists on the board and whether it is occupied by an piece of the same team.
+        if ((row < 1) || (row > 8) || (col < 1) || (col > 8) ||
+                (board.getPiece(new ChessPosition(row,col)) != null &&
+                        board.getPiece(new ChessPosition(row,col)).getTeamColor() == board.getPiece(position).getTeamColor())){
+            return;
+        } // If it is a piece that can be promoted, promote it.
+        else if ((row == 1 || row == 8) && (board.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)){
+            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.ROOK));
+            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.KNIGHT));
+            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.BISHOP));
+            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.QUEEN));
+        }
+        // Otherwise just add it
+        else{
+            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), null));
+        }
+
+    }
+
+    /*
+    private boolean AddMove(ChessPosition move){
+        //Create a boolean to determine if the space being considered is empty
+        boolean isEmpty = false;
+
+        //These are if the king is in check.
+        ChessGame possibleGame = new ChessGame();
+        ChessBoard possibleBoard = cur_game.getBoard().clone();
+        ChessMove possibleMove;
+        possibleGame.setBoard(possibleBoard);
+
+        //If the space is empty, add it as a possible move.
+        if(theBoard.getPiece(move) == null){
+            //If the king is in check see if this move will stop the board from being in check
+            if(cur_game.isInCheck(theBoard.getPiece(position).getTeamColor()));{
+                //Add the move possible move
+                possibleMove = new ChessMove(position,move,null);
+                //Clear both squares
+                possibleBoard.addPiece(position,null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(),null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(),theBoard.getPiece(position));
+
+                //See if the king is still in check.
+                if (possibleGame.isInCheck(possibleBoard.getPiece(move).getTeamColor())){
+                    isEmpty = true;
+                    return isEmpty;
+                }
+                //If not continue
+            }
+
+            //Add the position to the new list of possible moves.
+            Piece_Moves.add(new ChessMove(position,move,null));
+            isEmpty = true;
+            return isEmpty;
+        }
+        //If the space contains an opposing piece, add the space as a possible move and then end all
+        //possible moves in this direction.
+        else if (theBoard.getPiece(move).getTeamColor() != theBoard.getPiece(position).getTeamColor()) {
+            //If the king is in check see if this move will stop the board from being in check
+            if(cur_game.isInCheck(theBoard.getPiece(position).getTeamColor()));{
+                //Add the move possible move
+                possibleMove = new ChessMove(position,move,null);
+                //Clear both squares
+                possibleBoard.addPiece(position,null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(),null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(),theBoard.getPiece(move));
+
+                //See if the king is still in check.
+                if (possibleGame.isInCheck(theBoard.getPiece(move).getTeamColor())){
+                    isEmpty = true;
+                    return isEmpty;
+                }
+                //If not continue
+            }
+
+            //Add the position to the new list of possible moves.
+            Piece_Moves.add(new ChessMove(position,move,null));
+            return isEmpty;
+        }
+        //If the space contains a piece on the same team, end all possible moves in this direction.
+        else {
+            return isEmpty;
+        }
+
+    }*/
+
+    public boolean IsOnBoard(ChessPosition possiblePos){
+        // If the proposed space is not on the board, don't add it.
+        if (possiblePos.getColumn() < 1 || possiblePos.getColumn() > 8 || possiblePos.getRow() < 1 || possiblePos.getRow() > 8){
+            return  false;
+        }
+        return true;
     }
 
     @Override

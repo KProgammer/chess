@@ -2,193 +2,224 @@ package chess;
 
 import java.util.ArrayList;
 
-public class MoveQueen {
-    private final ChessBoard theBoard;
+public class MoveQueen extends ChessPiece {
+    private final ChessBoard board;
     private final ChessPosition position;
-    private ArrayList<ChessMove> Queen_Moves;
+    private ArrayList<ChessMove> Piece_Moves;
     private int pos_row;
     private int pos_col;
+    private ChessGame cur_game;
+    private ChessPiece queen;
 
-    public MoveQueen(ChessBoard theBoard, ChessPosition position){
+    public MoveQueen(ChessBoard board, ChessPosition position){
+        super(board, position);
 
-        this.theBoard = theBoard;
+        this.board = board;
         this.position = position;
 
         //Stores the list of moves
-        this.Queen_Moves = new ArrayList<>();
+        this.Piece_Moves = new ArrayList<>();
 
         //Store the possible positions for the bishop
         this.pos_row = position.getRow();
         this.pos_col = position.getColumn();
+
+        //Stores teh current chessgame
+        this.cur_game = new ChessGame();
+        cur_game.setBoard(board);
+
+        //This piece stores a piece similar to what we are interested in
+        this.queen = new ChessPiece(board.getPiece(position).getTeamColor(), ChessPiece.PieceType.QUEEN);
     }
 
-    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
+    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        //This loop looks for all possible moves towards the top of the board, or towards row 8.
-        while(pos_row < 8){
-            //Increase the position in the upper right diagonal direction
-            pos_row += 1;
-
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
-
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
-                break;
-            }
-        }
-
-        //This code resets pos_row and pos_col to the current position of the piece
-        pos_row = myPosition.getRow();
-        pos_col = myPosition.getColumn();
-
-        //This loop looks for all possible moves in the upper right diagonal direction, or towards row 8 col 8.
-        while((pos_row < 8) && (pos_col < 8)){
-            //Increase the position in the upper right diagonal direction
+        //Calculate moves for the upper right diagonal or towards row 8, col 8
+        while(pos_row < 8 && pos_col < 8){
+            //Add the values
             pos_row += 1;
             pos_col += 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
-
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
                 break;
             }
 
-        }
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
 
-        //This code resets pos_row and pos_col to the current position of the piece
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+                break;
+            }
+        }
+        //Reset the values of pos_row and pos_col
         pos_row = myPosition.getRow();
         pos_col = myPosition.getColumn();
 
-        //This loop looks for all possible moves towards the right of the board, or column 8.
+        //Calculate moves for the right or towards col 8
         while(pos_col < 8){
-            //Increase the position in the upper right diagonal direction
+            //Add the values
             pos_col += 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
+                break;
+            }
 
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
+
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
                 break;
             }
         }
-
-        //This code resets pos_row and pos_col to the current position of the piece
+        //Reset the values of pos_row and pos_col
         pos_row = myPosition.getRow();
         pos_col = myPosition.getColumn();
 
-        //This loop looks for all possible moves in the lower right diagonal direction.
-        while((pos_row > 1) && (pos_col < 8)){
-            //Increase the position in the lower right diagonal direction
+        //Calculate moves for the lower right diagonal or towards row 1, col 8
+        while(pos_row > 1 && pos_col < 8){
+            //Add the values
             pos_row -= 1;
             pos_col += 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
+                break;
+            }
 
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
+
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
                 break;
             }
         }
-
-        //This code resets pos_row and pos_col to the current position of the piece
+        //Reset the values of pos_row and pos_col
         pos_row = myPosition.getRow();
         pos_col = myPosition.getColumn();
 
-        //This loop looks for all possible moves towards the bottom of the board, or row 1.
+        //Calculate moves for down or towards row 1
         while(pos_row > 1){
-            //Increase the position in the upper right diagonal direction
+            //Add the values
             pos_row -= 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
+                break;
+            }
 
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
+
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
                 break;
             }
         }
-
-        //This code resets pos_row and pos_col to the current position of the piece
+        //Reset the values of pos_row and pos_col
         pos_row = myPosition.getRow();
         pos_col = myPosition.getColumn();
 
-        //This loop looks for all possible moves in the lower left diagonal direction.
-        while((pos_row > 1) && (pos_col > 1)){
-            //Increase the position in the lower left diagonal direction
+        //Calculate moves for the lower left diagonal or towards row 1, col 1
+        while(pos_row > 1 && pos_col > 1){
+            //Add the values
             pos_row -= 1;
             pos_col -= 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
-
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
                 break;
             }
 
-        }
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
 
-        //This code resets pos_row and pos_col to the current position of the piece
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+                break;
+            }
+        }
+        //Reset the values of pos_row and pos_col
         pos_row = myPosition.getRow();
         pos_col = myPosition.getColumn();
 
-        //This loop looks for all possible moves towards the left of the board, or column 1.
+        //Calculate moves for the left or towards col 1
         while(pos_col > 1){
-            //Increase the position in the upper right diagonal direction
+            //Add the values
             pos_col -= 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
+                break;
+            }
 
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
+
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
                 break;
             }
         }
-
-        //This code resets pos_row and pos_col to the current position of the piece
+        //Reset the values of pos_row and pos_col
         pos_row = myPosition.getRow();
         pos_col = myPosition.getColumn();
 
-        //This loop looks for all possible moves in the upper left diagonal direction.
-        while((pos_row < 8) && (pos_col > 1)){
-            //Increase the position in the upper left diagonal direction
+        //Calculate moves for the upper left diagonal or towards row 8, col 1
+        while(pos_row < 8 && pos_col < 8) {
+            //Add the values
             pos_row += 1;
             pos_col -= 1;
 
-            //Save the new position
-            ChessPosition move = new ChessPosition(pos_row, pos_col);
-
-            //Attempt to add the move to the list of moves.
-            if(!AddMove(move)){
-                //If AddMove is false, the bishop should stop moving this direction
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
                 break;
             }
 
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
+
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+                break;
+            }
+        }
+        //Reset the values of pos_row and pos_col
+        pos_row = myPosition.getRow();
+        pos_col = myPosition.getColumn();
+
+        //Calculate moves for upwards or towards row 8
+        while(pos_row < 8){
+            //Add the values
+            pos_row += 1;
+
+            // If the proposed space is not on the board, don't add it.
+            if (pos_col < 1 || pos_col > 8 || pos_row < 1 || pos_col > 8){
+                break;
+            }
+
+            //Attempt to add the move
+            AddPiece(pos_row,pos_col);
+
+            //if there is any piece you must stop advancing
+            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+                break;
+            }
         }
 
-        return Queen_Moves;
+        return Piece_Moves;
     }
-
     /**
      * Adds a move to the list of valid moves
      *
      * @param move The position the bishop is to be placed
      * @return If there should be no more moves in the direction of the given move, this will return false
      */
-    private boolean AddMove(ChessPosition move){
+    /*private boolean AddMove(ChessPosition move){
         //Create a boolean to determine if the space being considered is empty
         boolean isEmpty = false;
 
@@ -196,18 +227,61 @@ public class MoveQueen {
         //pos_row = position.getRow();
         //pos_col = position.getColumn();
 
+        //These are if the king is in check.
+        ChessGame possibleGame = new ChessGame();
+        ChessBoard possibleBoard = cur_game.getBoard().clone();
+        ChessMove possibleMove;
+        possibleGame.setBoard(possibleBoard);
+
+
         //If the space is empty, add it as a possible move.
-        if(theBoard.getPiece(move) == null){
+        if(board.getPiece(move) == null){
+            //If the king is in check see if this move will stop the board from being in check
+            if(cur_game.isInCheck(board.getPiece(position).getTeamColor()));{
+                //Add the move possible move
+                possibleMove = new ChessMove(position,move,null);
+                //Clear both squares
+                possibleBoard.addPiece(position,null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(),null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(), board.getPiece(move));
+
+                //See if the king is still in check.
+                if (possibleGame.isInCheckmate(board.getPiece(move).getTeamColor())){
+                    isEmpty = true;
+                    return isEmpty;
+                }
+                //If not continue
+            }
+
             //Add the position to the new list of possible moves.
-            Queen_Moves.add(new ChessMove(position,move,null));
+            Piece_Moves.add(new ChessMove(position,move,null));
             isEmpty = true;
             return isEmpty;
         }
         //If the space contains an opposing piece, add the space as a possible move and then end all
         //possible moves in this direction.
-        else if (theBoard.getPiece(move).getTeamColor() != theBoard.getPiece(position).getTeamColor()) {
+        else if (board.getPiece(move).getTeamColor() != board.getPiece(position).getTeamColor()) {
+            //If the king is in check see if this move will stop the board from being in check
+            if(cur_game.isInCheck(board.getPiece(position).getTeamColor()));{
+                //Add the move possible move
+                possibleMove = new ChessMove(position,move,null);
+                //Clear both squares
+                possibleBoard.addPiece(position,null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(),null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(), board.getPiece(move));
+
+                //See if the king is still in check.
+                if (possibleGame.isInCheckmate(board.getPiece(move).getTeamColor())){
+                    isEmpty = true;
+                    return isEmpty;
+                }
+                //If not continue
+            }
+
             //Add the position to the new list of possible moves.
-            Queen_Moves.add(new ChessMove(position,move,null));
+            Piece_Moves.add(new ChessMove(position,move,null));
             return isEmpty;
         }
         //If the space contains a piece on the same team, end all possible moves in this direction.
@@ -215,5 +289,5 @@ public class MoveQueen {
             return isEmpty;
         }
 
-    }
+    }*/
 }

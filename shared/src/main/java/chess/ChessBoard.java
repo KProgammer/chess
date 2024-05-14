@@ -15,9 +15,28 @@ public class ChessBoard {
         this.squares = new ChessPiece[8][8];
 
         //Make it so the board starts out a full set of pieces instead of starting out empty.
-        resetBoard();
+        //resetBoard();
     }
 
+    /*public ChessBoard(ChessBoard chessBoard){
+        ChessBoard newBoard = new ChessBoard();
+        ChessBoard placeHolder = new ChessBoard();
+        for(int i = 0; i < chessBoard.getBoard().length;i++){
+            for(int j = 0; j < chessBoard.getBoard().length;j++){
+                placeHolder.getBoard()[i][j] = chessBoard.getBoard()[i][j];
+            }
+        }
+
+        newBoard.setBoard(chessBoard.squares);
+    }*/
+
+    public ChessPiece[][] getBoard(){
+        return squares;
+    }
+
+    public void setBoard(ChessPiece[][] board){
+        this.squares = board;
+    }
     /**
      * Adds a chess piece to the chessboard
      *
@@ -87,6 +106,33 @@ public class ChessBoard {
 
     }
 
+    /**
+     * Makes the object cloneable
+     */
+   /* @Override
+    public ChessBoard clone() {
+        try {
+            return (ChessBoard) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new ChessBoard();
+        }
+    }*/
+
+    public ChessBoard clone()  {
+            //ChessBoard chessBoard = (ChessBoard) super.clone();
+            var clone = new ChessBoard();
+            ChessPiece[][] oldBoard = this.getBoard();
+            ChessPiece[][] newBoard = new ChessPiece[8][8];
+            for (int i = 0; i < oldBoard.length; i++) {
+                newBoard[i] = Arrays.copyOf(oldBoard[i], oldBoard[i].length);
+            }
+            clone.setBoard(newBoard);
+            return clone;
+    }
+
+    /**
+     * Makes the object more readable when it's printed.
+     */
     @Override
     public String toString() {
         return "ChessBoard{" +
@@ -94,6 +140,9 @@ public class ChessBoard {
                 '}';
     }
 
+    /**
+     * Overrides how the object is compared to another object or set equal to it.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,6 +151,9 @@ public class ChessBoard {
         return Objects.deepEquals(squares, that.squares);
     }
 
+    /**
+     * Affects how the object is retrieved from hashcode.
+     */
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);

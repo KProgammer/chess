@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -15,6 +17,7 @@ public class ChessGame {
 
     public ChessGame() {
         this.cur_board = new ChessBoard();
+        cur_board.resetBoard();
         this.cur_turn = TeamColor.WHITE;
     }
 
@@ -88,7 +91,97 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingsPos = null;
+        ChessMove posOfInterest;
+
+        boolean $invalidState = false;
+
+        if (teamColor == TeamColor.BLACK){
+            //First search the board to find the king
+            for (int i = 1; i < 9; i++){
+                for(int j = 1; j < 9; j++){
+                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                        continue;
+                    }
+
+                    if (cur_board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
+                    cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
+                        kingsPos = new ChessPosition(i,j);
+                        $invalidState = true;
+                    }
+                    if($invalidState){break;}
+                }
+                if($invalidState){break;}
+            }
+            //Now that you have found the king, see if any one from the white team can kill him.
+            //If they can, return true. Otherwise, return false.
+            //First search the board to find the king
+            for (int i = 1; i < 9; i++){
+                for(int j = 1; j < 9; j++){
+                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                        continue;
+                    }
+                    if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
+                        Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
+                                cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
+                        //Now go through each move's endposition and see if it matches the kings position
+                        for (Iterator variable = posMoves.iterator(); variable.hasNext();){
+
+                            posOfInterest = (ChessMove) variable.next();
+
+                            //If it matches return true
+                            if(posOfInterest.getEndPosition() == kingsPos){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        } else if (teamColor == TeamColor.WHITE) {
+            //First search the board to find the king
+            for (int i = 1; i < 9; i++){
+                for(int j = 1; j < 9; j++){
+                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                        continue;
+                    }
+                    if (cur_board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
+                            cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
+                        kingsPos = new ChessPosition(i,j);
+                        $invalidState = true;
+                    }
+                    if($invalidState){break;}
+                }if($invalidState){break;}
+            }
+
+            //Now that you have found the king, see if any one from the white team can kill him.
+            //If they can, return true. Otherwise, return false.
+            //First search the board to find the king
+            for (int i = 1; i < 9; i++){
+                for(int j = 1; j < 9; j++){
+                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                        break;
+                    }
+                    if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
+                        Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
+                                cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
+                        //Now go through each move's endposition and see if it matches the kings position
+                        for (Iterator variable = posMoves.iterator(); variable.hasNext();){
+
+                            posOfInterest = (ChessMove) variable.next();
+
+                            //If it matches return true
+                            if(posOfInterest.getEndPosition() == kingsPos){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return false;
     }
 
     /**

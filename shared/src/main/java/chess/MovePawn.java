@@ -1,27 +1,38 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static java.lang.Math.abs;
 
-public class MovePawn {
-    private final ChessBoard theBoard;
+public class MovePawn extends ChessPiece {
+    private final ChessBoard board;
     private final ChessPosition position;
-    private ArrayList<ChessMove> PawnMoves;
+    private ArrayList<ChessMove> Piece_Moves;
     private int pos_row;
     private int pos_col;
+    private ChessGame cur_game;
+    private ChessPiece pawn;
 
-    public MovePawn(ChessBoard theBoard, ChessPosition position){
+    public MovePawn(ChessBoard board, ChessPosition position){
+        super(board,position);
 
-        this.theBoard = theBoard;
+        this.board = board;
         this.position = position;
 
         //Stores the list of moves the king can make
-        this.PawnMoves = new ArrayList<>();
+        this.Piece_Moves = new ArrayList<>();
 
         // Stores the possible positions for each piece
         this.pos_row= position.getRow();
         this.pos_col = position.getColumn();
+
+        // Stores the current game board
+        this.cur_game = new ChessGame();
+        cur_game.setBoard(board);
+
+        //Creates a piece similar to what we are interested in.
+        this.pawn = new ChessPiece(board.getPiece(position).getTeamColor(), ChessPiece.PieceType.PAWN);
     }
 
     /**
@@ -30,112 +41,58 @@ public class MovePawn {
      * @param myPosition The starting position of the pawn
      * @return A list of all the possible moves the king can make
      */
-    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
-        Boolean ispieceinfront = false;
-        for(int i = 1; i < 3; i++) {
-            for (int j = -1; j < 2; j++) {
-                //If it is a black pawn, have the rows decrement instead of increase
-                if (theBoard.getPiece(position).getTeamColor() == ChessGame.TeamColor.BLACK){
-                    i = -i;
-                }
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    //If the piece is starting it may move up to two spaces if there are no pieces in the way
+        if(pos_row == 2 || pos_row == 7){
+        if((pos_row == 2) &&
+                (pawn.getTeamColor() == ChessGame.TeamColor.WHITE) &&
+                (board.getPiece(new ChessPosition((pos_row+1),pos_col)) == null) &&
+                (board.getPiece(new ChessPosition((pos_row+2),pos_col)) == null)){
+            AddPiece((pos_row+2),pos_col);
+        }
+        if((pos_row == 7) &&
+                (pawn.getTeamColor() == ChessGame.TeamColor.BLACK) &&
+                (board.getPiece(new ChessPosition((pos_row-1),pos_col)) == null) &&
+                (board.getPiece(new ChessPosition((pos_row-2),pos_col)) == null)){
+            AddPiece((pos_row-2),pos_col);
+        }
+    }
 
+        if(pawn.getTeamColor() == ChessGame.TeamColor.BLACK){
+        pos_row -= 1;
+    } else {
+        pos_row += 1;
+    }
 
-                //If this is not the pawns first move, it may not go forward two spaces
-                if (abs(i) == 2 && (position.getRow() != 2) && (position.getRow() != 7)){
-                    //Reset positions and continue.
-                    pos_row = position.getRow();
-                    pos_col = position.getColumn();
+    //Calculate moves for pawn
+        for(int i = -1; i < 2; i++){
+        //Reset the positions for pos_col
+        pos_col = myPosition.getColumn();
 
-                    //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                    i = abs(i);
+        //Add the modifier
+        pos_col += i;
 
-                    continue;
-                }
-
-                //Find the next column position.
-                pos_row += i;
-                pos_col += j;
-
-                //check to make sure pos_col is a legitimate position. Reset and continue if not.
-                if ((pos_col < 1) || (pos_col > 8) || (pos_row < 1) || (pos_row > 8)) {
-                    //Reset positions and continue.
-                    pos_row = position.getRow();
-                    pos_col = position.getColumn();
-
-                    //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                    i = abs(i);
-
-                    continue;
-                }
-
-                //If there is a piece in front of the pawn it cannot capture it and its moves forward are blocked.
-                if((j == 0) && (theBoard.getPiece(new ChessPosition(pos_row, pos_col)) != null)){
-                    ispieceinfront = true;
-
-                    //Reset positions and continue.
-                    pos_row = position.getRow();
-                    pos_col = position.getColumn();
-
-                    //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                    i = abs(i);
-
-                    continue;
-                }
-
-                //If there is a piece in front the pawn can't hop over it
-                if((abs(i) == 2) && (ispieceinfront == true)){
-                    //Reset positions and continue.
-                    pos_row = position.getRow();
-                    pos_col = position.getColumn();
-
-                    //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                    i = abs(i);
-
-                    continue;
-                }
-
-                //If this is the pawn's first move, it should it can only go forward, not diagonal. Reset and continue if it tries to go diagonal
-                if ((abs(i) == 2) && (j != 0)){
-                    //Reset positions and continue.
-                    pos_row = position.getRow();
-                    pos_col = position.getColumn();
-
-                    //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                    i = abs(i);
-
-                    continue;
-                }
-
-
-
-                //If the space is diagonal and is empty, the pawn cannot mover there.
-
-                //Save the new position
-                ChessPosition move = new ChessPosition(pos_row, pos_col);
-
-                //If the move being considered is diagonal, there must be a piece there to capture.
-                if((move.getColumn() != position.getColumn()) && (theBoard.getPiece(move) == null)){
-                    //Set pos_row and pos_col to starting position
-                    pos_row = position.getRow();
-                    pos_col = position.getColumn();
-
-                    //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                    i = abs(i);
-
-                    //If there is no piece to capture, don't add this move.
-                    continue;
-                }
-
-                //Determine if it is a legal move, add it if it is, do not if it isn't
-                AddMove(move);
-
-                //Set i back to it's original positive value if it was made negative to adapt to moving a black piece.
-                i = abs(i);
-            }
+        //Make sure the move is on the board. If not, skip this round.
+        if ((pos_row < 1) || (pos_row > 8) || (pos_col < 1) || (pos_col > 8)){
+            continue;
         }
 
-        return PawnMoves;
+        //If we are considering a diagonal move, there must be a piece of the opposite side to capture
+        if(i != 0 && board.getPiece(new ChessPosition(pos_row,pos_col)) == null){
+            //move on
+            continue;
+        }
+        // if there is any piece in front of the pawn, it may not move
+        else if (i == 0 && board.getPiece(new ChessPosition(pos_row,pos_col)) != null){
+            continue;
+        }
+
+        //Otherwise attempt to add the piece.
+        AddPiece(pos_row,pos_col);
     }
+
+        return Piece_Moves;
+}
 
     /**
      * Adds a move to the list of valid moves
@@ -143,45 +100,87 @@ public class MovePawn {
      * @param move The position the pawn is to be placed
      * @return If there should be no more moves in the direction of the given move, this will return false
      */
-    private boolean AddMove(ChessPosition move){
+    /*private boolean AddMove(ChessPosition move){
         //Create a boolean to determine if the space being considered is empty
         boolean isEmpty = false;
+
+        //These are if the king is in check.
+        ChessGame possibleGame = new ChessGame();
+        ChessBoard possibleBoard = cur_game.getBoard().clone();
+        ChessMove possibleMove;
+        possibleGame.setBoard(possibleBoard);
 
         //Set pos_row and pos_col to starting position
         pos_row = position.getRow();
         pos_col = position.getColumn();
 
         //If the space is empty, add it as a possible move.
-        if(theBoard.getPiece(move) == null){
+        if(board.getPiece(move) == null){
+            //If the king is in check see if this move will stop the board from being in check
+            if(cur_game.isInCheck(board.getPiece(position).getTeamColor()));{
+                //Add the move possible move
+                possibleMove = new ChessMove(position,move,null);
+                //Clear both squares
+                possibleBoard.addPiece(position,null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(),null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(), board.getPiece(move));
+
+                //See if the king is still in check.
+                if (possibleGame.isInCheckmate(board.getPiece(move).getTeamColor())){
+                    isEmpty = true;
+                    return isEmpty;
+                }
+                //If not continue
+            }
+
             //Check if it is a piece that can be promoted.
-            if ((move.getRow() == 1 || move.getRow() == 8) && (theBoard.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)){
+            if ((move.getRow() == 1 || move.getRow() == 8) && (board.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)){
                 //Add the possible promotions that come with this move
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.ROOK));
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.KNIGHT));
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.BISHOP));
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.QUEEN));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.ROOK));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.KNIGHT));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.BISHOP));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.QUEEN));
             }
             else {
                 //Add the position to the new list of possible moves.
-                PawnMoves.add(new ChessMove(position, move, null));
+                Piece_Moves.add(new ChessMove(position, move, null));
             }
             isEmpty = true;
             return isEmpty;
         }
         //If the space contains an opposing piece, add the space as a possible move and then end all
         //possible moves in this direction.
-        else if (theBoard.getPiece(move).getTeamColor() != theBoard.getPiece(position).getTeamColor()) {
+        else if (board.getPiece(move).getTeamColor() != board.getPiece(position).getTeamColor()) {
+            //If the king is in check see if this move will stop the board from being in check
+            if(cur_game.isInCheck(board.getPiece(position).getTeamColor()));{
+                //Add the move possible move
+                possibleMove = new ChessMove(position,move,null);
+                //Clear both squares
+                possibleBoard.addPiece(position,null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(),null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(), board.getPiece(move));
+
+                //See if the king is still in check.
+                if (possibleGame.isInCheckmate(board.getPiece(move).getTeamColor())){
+                    isEmpty = true;
+                    return isEmpty;
+                }
+                //If not continue
+            }
+
             //Check if this piece will get promoted.
-            if ((move.getRow() == 1 || move.getRow() == 8) && (theBoard.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)){
+            if ((move.getRow() == 1 || move.getRow() == 8) && (board.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)){
                 //Add the possible promotions that come with this move
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.ROOK));
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.KNIGHT));
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.BISHOP));
-                PawnMoves.add(new ChessMove(position, move, ChessPiece.PieceType.QUEEN));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.ROOK));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.KNIGHT));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.BISHOP));
+                Piece_Moves.add(new ChessMove(position, move, ChessPiece.PieceType.QUEEN));
             }
             else {
                 //Add the position to the new list of possible moves.
-                PawnMoves.add(new ChessMove(position, move, null));
+                Piece_Moves.add(new ChessMove(position, move, null));
             }
             return isEmpty;
         }
@@ -190,5 +189,5 @@ public class MovePawn {
             return isEmpty;
         }
 
-    }
+    }*/
 }
