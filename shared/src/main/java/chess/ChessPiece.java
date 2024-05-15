@@ -170,21 +170,22 @@ public class ChessPiece {
      * @return If there should be no more moves in the direction of the given move, this will return false
      */
     public void AddPiece(ArrayList<ChessMove> Piece_Moves, int row, int col) {
+
         //Check to see if the space exists on the board and whether it is occupied by an piece of the same team.
         if ((row < 1) || (row > 8) || (col < 1) || (col > 8) ||
                 (board.getPiece(new ChessPosition(row,col)) != null &&
                         board.getPiece(new ChessPosition(row,col)).getTeamColor() == board.getPiece(position).getTeamColor())){
             return;
         } // If it is a piece that can be promoted, promote it.
-        else if ((row == 1 || row == 8) && (board.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)){
-            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.ROOK));
-            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.KNIGHT));
-            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.BISHOP));
-            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), ChessPiece.PieceType.QUEEN));
+        else if ((row == 1 || row == 8) && (board.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)) {
+                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.ROOK));
+                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.KNIGHT));
+                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.BISHOP));
+                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.QUEEN));
         }
         // Otherwise just add it
-        else{
-            Piece_Moves.add(new ChessMove(position,new ChessPosition(row,col), null));
+        else {
+            Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), null));
         }
 
     }

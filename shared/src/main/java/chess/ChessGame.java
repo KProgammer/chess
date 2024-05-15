@@ -68,9 +68,60 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if (cur_board.getPiece(startPosition) == null){
             return null;
-        } else{
-            return new ChessPiece(cur_board.getPiece(startPosition).getTeamColor(),
-                    cur_board.getPiece(startPosition).getPieceType()).pieceMoves(cur_board,startPosition);
+        } // Check if the king is in check.
+
+        //These lines are used to store a possible chessboard
+        ChessGame possibleGame = new ChessGame();
+        ChessBoard possibleBoard = cur_board.clone();
+
+        //This line stores the current chessboard
+        ChessBoard originalBoard = cur_board;
+
+        //This line stores the moves of the chess piece
+        Collection<ChessMove> movesOfInterest = new ChessPiece(cur_board.getPiece(startPosition).getTeamColor(),
+                cur_board.getPiece(startPosition).getPieceType()).pieceMoves(cur_board,startPosition);
+
+        //this collects all the valid moves for the current piece
+        Collection<ChessMove> Val_Moves = new ArrayList<ChessMove>();
+
+        //Set the possible game to have the same chessboard as the current game.
+        possibleGame.setBoard(possibleBoard);
+
+        //This stores the move that is being considered
+        ChessMove possibleMove;
+
+
+        if (isInCheck(cur_board.getPiece(startPosition).getTeamColor())) {
+            //If the king is in check we must check if any of the moves will bring the king out of check
+            for (ChessMove chessMove : movesOfInterest) {
+                //reset the board to the current board
+                possibleBoard = cur_board.clone();
+
+                //Add the move possible move
+                possibleMove = chessMove;
+
+                //Clear both squares
+                possibleBoard.addPiece(startPosition, null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(), null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(), cur_board.getPiece(startPosition));
+
+                //Set the cur_board equal to possibleBoard to try to see if the new move will leave the king in Check
+                cur_board = possibleBoard;
+
+                //If the king is not in check, add the move to the Val_Moves variable
+                if (!possibleGame.isInCheck(cur_board.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
+                    Val_Moves.add(possibleMove);
+                }
+
+                //Reset cur_board back to the original board;
+                cur_board = originalBoard;
+
+            }
+            return Val_Moves;
+        }
+        else{
+            return movesOfInterest;
         }
     }
 
@@ -96,6 +147,7 @@ public class ChessGame {
 
         boolean $invalidState = false;
 
+
         if (teamColor == TeamColor.BLACK){
             //First search the board to find the king
             for (int i = 1; i < 9; i++){
@@ -115,13 +167,13 @@ public class ChessGame {
             }
             //Now that you have found the king, see if any one from the white team can kill him.
             //If they can, return true. Otherwise, return false.
-            //First search the board to find the king
             for (int i = 1; i < 9; i++){
                 for(int j = 1; j < 9; j++){
                     if(cur_board.getPiece(new ChessPosition(i,j)) == null){
                         continue;
                     }
                     if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
+                        //Get the possible moves of that piece
                         Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
                                 cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
                         //Now go through each move's endposition and see if it matches the kings position
@@ -130,7 +182,7 @@ public class ChessGame {
                             posOfInterest = (ChessMove) variable.next();
 
                             //If it matches return true
-                            if(posOfInterest.getEndPosition() == kingsPos){
+                            if(posOfInterest.getEndPosition().equals(kingsPos)){
                                 return true;
                             }
                         }
@@ -172,7 +224,7 @@ public class ChessGame {
                             posOfInterest = (ChessMove) variable.next();
 
                             //If it matches return true
-                            if(posOfInterest.getEndPosition() == kingsPos){
+                            if(posOfInterest.getEndPosition().equals(kingsPos)){
                                 return true;
                             }
                         }
