@@ -106,16 +106,19 @@ public class ChessGame {
                 //Set the piece in the new position
                 possibleBoard.addPiece(possibleMove.getEndPosition(), cur_board.getPiece(startPosition));
 
+                //Set the new board to the possible game.
+                possibleGame.setBoard(possibleBoard);
+
                 //Set the cur_board equal to possibleBoard to try to see if the new move will leave the king in Check
-                cur_board = possibleBoard;
+                //cur_board = possibleBoard;
 
                 //If the king is not in check, add the move to the Val_Moves variable
-                if (!possibleGame.isInCheck(cur_board.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
+                if (!possibleGame.isInCheck(possibleBoard.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
                     Val_Moves.add(possibleMove);
                 }
 
                 //Reset cur_board back to the original board;
-                cur_board = originalBoard;
+                //cur_board = originalBoard;
 
             }
             return Val_Moves;
