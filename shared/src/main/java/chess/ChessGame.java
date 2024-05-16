@@ -124,7 +124,31 @@ public class ChessGame {
             return Val_Moves;
         }
         else{
-            return movesOfInterest;
+            //If the king is not check we must check if any of the moves will bring the king into check
+            for (ChessMove chessMove : movesOfInterest) {
+                //reset the board to the current board
+                possibleBoard = cur_board.clone();
+
+                //Add the move possible move
+                possibleMove = chessMove;
+
+                //Clear both squares
+                possibleBoard.addPiece(startPosition, null);
+                possibleBoard.addPiece(possibleMove.getEndPosition(), null);
+                //Set the piece in the new position
+                possibleBoard.addPiece(possibleMove.getEndPosition(), cur_board.getPiece(startPosition));
+
+                //Set the new board to the possible game.
+                possibleGame.setBoard(possibleBoard);
+
+
+                //If the king is not in check, add the move to the Val_Moves variable
+                if (!possibleGame.isInCheck(possibleBoard.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
+                    Val_Moves.add(possibleMove);
+                }
+
+            }
+            return Val_Moves;
         }
     }
 
@@ -210,15 +234,16 @@ public class ChessGame {
                 }if($invalidState){break;}
             }
 
-            //Now that you have found the king, see if any one from the white team can kill him.
+            //Now that you have found the king, see if any one from the black team can kill him.
             //If they can, return true. Otherwise, return false.
             //First search the board to find the king
             for (int i = 1; i < 9; i++){
                 for(int j = 1; j < 9; j++){
                     if(cur_board.getPiece(new ChessPosition(i,j)) == null){
-                        break;
+                        continue;
                     }
                     if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
+                        //Get the possible moves of the piece.
                         Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
                                 cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
                         //Now go through each move's endposition and see if it matches the kings position
