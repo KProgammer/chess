@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -72,22 +71,19 @@ public class ChessGame {
 
         //These lines are used to store a possible chessboard
         ChessGame possibleGame = new ChessGame();
-        ChessBoard possibleBoard = null;
+        ChessBoard possibleBoard;
         try {
             possibleBoard = cur_board.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
 
-        //This line stores the current chessboard
-        ChessBoard originalBoard = cur_board;
-
         //This line stores the moves of the chess piece
         Collection<ChessMove> movesOfInterest = new ChessPiece(cur_board.getPiece(startPosition).getTeamColor(),
                 cur_board.getPiece(startPosition).getPieceType()).pieceMoves(cur_board,startPosition);
 
         //this collects all the valid moves for the current piece
-        Collection<ChessMove> Val_Moves = new ArrayList<ChessMove>();
+        Collection<ChessMove> Val_Moves = new ArrayList<>();
 
         //Set the possible game to have the same chessboard as the current game.
         possibleGame.setBoard(possibleBoard);
@@ -124,7 +120,6 @@ public class ChessGame {
                 }
 
             }
-            return Val_Moves;
         }
         else{
             //If the king is not check we must check if any of the moves will bring the king into check
@@ -155,8 +150,8 @@ public class ChessGame {
                 }
 
             }
-            return Val_Moves;
         }
+        return Val_Moves;
     }
 
     /**
@@ -256,12 +251,12 @@ public class ChessGame {
                         Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
                                 cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
                         //Now go through each move's endposition and see if it matches the kings position
-                        for (Iterator variable = posMoves.iterator(); variable.hasNext();){
+                        for (ChessMove posMove : posMoves) {
 
-                            posOfInterest = (ChessMove) variable.next();
+                            posOfInterest = posMove;
 
                             //If it matches return true
-                            if(posOfInterest.getEndPosition().equals(kingsPos)){
+                            if (posOfInterest.getEndPosition().equals(kingsPos)) {
                                 return true;
                             }
                         }
@@ -299,12 +294,12 @@ public class ChessGame {
                         Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
                                 cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
                         //Now go through each move's endposition and see if it matches the kings position
-                        for (Iterator variable = posMoves.iterator(); variable.hasNext();){
+                        for (ChessMove posMove : posMoves) {
 
-                            posOfInterest = (ChessMove) variable.next();
+                            posOfInterest = posMove;
 
                             //If it matches return true
-                            if(posOfInterest.getEndPosition().equals(kingsPos)){
+                            if (posOfInterest.getEndPosition().equals(kingsPos)) {
                                 return true;
                             }
                         }
@@ -324,7 +319,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         //Stores any valid move that brings the king out of check
-        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<Collection<ChessMove>>();
+        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<>();
 
         //This is to hold the number of valid moves.
         int numValidMoves = 0;
@@ -361,7 +356,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         //Stores any valid move that brings the king out of check
-        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<Collection<ChessMove>>();
+        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<>();
 
         //This is to hold the number of valid moves.
         int numValidMoves = 0;

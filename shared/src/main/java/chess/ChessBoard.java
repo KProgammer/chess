@@ -18,18 +18,6 @@ public class ChessBoard implements Cloneable{
         //resetBoard();
     }
 
-    /*public ChessBoard(ChessBoard chessBoard){
-        ChessBoard newBoard = new ChessBoard();
-        ChessBoard placeHolder = new ChessBoard();
-        for(int i = 0; i < chessBoard.getBoard().length;i++){
-            for(int j = 0; j < chessBoard.getBoard().length;j++){
-                placeHolder.getBoard()[i][j] = chessBoard.getBoard()[i][j];
-            }
-        }
-
-        newBoard.setBoard(chessBoard.squares);
-    }*/
-
     public ChessPiece[][] getBoard(){
         return squares;
     }
@@ -110,7 +98,7 @@ public class ChessBoard implements Cloneable{
      */
     @Override
     protected ChessBoard clone() throws CloneNotSupportedException {
-        var clone = new ChessBoard();
+        var clone = (ChessBoard) super.clone();
         clone.squares = new ChessPiece[8][8];
         for (int i = 0; i < this.squares.length; i++){
             clone.squares[i] = Arrays.copyOf(this.squares[i], this.squares.length);
