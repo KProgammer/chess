@@ -170,7 +170,7 @@ public class MoveQueen extends ChessPiece {
         pos_col = myPosition.getColumn();
 
         //Calculate moves for the upper left diagonal or towards row 8, col 1
-        while(pos_row < 8 && pos_col < 8) {
+        while(pos_row < 8 && pos_col > 1) {
             //Add the values
             pos_row += 1;
             pos_col -= 1;

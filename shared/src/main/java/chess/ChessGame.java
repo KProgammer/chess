@@ -72,7 +72,12 @@ public class ChessGame {
 
         //These lines are used to store a possible chessboard
         ChessGame possibleGame = new ChessGame();
-        ChessBoard possibleBoard = cur_board.clone();
+        ChessBoard possibleBoard = null;
+        try {
+            possibleBoard = cur_board.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
 
         //This line stores the current chessboard
         ChessBoard originalBoard = cur_board;
@@ -95,7 +100,11 @@ public class ChessGame {
             //If the king is in check we must check if any of the moves will bring the king out of check
             for (ChessMove chessMove : movesOfInterest) {
                 //reset the board to the current board
-                possibleBoard = cur_board.clone();
+                try {
+                    possibleBoard = cur_board.clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 //Add the move possible move
                 possibleMove = chessMove;
@@ -109,16 +118,10 @@ public class ChessGame {
                 //Set the new board to the possible game.
                 possibleGame.setBoard(possibleBoard);
 
-                //Set the cur_board equal to possibleBoard to try to see if the new move will leave the king in Check
-                //cur_board = possibleBoard;
-
                 //If the king is not in check, add the move to the Val_Moves variable
                 if (!possibleGame.isInCheck(possibleBoard.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
                     Val_Moves.add(possibleMove);
                 }
-
-                //Reset cur_board back to the original board;
-                //cur_board = originalBoard;
 
             }
             return Val_Moves;
@@ -127,7 +130,11 @@ public class ChessGame {
             //If the king is not check we must check if any of the moves will bring the king into check
             for (ChessMove chessMove : movesOfInterest) {
                 //reset the board to the current board
-                possibleBoard = cur_board.clone();
+                try {
+                    possibleBoard = cur_board.clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 //Add the move possible move
                 possibleMove = chessMove;
@@ -159,7 +166,52 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+         //This is a boolean to store if the move is a valid ChessMove
+         boolean isAMove = false;
+
+         //This is to point towards the chess piece were are looking at.
+         ChessPiece pieceOfInterest = null;
+
+         if (cur_board.getPiece(move.getStartPosition()) != null) {
+             //Make a placeholder to point to the chesspiece we are interested
+             pieceOfInterest = cur_board.getPiece(move.getStartPosition());
+
+             //Look through all the possible moves of the piece and see if move is one of them
+             for (ChessMove chessMove : validMoves(move.getStartPosition())) {
+                 if (chessMove.equals(move)) {
+                     isAMove = true;
+                     break;
+                 }
+             }
+
+             //Check if the piece is the same color as the team whose turn it is.
+             if (pieceOfInterest.getTeamColor() != cur_turn) {
+                 isAMove = false;
+             }
+         }
+
+         //If it's true then make the move
+         if (isAMove) {
+             if(move.getPromotionPiece() != null){
+                 //Add the piece to its new position.
+                 cur_board.addPiece(move.getEndPosition(), new ChessPiece(pieceOfInterest.getTeamColor(),move.getPromotionPiece()));
+             }else {
+                 //Add the piece to its new position.
+                 cur_board.addPiece(move.getEndPosition(), cur_board.getPiece(move.getStartPosition()));
+             }
+
+             //Change the team turn.
+             if(pieceOfInterest.getTeamColor() == TeamColor.BLACK){
+                 setTeamTurn(TeamColor.WHITE);
+             }else {
+                 setTeamTurn(TeamColor.BLACK);
+             }
+
+             //Set the old position to null
+             cur_board.addPiece(move.getStartPosition(), null);
+         } else {
+             throw new InvalidMoveException();
+         }
     }
 
     /**
@@ -271,7 +323,33 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //Stores any valid move that brings the king out of check
+        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<Collection<ChessMove>>();
+
+        //This is to hold the number of valid moves.
+        int numValidMoves = 0;
+
+        //This is to be used to iterate through total moves and find the number of validmoves available.
+        Collection<ChessMove> placeholder;
+
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                if((cur_board.getPiece(new ChessPosition(i,j)) == null) ||
+                        ((cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
+                    continue;
+                } else if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
+                    Collection<ChessMove> moves = validMoves(new ChessPosition(i,j));
+                    totalMoves.add(moves);
+                }
+            }
+        }
+        for (Collection<ChessMove> totalMove : totalMoves) {
+            placeholder = totalMove;
+            numValidMoves += placeholder.size();
+
+        }
+
+        return (numValidMoves == 0) && isInCheck(teamColor);
     }
 
     /**
@@ -282,7 +360,33 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //Stores any valid move that brings the king out of check
+        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<Collection<ChessMove>>();
+
+        //This is to hold the number of valid moves.
+        int numValidMoves = 0;
+
+        //This is to be used to iterate through total moves and find the number of validmoves available.
+        Collection<ChessMove> placeholder;
+
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                if((cur_board.getPiece(new ChessPosition(i,j)) == null) ||
+                        ((cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
+                    continue;
+                } else if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
+                    Collection<ChessMove> moves = validMoves(new ChessPosition(i,j));
+                    totalMoves.add(moves);
+                }
+            }
+        }
+        for (Collection<ChessMove> totalMove : totalMoves) {
+            placeholder = totalMove;
+            numValidMoves += placeholder.size();
+
+        }
+
+        return (numValidMoves == 0) && (!isInCheck(teamColor));
     }
 
     /**
