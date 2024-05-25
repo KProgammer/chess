@@ -1,27 +1,27 @@
 package service;
 
-import dataaccess.AuthorizationDAO;
-import dataaccess.UserDAO;
+import dataaccess.AuthorizationMemoryDAO;
+import dataaccess.UserMemoryDAO;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
 public class AuthorizationService {
-    private final AuthorizationDAO authorizationObject;
-    private final UserDAO userObject;
+    private final AuthorizationMemoryDAO authorizationObject;
+    private final UserMemoryDAO userObject;
     //AuthorizationDAO authorizationObject = new AuthorizationDAO();
     //UserDAO userObject = new UserDAO();
 
-    public AuthorizationService(AuthorizationDAO authorizationObject, UserDAO userObject){
+    public AuthorizationService(AuthorizationMemoryDAO authorizationObject, UserMemoryDAO userObject){
 
         this.authorizationObject = authorizationObject;
         this.userObject = userObject;
     }
 
-    public void clear(){
+    /*public void clear(){
         authorizationObject.clear();
-    }
+    }*/
 
     //login
     public Collection<String> login(String username, String password){

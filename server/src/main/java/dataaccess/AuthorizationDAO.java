@@ -1,36 +1,16 @@
 package dataaccess;
 
 import model.Authorization;
-import java.util.*;
 
-public class AuthorizationDAO {
+import java.util.HashMap;
+import java.util.Map;
 
+public interface AuthorizationDAO {
     Map<String, Authorization> ListAuthtokenUser = new HashMap<>();
 
-    public String createAuth(String username){
-        String authToken = UUID.randomUUID().toString();
+    String createAuth(String username);
 
-        //Make sure that the authToken is unique.
-        while(ListAuthtokenUser.get(authToken) != null) {
-            authToken = UUID.randomUUID().toString();
-        }
-        Authorization newAuth = new Authorization(authToken, username);
+    Authorization getAuth(String authToken);
 
-        ListAuthtokenUser.put(authToken, newAuth);
-        return authToken;
-    }
-
-    public Authorization getAuth(String authToken){
-        return ListAuthtokenUser.get(authToken);
-    }
-
-    public void deleteAuth(String authToken){
-        ListAuthtokenUser.remove(authToken);
-    }
-
-    public void clear(){
-        ListAuthtokenUser.clear();
-    }
+    void deleteAuth(String authToken);
 }
-
-

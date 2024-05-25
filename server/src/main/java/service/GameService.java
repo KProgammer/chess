@@ -1,30 +1,28 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthorizationDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.AuthorizationMemoryDAO;
+import dataaccess.GameMemoryDAO;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
-import java.util.UUID;
 
 public class GameService {
-    private final GameDAO gameObject;
-    private final AuthorizationDAO authorizationObject;
+    private final GameMemoryDAO gameObject;
+    private final AuthorizationMemoryDAO authorizationObject;
     //GameDAO gameObject = new GameDAO();
     //AuthorizationDAO authorizationObject = new AuthorizationDAO();
 
-    public GameService(GameDAO gameObject, AuthorizationDAO authorizationObject){
+    public GameService(GameMemoryDAO gameObject, AuthorizationMemoryDAO authorizationObject){
 
         this.gameObject = gameObject;
         this.authorizationObject = authorizationObject;
     }
 
-    public void clear(){
+    /*public void clear(){
         gameObject.clear();
-    }
+    }*/
 
     //ListGame
     public Collection<String> List(String authToken){

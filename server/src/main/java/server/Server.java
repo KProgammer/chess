@@ -1,9 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.AuthorizationDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.AuthorizationMemoryDAO;
+import dataaccess.GameMemoryDAO;
+import dataaccess.UserMemoryDAO;
 import model.User;
 import service.AuthorizationService;
 import service.GameService;
@@ -11,9 +11,9 @@ import service.UserService;
 import spark.*;
 
 public class Server {
-    GameDAO gameObject = new GameDAO();
-    UserDAO userObject = new UserDAO();
-    AuthorizationDAO authorizationObject = new AuthorizationDAO();
+    GameMemoryDAO gameObject = new GameMemoryDAO();
+    UserMemoryDAO userObject = new UserMemoryDAO();
+    AuthorizationMemoryDAO authorizationObject = new AuthorizationMemoryDAO();
     GameService gameService = new GameService(gameObject,authorizationObject);
     UserService userService = new UserService(userObject,authorizationObject);
     AuthorizationService authorizationService = new AuthorizationService(authorizationObject,userObject);
