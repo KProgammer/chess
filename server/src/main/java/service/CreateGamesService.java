@@ -6,14 +6,8 @@ import static server.Server.authorizationObject;
 import static server.Server.gameObject;
 
 public class CreateGamesService {
-    private final CreateGameRequest request;
-
-    public CreateGamesService(CreateGameRequest request){
-        this.request = request;
-    }
-
     //CreateGame
-    public CreateGameResult CreateGame(){
+    public CreateGameResult CreateGame(CreateGameRequest request){
         if (authorizationObject.getAuth(request.getAuthToken()) == null){
             return new CreateGameResult(null,null,"Error: unauthorized");
         }

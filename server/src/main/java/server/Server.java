@@ -8,7 +8,7 @@ import spark.*;
 
 public class Server {
     public static GameDAO gameObject = new GameMemoryDAO();
-    UserDAO userObject = new UserMemoryDAO();
+    public static UserDAO userObject = new UserMemoryDAO();
     public static AuthorizationDAO authorizationObject = new AuthorizationMemoryDAO();
     /*GameService gameService = new GameService(gameObject,authorizationObject);
     UserService userService = new UserService(userObject,authorizationObject);
@@ -22,7 +22,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
 
-        //Spark.post("/user",this::register);
+        Spark.post("/user",this::register);
 
         //Spark.post("/session",this::login);
 
@@ -47,12 +47,11 @@ public class Server {
         return new Gson().toJson(new ClearService().clear());
     }
 
-    /*private Object register(Request req, Response res) {
+    private Object register(Request req, Response res) {
         String body = req.body();
-        User gs = new Gson().fromJson(body,User.class);
-
-        return new Gson().toJson(userService.register(gs.username(), req.params(":password"), req.params(":email")));
-    }*/
+        RegisterRequest request = new Gson().fromJson(body,RegisterRequest.class);
+        return new Gson().toJson(new RegisterService().register(request));
+    }
 
     /*private Object login(Request req, Response res) {
         return new Gson().toJson(authorizationService.login(req.params(":username"),req.params(":password")));
@@ -69,7 +68,7 @@ public class Server {
     private Object creategame(Request req, Response res) {
         String body = req.body();
         CreateGameRequest request = new Gson().fromJson(body, CreateGameRequest.class);
-        return new Gson().toJson(new CreateGamesService(request));
+        return new Gson().toJson(new CreateGamesService().CreateGame(request));
     }
 
     private Object joingame(Request req, Response res) {
