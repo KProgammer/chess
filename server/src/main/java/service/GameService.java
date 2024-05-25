@@ -86,7 +86,7 @@ public class GameService {
             return result;
         }
 
-        gameObject.updateGame(gameID,authorizationObject.getAuth(authToken),teamColor);
+        gameObject.updateGame(gameID,authorizationObject.getAuth(authToken).authToken(),teamColor);
 
         return result;
     }

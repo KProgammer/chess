@@ -5,7 +5,7 @@ import java.util.*;
 
 public class AuthorizationDAO {
 
-    Map<String, Record> ListAuthtokenUser = new Map<>() {
+    Map<String, Authorization> ListAuthtokenUser = new Map<>() {
         @Override
         public int size() {
             return 0;
@@ -27,22 +27,22 @@ public class AuthorizationDAO {
         }
 
         @Override
-        public Record get(Object key) {
+        public Authorization get(Object key) {
             return null;
         }
 
         @Override
-        public Record put(String key, Record value) {
+        public Authorization put(String key, Authorization value) {
             return null;
         }
 
         @Override
-        public Record remove(Object key) {
+        public Authorization remove(Object key) {
             return null;
         }
 
         @Override
-        public void putAll(Map<? extends String, ? extends Record> m) {
+        public void putAll(Map<? extends String, ? extends Authorization> m) {
 
         }
 
@@ -57,12 +57,12 @@ public class AuthorizationDAO {
         }
 
         @Override
-        public Collection<Record> values() {
+        public Collection<Authorization> values() {
             return List.of();
         }
 
         @Override
-        public Set<Entry<String, Record>> entrySet() {
+        public Set<Entry<String, Authorization>> entrySet() {
             return Set.of();
         }
 
@@ -84,13 +84,14 @@ public class AuthorizationDAO {
         while(ListAuthtokenUser.get(authToken) != null) {
             authToken = UUID.randomUUID().toString();
         }
+        Authorization newAuth = new Authorization(authToken, username);
 
-        ListAuthtokenUser.put(authToken, new Authorization(authToken, username));
+        ListAuthtokenUser.put(authToken, newAuth);
         return authToken;
     }
 
-    public String getAuth(String authToken){
-        return ListAuthtokenUser.get(authToken).toString();
+    public Authorization getAuth(String authToken){
+        return ListAuthtokenUser.get(authToken);
     }
 
     public void deleteAuth(String authToken){
