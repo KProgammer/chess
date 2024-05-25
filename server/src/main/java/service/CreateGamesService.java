@@ -1,25 +1,41 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Random;
+
+import static server.Server.authorizationObject;
+import static server.Server.gameObject;
 
 public class CreateGamesService {
+    private final CreateGameRequest request;
 
+    public CreateGamesService(CreateGameRequest request){
+        this.request = request;
+    }
 
     //CreateGame
-    public Collection<String> CreateGame(String authToken, String gameName){
-        ArrayList<String> result = new ArrayList<>();
-
-        if (authorizationObject.getAuth(authToken) == null){
-            result.add("'message':'Error: unauthorized'");
-            return result;
+    public CreateGameResult CreateGame(){
+        if (authorizationObject.getAuth(request.getAuthToken()) == null){
+            return new CreateGameResult(null,null,"Error: unauthorized");
         }
 
         int gameID = createGameID();
-        gameObject.createGame(gameID,gameName);
+        gameObject.createGame(gameID, request.getGameName());
 
-        result.add("'gameID':"+gameID);
-
-        return result;
+        return new CreateGameResult("gameID",gameID, request.getGameName());
     }
+
+    private int createGameID(){
+        Random rand = new Random();
+        int min = 1000;
+        int max = 10000;
+        int gameID = (rand.nextInt(max-min+1)+min);
+
+        //Make sure that the authToken is unique.
+        while(gameObject.getGame(gameID) != null) {
+            gameID = (rand.nextInt(max-min+1)+min);
+        }
+
+        return gameID;
+    }
+
 }

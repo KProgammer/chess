@@ -3,16 +3,13 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.User;
-import service.AuthorizationService;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import service.*;
 import spark.*;
 
 public class Server {
-    GameDAO gameObject = new GameMemoryDAO();
+    public static GameDAO gameObject = new GameMemoryDAO();
     UserDAO userObject = new UserMemoryDAO();
-    AuthorizationDAO authorizationObject = new AuthorizationMemoryDAO();
+    public static AuthorizationDAO authorizationObject = new AuthorizationMemoryDAO();
     /*GameService gameService = new GameService(gameObject,authorizationObject);
     UserService userService = new UserService(userObject,authorizationObject);
     AuthorizationService authorizationService = new AuthorizationService(authorizationObject,userObject);*/
@@ -25,13 +22,13 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
 
-        Spark.post("/user",this::register);
+        //Spark.post("/user",this::register);
 
-        Spark.post("/session",this::login);
+        //Spark.post("/session",this::login);
 
-        Spark.delete("/session",this::logout);
+        //Spark.delete("/session",this::logout);
 
-        Spark.get("/game",this::listGames);
+        //Spark.get("/game",this::listGames);
 
         Spark.post("/game",this::creategame);
 
@@ -50,27 +47,29 @@ public class Server {
         return new Gson().toJson(new ClearService().clear());
     }
 
-    private Object register(Request req, Response res) {
+    /*private Object register(Request req, Response res) {
         String body = req.body();
         User gs = new Gson().fromJson(body,User.class);
 
         return new Gson().toJson(userService.register(gs.username(), req.params(":password"), req.params(":email")));
-    }
+    }*/
 
-    private Object login(Request req, Response res) {
+    /*private Object login(Request req, Response res) {
         return new Gson().toJson(authorizationService.login(req.params(":username"),req.params(":password")));
-    }
+    }*/
 
-    private Object logout(Request req, Response res) {
+    /*private Object logout(Request req, Response res) {
         return new Gson().toJson(authorizationService.logout(req.params(":authToken")));
-    }
+    }*/
 
-    private Object listGames(Request req, Response res) {
+    /*private Object listGames(Request req, Response res) {
         return new Gson().toJson(gameService.List(req.params(":authToken")));
-    }
+    }*/
 
     private Object creategame(Request req, Response res) {
-        return new Gson().toJson(gameService.CreateGame(req.params(":authToken"), req.params(":gameName")));
+        String body = req.body();
+        CreateGameRequest request = new Gson().fromJson(body, CreateGameRequest.class);
+        return new Gson().toJson(new CreateGamesService(request));
     }
 
     private Object joingame(Request req, Response res) {
