@@ -77,7 +77,7 @@ public class AuthorizationDAO {
         }
     };
 
-    public void createAuth(String username){
+    public String createAuth(String username){
         String authToken = UUID.randomUUID().toString();
 
         //Make sure that the authToken is unique.
@@ -86,6 +86,7 @@ public class AuthorizationDAO {
         }
 
         ListAuthtokenUser.put(authToken, new Authorization(authToken, username));
+        return authToken;
     }
 
     public Record getAuth(String authToken){

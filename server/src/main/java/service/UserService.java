@@ -26,10 +26,10 @@ public class UserService {
         }
 
         userObject.createUser(username,password,email);
-        authorizationObject.createAuth(username);
+        String authToken = authorizationObject.createAuth(username);
 
-        result.add(username+"':'");
-        result.add(authorizationObject.getAuth(username)+"':'");
+        result.add("'"+username+"':'");
+        result.add("'"+authToken+"':'");
         return result;
     }
 }
