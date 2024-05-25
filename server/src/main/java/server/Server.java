@@ -10,9 +10,6 @@ import service.GameService;
 import service.UserService;
 import spark.*;
 
-import java.util.Map;
-import java.util.Objects;
-
 public class Server {
     GameDAO gameObject = new GameDAO();
     UserDAO userObject = new UserDAO();
@@ -28,8 +25,6 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
-
-        Spark.post("/game", this::listGames);
 
         Spark.post("/user",this::register);
 
@@ -52,40 +47,38 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Objects clear(Request req, Response res) {
+    private Object clear(Request req, Response res) {
         authorizationService.clear();
         gameService.clear();
         userService.clear();
         return null;
     }
 
-    private Objects register(Request req, Response res) {
-        userService.register(req.body(), req.body(), req.body());
-        return null;
+    private Object register(Request req, Response res) {
+        String body = req.body();
+        User gs = new Gson().fromJson(body,User.class);
+
+        return new Gson().toJson(userService.register(gs.username(), req.params(":password"), req.params(":email")));
     }
 
-    private Objects login(Request req, Response res) {
-        authorizationService.login(req.body(),req.body());
-        return null;
+    private Object login(Request req, Response res) {
+        return new Gson().toJson(authorizationService.login(req.params(":username"),req.params(":password")));
     }
 
-    private Objects logout(Request req, Response res) {
-        authorizationService.logout(req.body());
-        return null;
+    private Object logout(Request req, Response res) {
+        return new Gson().toJson(authorizationService.logout(req.params(":authToken")));
     }
 
-    private Objects listGames(Request req, Response res) {
-        gameService.List(req.body());
-        return null;
+    private Object listGames(Request req, Response res) {
+        return new Gson().toJson(gameService.List(req.params(":authToken")));
     }
 
-    private Objects creategame(Request req, Response res) {
-        gameService.CreateGame(req.body(), req.body());
-        return null;
+    private Object creategame(Request req, Response res) {
+        return new Gson().toJson(gameService.CreateGame(req.params(":authToken"), req.params(":gameName")));
     }
 
-    private Objects joingame(Request req, Response res) {
-        //gameService.JoinGame(req.body(), req.body(), req.body());
+    private Object joingame(Request req, Response res) {
+        //return new Gson().toJson(gameService.JoinGame(req.params("authToken"), req.params(":teamColor"), req.params(":gameID")));
         return null;
     }
 }
