@@ -89,8 +89,8 @@ public class AuthorizationDAO {
         return authToken;
     }
 
-    public Record getAuth(String authToken){
-        return ListAuthtokenUser.get(authToken);
+    public String getAuth(String authToken){
+        return ListAuthtokenUser.get(authToken).toString();
     }
 
     public void deleteAuth(String authToken){

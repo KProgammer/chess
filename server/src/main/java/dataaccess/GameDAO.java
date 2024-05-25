@@ -77,10 +77,10 @@ public class GameDAO {
         return ListOfGames.get(gameID);
     }
 
-    public Collection<Game> listGames(){
-        ArrayList<Game> GameList = new ArrayList<>();
+    public Collection<String> listGames(){
+        ArrayList<String> GameList = new ArrayList<>();
         for(int game : ListOfGames.keySet()){
-            GameList.add(ListOfGames.get(game));
+            GameList.add(ListOfGames.get(game).toString());
         }
         return GameList;
     }
