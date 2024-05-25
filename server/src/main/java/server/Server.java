@@ -1,22 +1,21 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.AuthorizationMemoryDAO;
-import dataaccess.GameMemoryDAO;
-import dataaccess.UserMemoryDAO;
+import dataaccess.*;
 import model.User;
 import service.AuthorizationService;
+import service.ClearService;
 import service.GameService;
 import service.UserService;
 import spark.*;
 
 public class Server {
-    GameMemoryDAO gameObject = new GameMemoryDAO();
-    UserMemoryDAO userObject = new UserMemoryDAO();
-    AuthorizationMemoryDAO authorizationObject = new AuthorizationMemoryDAO();
-    GameService gameService = new GameService(gameObject,authorizationObject);
+    GameDAO gameObject = new GameMemoryDAO();
+    UserDAO userObject = new UserMemoryDAO();
+    AuthorizationDAO authorizationObject = new AuthorizationMemoryDAO();
+    /*GameService gameService = new GameService(gameObject,authorizationObject);
     UserService userService = new UserService(userObject,authorizationObject);
-    AuthorizationService authorizationService = new AuthorizationService(authorizationObject,userObject);
+    AuthorizationService authorizationService = new AuthorizationService(authorizationObject,userObject);*/
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -48,10 +47,7 @@ public class Server {
     }
 
     private Object clear(Request req, Response res) {
-        authorizationService.clear();
-        gameService.clear();
-        userService.clear();
-        return null;
+        return new Gson().toJson(new ClearService().clear());
     }
 
     private Object register(Request req, Response res) {
