@@ -8,8 +8,16 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class AuthorizationService {
-    AuthorizationDAO authorizationObject = new AuthorizationDAO();
-    UserDAO userObject = new UserDAO();
+    private final AuthorizationDAO authorizationObject;
+    private final UserDAO userObject;
+    //AuthorizationDAO authorizationObject = new AuthorizationDAO();
+    //UserDAO userObject = new UserDAO();
+
+    public AuthorizationService(AuthorizationDAO authorizationObject, UserDAO userObject){
+
+        this.authorizationObject = authorizationObject;
+        this.userObject = userObject;
+    }
 
     public void clear(){
         authorizationObject.clear();

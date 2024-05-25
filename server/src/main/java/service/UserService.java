@@ -9,8 +9,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserService {
-    UserDAO userObject = new UserDAO();
-    AuthorizationDAO authorizationObject = new AuthorizationDAO();
+    private final UserDAO userObject;
+    private final AuthorizationDAO authorizationObject;
+    //UserDAO userObject = new UserDAO();
+    //AuthorizationDAO authorizationObject = new AuthorizationDAO();
+
+    public UserService(UserDAO userObject, AuthorizationDAO authorizationObject){
+
+        this.userObject = userObject;
+        this.authorizationObject = authorizationObject;
+    }
 
     public void clear() {
         userObject.clear();

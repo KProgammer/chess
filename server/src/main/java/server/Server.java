@@ -1,6 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.AuthorizationDAO;
+import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.User;
 import service.AuthorizationService;
@@ -12,6 +14,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Server {
+    GameDAO gameObject = new GameDAO();
+    UserDAO userObject = new UserDAO();
+    AuthorizationDAO authorizationObject = new AuthorizationDAO();
+    GameService gameService = new GameService(gameObject,authorizationObject);
+    UserService userService = new UserService(userObject,authorizationObject);
+    AuthorizationService authorizationService = new AuthorizationService(authorizationObject,userObject);
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -44,45 +53,39 @@ public class Server {
     }
 
     private Objects clear(Request req, Response res) {
-        //AuthorizationService Clear
-        //GameService Clear
-        //UserService Clear
+        authorizationService.clear();
+        gameService.clear();
+        userService.clear();
         return null;
     }
 
     private Objects register(Request req, Response res) {
-        //UserService
+        userService.register(req.body(), req.body(), req.body());
         return null;
     }
 
     private Objects login(Request req, Response res) {
-        //UserService
+        authorizationService.login(req.body(),req.body());
         return null;
     }
 
     private Objects logout(Request req, Response res) {
-        //UserService
+        authorizationService.logout(req.body());
         return null;
     }
 
     private Objects listGames(Request req, Response res) {
-        //GameService
+        gameService.List(req.body());
         return null;
     }
 
     private Objects creategame(Request req, Response res) {
-        //GameService
+        gameService.CreateGame(req.body(), req.body());
         return null;
     }
 
     private Objects joingame(Request req, Response res) {
-        //GameService
+        //gameService.JoinGame(req.body(), req.body(), req.body());
         return null;
     }
-
-    /*private Object listNames(Request req, Response res) {
-        res.type("application/json");
-        return new Gson().toJson(Map.of("name", games));
-    }*/
-
 }

@@ -11,9 +11,16 @@ import java.util.Random;
 import java.util.UUID;
 
 public class GameService {
-    GameDAO gameObject = new GameDAO();
-    UserDAO userObject = new UserDAO();
-    AuthorizationDAO authorizationObject = new AuthorizationDAO();
+    private final GameDAO gameObject;
+    private final AuthorizationDAO authorizationObject;
+    //GameDAO gameObject = new GameDAO();
+    //AuthorizationDAO authorizationObject = new AuthorizationDAO();
+
+    public GameService(GameDAO gameObject, AuthorizationDAO authorizationObject){
+
+        this.gameObject = gameObject;
+        this.authorizationObject = authorizationObject;
+    }
 
     public void clear(){
         gameObject.clear();
