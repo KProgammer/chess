@@ -3,9 +3,33 @@ package service;
 import dataaccess.AuthorizationDAO;
 import dataaccess.UserDAO;
 import model.Authorization;
+import model.User;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class UserService {
-    //public AuthorizationDAO register(UserDAO user){}
-    //public AuthorizationDAO login(UserDAO user){}
-    public void logout(UserDAO user){}
+    UserDAO userObject = new UserDAO();
+    AuthorizationDAO authorizationObject = new AuthorizationDAO();
+
+    public void clear() {
+        userObject.clear();
+    }
+
+    //Register
+    public Collection<String> register(String username, String password, String email) {
+        ArrayList<String> result = new ArrayList<>();
+
+        if (userObject.getUser(username) != null){
+            result.add("'message':'Error: already taken'");
+            return result;
+        }
+
+        userObject.createUser(username,password,email);
+        authorizationObject.createAuth(username);
+
+        result.add(username+"':'");
+        result.add(authorizationObject.getAuth(username)+"':'");
+        return result;
+    }
 }

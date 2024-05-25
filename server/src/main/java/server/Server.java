@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.UserDAO;
 import model.User;
 import service.AuthorizationService;
 import service.GameService;
@@ -11,14 +12,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Server {
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", this::delete);
+        Spark.delete("/db", this::clear);
 
         Spark.post("/game", this::listGames);
 
@@ -43,8 +43,10 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Objects delete(Request req, Response res) {
-        //AuthorizationService
+    private Objects clear(Request req, Response res) {
+        //AuthorizationService Clear
+        //GameService Clear
+        //UserService Clear
         return null;
     }
 
