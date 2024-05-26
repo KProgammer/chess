@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import model.User;
 import service.*;
 import spark.*;
 
@@ -10,9 +9,6 @@ public class Server {
     public static GameDAO gameObject = new GameMemoryDAO();
     public static UserDAO userObject = new UserMemoryDAO();
     public static AuthorizationDAO authorizationObject = new AuthorizationMemoryDAO();
-    /*GameService gameService = new GameService(gameObject,authorizationObject);
-    UserService userService = new UserService(userObject,authorizationObject);
-    AuthorizationService authorizationService = new AuthorizationService(authorizationObject,userObject);*/
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -24,15 +20,15 @@ public class Server {
 
         Spark.post("/user",this::register);
 
-        //Spark.post("/session",this::login);
+        Spark.post("/session",this::login);
 
-        //Spark.delete("/session",this::logout);
+        Spark.delete("/session",this::logout);
 
-        //Spark.get("/game",this::listGames);
+        Spark.get("/game",this::listGames);
 
         Spark.post("/game",this::creategame);
 
-        //Spark.post("/game",this::joingame);
+        Spark.post("/game",this::joingame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -77,9 +73,9 @@ public class Server {
         return new Gson().toJson(new CreateGamesService().CreateGame(request));
     }
 
-    /*private Object joingame(Request req, Response res) {
+    private Object joingame(Request req, Response res) {
         String body = req.body();
         JoinGameRequest request = new Gson().fromJson(body, JoinGameRequest.class);
         return new Gson().toJson(new JoinGameService().JoinGame(request));
-    }*/
+    }
 }

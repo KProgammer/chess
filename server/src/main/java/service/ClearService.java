@@ -12,6 +12,6 @@ public class ClearService {
         ListOfGames.clear();
         ListOfUsers.clear();
 
-        return new ClearResult();
+        return new ClearResult(null);
     }
 }
