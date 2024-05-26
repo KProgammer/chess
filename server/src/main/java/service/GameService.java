@@ -25,7 +25,7 @@ public class GameService {
     }*/
 
     //ListGame
-    public Collection<String> List(String authToken){
+    /*public Collection<String> List(String authToken){
         ArrayList<String> result = new ArrayList<>();
 
         if (authorizationObject.getAuth(authToken) == null){
@@ -34,7 +34,7 @@ public class GameService {
         }
 
         return gameObject.listGames();
-    }
+    }*/
 
     //CreateGame
     public Collection<String> CreateGame(String authToken, String gameName){
