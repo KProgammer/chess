@@ -15,7 +15,7 @@ public interface GameDAO {
 
     Game getGame(int gameID);
 
-    Collection<String> listGames();
+    Collection<Game> listGames();
 
     void updateGame(int gameID, String username, ChessGame.TeamColor teamColor);
 

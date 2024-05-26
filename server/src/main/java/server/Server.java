@@ -32,7 +32,7 @@ public class Server {
 
         Spark.post("/game",this::creategame);
 
-        Spark.post("/game",this::joingame);
+        //Spark.post("/game",this::joingame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -53,17 +53,23 @@ public class Server {
         return new Gson().toJson(new RegisterService().register(request));
     }
 
-    /*private Object login(Request req, Response res) {
-        return new Gson().toJson(authorizationService.login(req.params(":username"),req.params(":password")));
-    }*/
+    private Object login(Request req, Response res) {
+        String body = req.body();
+        LoginRequest request = new Gson().fromJson(body,LoginRequest.class);
+        return new Gson().toJson(new LoginService().login(request));
+    }
 
-    /*private Object logout(Request req, Response res) {
-        return new Gson().toJson(authorizationService.logout(req.params(":authToken")));
-    }*/
+    private Object logout(Request req, Response res) {
+        String body = req.body();
+        LogoutRequest request = new Gson().fromJson(body,LogoutRequest.class);
+        return new Gson().toJson(new LogoutService().logout(request));
+    }
 
-    /*private Object listGames(Request req, Response res) {
-        return new Gson().toJson(gameService.List(req.params(":authToken")));
-    }*/
+    private Object listGames(Request req, Response res) {
+        String body = req.body();
+        ListGamesRequest request = new Gson().fromJson(body,ListGamesRequest.class);
+        return new Gson().toJson(new ListGamesService().List(request));
+    }
 
     private Object creategame(Request req, Response res) {
         String body = req.body();
@@ -71,8 +77,9 @@ public class Server {
         return new Gson().toJson(new CreateGamesService().CreateGame(request));
     }
 
-    private Object joingame(Request req, Response res) {
-        //return new Gson().toJson(gameService.JoinGame(req.params("authToken"), req.params(":teamColor"), req.params(":gameID")));
-        return null;
-    }
+    /*private Object joingame(Request req, Response res) {
+        String body = req.body();
+        JoinGameRequest request = new Gson().fromJson(body, JoinGameRequest.class);
+        return new Gson().toJson(new JoinGameService().JoinGame(request));
+    }*/
 }

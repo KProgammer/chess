@@ -18,10 +18,10 @@ public class GameMemoryDAO implements GameDAO {
     }
 
     @Override
-    public Collection<String> listGames(){
-        ArrayList<String> GameList = new ArrayList<>();
+    public Collection<Game> listGames(){
+        ArrayList<Game> GameList = new ArrayList<>();
         for(int game : ListOfGames.keySet()){
-            GameList.add(ListOfGames.get(game).toString());
+            GameList.add(ListOfGames.get(game));
         }
         return GameList;
     }

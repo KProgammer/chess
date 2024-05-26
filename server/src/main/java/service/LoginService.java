@@ -7,12 +7,12 @@ import static server.Server.userObject;
 
 public class LoginService {
     //login
-    public RegisterResult login(RegisterRequest request){
+    public LoginResult login(LoginRequest request){
         if(userObject.getUser(request.getUsername()) == null ||
                 !Objects.equals(userObject.getUser(request.getUsername()).password(), request.getPassword())){
-            return new RegisterResult(null,null,"Error: unauthorized");
+            return new LoginResult(null,null,"Error: unauthorized");
         }
 
-        return new RegisterResult(request.getUsername(),authorizationObject.createAuth(request.getUsername()),null);
+        return new LoginResult(request.getUsername(),authorizationObject.createAuth(request.getUsername()),null);
     }
 }
