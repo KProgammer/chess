@@ -30,5 +30,8 @@ public class JoinGameTest {
 
         Assertions.assertEquals(new JoinGameService().JoinGame(new JoinGameRequest(null, ChessGame.TeamColor.BLACK, gameID)),
                 new JoinGameResult("Error: unauthorized"),"Unauthorized Error wasn't thrown");
+
+        Assertions.assertEquals(new JoinGameService().JoinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.WHITE, gameID)),
+                new JoinGameResult("Error: already taken"),"Already taken error wasn't thrown");
     }
 }

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class CreateGameResult {
     private final String pre;
-    private final int gameID;
+    private final Integer gameID;
     private final String message;
 
     public CreateGameResult(String pre, Integer gameID, String message ){

@@ -22,7 +22,7 @@ public class JoinGameService {
             return new JoinGameResult("Error: already taken");
         }
 
-        gameObject.updateGame(request.getGameID(), authorizationObject.getAuth(request.getAuthToken()).authToken(),
+        gameObject.updateGame(request.getGameID(), authorizationObject.getAuth(request.getAuthToken()).username(),
                 request.getTeamColor());
 
         return new JoinGameResult(null);
