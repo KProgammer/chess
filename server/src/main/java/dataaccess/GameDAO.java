@@ -3,7 +3,6 @@ package dataaccess;
 import chess.ChessGame;
 import model.Game;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,4 +21,8 @@ public interface GameDAO {
     void updateGame(int gameID, String newGamename);
 
     void updateGame(int gameID, ChessGame newGame);
+
+    int getGameID(String gameName);
+
+    void clear();
 }

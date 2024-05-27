@@ -11,4 +11,8 @@ public class RegisterResult {
         this.authToken = authToken;
         this.message = message;
     }
+
+    public String getAuthToken() {
+        return authToken;
+    }
 }

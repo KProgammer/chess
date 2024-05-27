@@ -13,4 +13,6 @@ public interface AuthorizationDAO {
     Authorization getAuth(String authToken);
 
     void deleteAuth(String authToken);
+
+    void clear();
 }

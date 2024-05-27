@@ -53,7 +53,18 @@ public class GameMemoryDAO implements GameDAO {
 
     }
 
-    /*public void clear(){
+    @Override
+    public int getGameID(String gameName){
+        for(int game : ListOfGames.keySet()){
+            if(Objects.equals(ListOfGames.get(game).gameName(), gameName)){
+                return ListOfGames.get(game).gameID();
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public void clear(){
         ListOfGames.clear();
-    }*/
+    }
 }

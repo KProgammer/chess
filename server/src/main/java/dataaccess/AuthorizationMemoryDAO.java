@@ -29,9 +29,9 @@ public class AuthorizationMemoryDAO implements AuthorizationDAO {
         ListAuthtokenUser.remove(authToken);
     }
 
-    /*public void clear(){
+    public void clear(){
         ListAuthtokenUser.clear();
-    }*/
+    }
 }
 
 

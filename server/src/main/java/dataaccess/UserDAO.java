@@ -11,4 +11,6 @@ public interface UserDAO {
     void createUser(String username, String password, String email);
 
     User getUser(String username);
+
+    void clear();
 }
