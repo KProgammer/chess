@@ -6,6 +6,10 @@ import static server.Server.authorizationObject;
 import static server.Server.userObject;
 
 public class LoginService {
+    /*public LoginService() {
+        super();
+    }*/
+
     //login
     public LoginResult login(LoginRequest request){
         if(userObject.getUser(request.getUsername()) == null ||
@@ -13,6 +17,6 @@ public class LoginService {
             return new LoginResult(null,null,"Error: unauthorized");
         }
 
-        return new LoginResult(request.getUsername(),authorizationObject.createAuth(request.getUsername()),null);
+        return new LoginResult(request.getUsername(), request.getPassword(), null);
     }
 }

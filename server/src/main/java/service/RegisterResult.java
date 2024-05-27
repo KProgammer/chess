@@ -1,5 +1,7 @@
 package service;
 
+import java.util.Objects;
+
 public class RegisterResult {
     private final String username;
     private final String authToken;
@@ -14,5 +16,18 @@ public class RegisterResult {
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RegisterResult that = (RegisterResult) o;
+        return Objects.equals(username, that.username) && Objects.equals(authToken, that.authToken) && Objects.equals(message, that.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, authToken, message);
     }
 }
