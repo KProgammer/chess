@@ -51,6 +51,8 @@ public class Server {
         RegisterResult Result = new RegisterService().register(request);
         if(Objects.equals(Result.getMessage(), "Error: already taken")){
             res.status(403);
+        } else if(Objects.equals(Result.getMessage(), "Error: bad request")){
+            res.status(400);
         }
         return new Gson().toJson(Result);
     }
@@ -91,6 +93,8 @@ public class Server {
         CreateGameResult Result = new CreateGamesService().CreateGame(request);
         if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
             res.status(401);
+        } else if(Objects.equals(Result.getMessage(), "Error: bad request")){
+            res.status(400);
         }
         return new Gson().toJson(Result);
     }
@@ -103,6 +107,8 @@ public class Server {
             res.status(401);
         } else if(Objects.equals(Result.getMessage(), "Error: already taken")){
             res.status(403);
+        } else if(Objects.equals(Result.getMessage(), "Error: bad request")){
+            res.status(400);
         }
         return new Gson().toJson(Result);
     }

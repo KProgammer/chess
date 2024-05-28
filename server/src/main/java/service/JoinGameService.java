@@ -13,13 +13,15 @@ public class JoinGameService {
     public JoinGameResult JoinGame(JoinGameRequest request){
         if (authorizationObject.getAuth(request.getAuthToken()) == null){
             return new JoinGameResult("Error: unauthorized");
-        }
-
-        if((request.getTeamColor().equals(ChessGame.TeamColor.BLACK) &&
+        }else if((request.getTeamColor().equals(ChessGame.TeamColor.BLACK) &&
                 gameObject.getGame(request.getGameID()).blackUsername() != null) ||
                 ((request.getTeamColor().equals(ChessGame.TeamColor.WHITE) &&
                         gameObject.getGame(request.getGameID()).whiteUsername() != null))){
             return new JoinGameResult("Error: already taken");
+        } else if (request.getTeamColor() == null ||
+                    request.getGameID() == null ||
+                    request.getAuthToken() == null) {
+            return new JoinGameResult("Error: bad request");
         }
 
         gameObject.updateGame(request.getGameID(), authorizationObject.getAuth(request.getAuthToken()).username(),
