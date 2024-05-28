@@ -25,6 +25,16 @@ public class AuthorizationMemoryDAO implements AuthorizationDAO {
     }
 
     @Override
+    public String getAuthToken(String username){
+        for(String token : ListAuthtokenUser.keySet()){
+            if(ListAuthtokenUser.get(token).username() == username){
+                return ListAuthtokenUser.get(token).authToken();
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void deleteAuth(String authToken){
         ListAuthtokenUser.remove(authToken);
     }

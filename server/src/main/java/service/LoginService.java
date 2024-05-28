@@ -16,7 +16,8 @@ public class LoginService {
                 !Objects.equals(userObject.getUser(request.getUsername()).password(), request.getPassword())){
             return new LoginResult(null,null,"Error: unauthorized");
         }
+        String authToken = authorizationObject.createAuth(request.getUsername());
 
-        return new LoginResult(request.getUsername(), request.getPassword(), null);
+        return new LoginResult(request.getUsername(), authToken, null);
     }
 }

@@ -12,6 +12,8 @@ public interface AuthorizationDAO {
 
     Authorization getAuth(String authToken);
 
+    String getAuthToken(String username);
+
     void deleteAuth(String authToken);
 
     void clear();
