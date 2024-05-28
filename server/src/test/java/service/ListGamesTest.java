@@ -50,7 +50,7 @@ public class ListGamesTest {
         }
 
         Assertions.assertEquals(new ListGamesService().List(new ListGamesRequest(authToken)),new ListGamesResult(gameList,null),
-                "Not all games listed");
+                "Not all games listed or not in the right order.");
 
         Assertions.assertEquals(new ListGamesService().List(new ListGamesRequest(null)), new ListGamesResult(null,"Error: unauthorized"),
                 "Not authorized error not thrown.");

@@ -18,7 +18,7 @@ public class RegisterTest {
                 "User not registered.");
 
         Assertions.assertEquals(new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com")),
-                new RegisterResult(null, null, "Error: already taken"), "Did not throw error: already taken.");
+                new RegisterResult(null, null, "Error: already taken"), "Did not throw Error: already taken.");
 
     }
 }
