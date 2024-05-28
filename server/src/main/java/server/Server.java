@@ -68,13 +68,12 @@ public class Server {
     }
 
     private Object logout(Request req, Response res) {
-        String body = req.body();
-        LogoutRequest request = new Gson().fromJson(body,LogoutRequest.class);
+        LogoutRequest request = new LogoutRequest(req.headers("authorization"));
         LogoutResult Result = new LogoutService().logout(request);
         if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
             res.status(401);
         }
-        return new Gson().toJson(new LogoutService().logout(request));
+        return new Gson().toJson(Result);
     }
 
     private Object listGames(Request req, Response res) {

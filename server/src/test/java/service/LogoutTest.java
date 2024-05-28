@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static server.Server.authorizationObject;
+
 public class LogoutTest {
     @Test
     @DisplayName("LogoutGameTest")
@@ -12,7 +14,7 @@ public class LogoutTest {
 
         LogoutResult logoutResult = new LogoutService().logout(new LogoutRequest(registerResult.getAuthToken()));
 
-        Assertions.assertEquals(logoutResult, new LogoutResult(null),
+        Assertions.assertEquals(authorizationObject.getAuth(registerResult.getAuthToken()), null,
                     "Unable to logout");
 
         logoutResult = new LogoutService().logout(new LogoutRequest(null));

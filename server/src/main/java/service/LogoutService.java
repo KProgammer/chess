@@ -12,6 +12,8 @@ public class LogoutService {
             return new LogoutResult("Error: unauthorized");
         }
 
+        authorizationObject.deleteAuth(request.getAuthToken());
+
         return new LogoutResult(null);
     }
 }
