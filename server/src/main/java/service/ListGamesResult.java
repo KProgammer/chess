@@ -16,6 +16,14 @@ public class ListGamesResult {
         this.message = message;
     }
 
+    public Collection<Game> getGameList() {
+        return gameList;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

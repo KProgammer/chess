@@ -13,6 +13,18 @@ public class CreateGameResult {
         this.message = message;
     }
 
+    public String getPre() {
+        return pre;
+    }
+
+    public Integer getGameID() {
+        return gameID;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

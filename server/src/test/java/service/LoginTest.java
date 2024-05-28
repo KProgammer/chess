@@ -14,7 +14,7 @@ public class LoginTest {
 
         LoginResult loginResult = new LoginService().login(new LoginRequest("Gavin","CowsAreAwesome"));
 
-        Assertions.assertEquals(loginResult, new LoginResult("Gavin","CowsAreAwesome",null),
+        Assertions.assertNotNull(loginResult.getAuthToken(),
                 "Unable to login");
 
         loginResult = new LoginService().login(new LoginRequest("Gavin","CowsStink"));

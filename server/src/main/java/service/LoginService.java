@@ -1,5 +1,7 @@
 package service;
 
+import spark.Response;
+
 import java.util.Objects;
 
 import static server.Server.authorizationObject;

@@ -5,6 +5,8 @@ import dataaccess.*;
 import service.*;
 import spark.*;
 
+import java.util.Objects;
+
 public class Server {
     public static GameDAO gameObject = new GameMemoryDAO();
     public static UserDAO userObject = new UserMemoryDAO();
@@ -46,36 +48,62 @@ public class Server {
     private Object register(Request req, Response res) {
         String body = req.body();
         RegisterRequest request = new Gson().fromJson(body,RegisterRequest.class);
-        return new Gson().toJson(new RegisterService().register(request));
+        RegisterResult Result = new RegisterService().register(request);
+        if(Objects.equals(Result.getMessage(), "Error: already taken")){
+            res.status(403);
+        }
+        return new Gson().toJson(Result);
     }
 
     private Object login(Request req, Response res) {
         String body = req.body();
         LoginRequest request = new Gson().fromJson(body,LoginRequest.class);
-        return new Gson().toJson(new LoginService().login(request));
+        LoginResult Result = new LoginService().login(request);
+        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+            res.status(401);
+        }
+        return new Gson().toJson(Result);
     }
 
     private Object logout(Request req, Response res) {
         String body = req.body();
         LogoutRequest request = new Gson().fromJson(body,LogoutRequest.class);
+        LogoutResult Result = new LogoutService().logout(request);
+        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+            res.status(401);
+        }
         return new Gson().toJson(new LogoutService().logout(request));
     }
 
     private Object listGames(Request req, Response res) {
         String body = req.body();
         ListGamesRequest request = new Gson().fromJson(body,ListGamesRequest.class);
-        return new Gson().toJson(new ListGamesService().List(request));
+        ListGamesResult Result = new ListGamesService().List(request);
+        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+            res.status(401);
+        }
+        return new Gson().toJson(Result);
     }
 
     private Object creategame(Request req, Response res) {
         String body = req.body();
         CreateGameRequest request = new Gson().fromJson(body, CreateGameRequest.class);
-        return new Gson().toJson(new CreateGamesService().CreateGame(request));
+        CreateGameResult Result = new CreateGamesService().CreateGame(request);
+        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+            res.status(401);
+        }
+        return new Gson().toJson(Result);
     }
 
     private Object joingame(Request req, Response res) {
         String body = req.body();
         JoinGameRequest request = new Gson().fromJson(body, JoinGameRequest.class);
-        return new Gson().toJson(new JoinGameService().JoinGame(request));
+        JoinGameResult Result = new JoinGameService().JoinGame(request);
+        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+            res.status(401);
+        } else if(Objects.equals(Result.getMessage(), "Error: already taken")){
+            res.status(403);
+        }
+        return new Gson().toJson(Result);
     }
 }
