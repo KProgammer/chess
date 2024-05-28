@@ -3,8 +3,8 @@ package service;
 import java.util.Objects;
 
 public class CreateGameRequest {
-    private final String gameName;
-    private final String authToken;
+    private String gameName;
+    private String authToken;
 
     public CreateGameRequest(String gameName, String authToken){
         this.gameName = gameName;
@@ -17,6 +17,14 @@ public class CreateGameRequest {
 
     public String getAuthToken() {
         return authToken;
+    }
+
+    public void setGameName(String newGameName){
+        gameName = newGameName;
+    }
+
+    public void setAuthToken(String newAuthToken){
+        authToken = newAuthToken;
     }
 
     @Override

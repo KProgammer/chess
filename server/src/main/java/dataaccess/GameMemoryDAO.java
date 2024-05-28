@@ -19,11 +19,11 @@ public class GameMemoryDAO implements GameDAO {
 
     @Override
     public Collection<Game> listGames(){
-        ArrayList<Game> GameList = new ArrayList<>();
+        ArrayList<Game> games = new ArrayList<>();
         for(int game : ListOfGames.keySet()){
-            GameList.add(ListOfGames.get(game));
+            games.add(ListOfGames.get(game));
         }
-        return GameList;
+        return games;
     }
 
     @Override

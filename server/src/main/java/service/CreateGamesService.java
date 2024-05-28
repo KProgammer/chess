@@ -9,15 +9,15 @@ public class CreateGamesService {
     //CreateGame
     public CreateGameResult CreateGame(CreateGameRequest request){
         if (authorizationObject.getAuth(request.getAuthToken()) == null){
-            return new CreateGameResult(null,null,"Error: unauthorized");
+            return new CreateGameResult(null,"Error: unauthorized");
         } else if (request.getGameName() == null) {
-            return new CreateGameResult(null,null,"Error: bad request");
+            return new CreateGameResult(null,"Error: bad request");
         }
 
         int gameID = createGameID();
         gameObject.createGame(gameID, request.getGameName());
 
-        return new CreateGameResult("gameID",gameID, request.getGameName());
+        return new CreateGameResult(gameID, request.getGameName());
     }
 
     private int createGameID(){

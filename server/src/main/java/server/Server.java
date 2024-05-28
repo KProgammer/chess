@@ -30,7 +30,7 @@ public class Server {
 
         Spark.post("/game",this::creategame);
 
-        Spark.post("/game",this::joingame);
+        Spark.put("/game",this::joingame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -77,8 +77,7 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) {
-        String body = req.body();
-        ListGamesRequest request = new Gson().fromJson(body,ListGamesRequest.class);
+        ListGamesRequest request = new ListGamesRequest(req.headers("authorization"));
         ListGamesResult Result = new ListGamesService().List(request);
         if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
             res.status(401);
@@ -89,6 +88,7 @@ public class Server {
     private Object creategame(Request req, Response res) {
         String body = req.body();
         CreateGameRequest request = new Gson().fromJson(body, CreateGameRequest.class);
+        request.setAuthToken(req.headers("authorization"));
         CreateGameResult Result = new CreateGamesService().CreateGame(request);
         if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
             res.status(401);
@@ -101,6 +101,7 @@ public class Server {
     private Object joingame(Request req, Response res) {
         String body = req.body();
         JoinGameRequest request = new Gson().fromJson(body, JoinGameRequest.class);
+        request.setAuthToken(req.headers("authorization"));
         JoinGameResult Result = new JoinGameService().JoinGame(request);
         if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
             res.status(401);

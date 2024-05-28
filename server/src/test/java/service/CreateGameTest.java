@@ -20,7 +20,7 @@ public class CreateGameTest {
                         "Game wasn't created");
 
         Assertions.assertEquals(new CreateGamesService().CreateGame(new CreateGameRequest("practiceGame",null)),
-                new CreateGameResult(null,null,"Error: unauthorized"),"Unauthorized Error wasn't thrown");
+                new CreateGameResult(null,"Error: unauthorized"),"Unauthorized Error wasn't thrown");
 
         /*Assertions.assertEquals(new CreateGamesService().CreateGame(new CreateGameRequest(null,authToken)),
                 "Error: bad request","Error wasn't thrown");*/
