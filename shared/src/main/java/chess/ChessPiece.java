@@ -192,27 +192,6 @@ public class ChessPiece {
         return true;
     }
 
-    public void resetToStartPosition(){
-        posCol = position.getColumn();
-        posRow = position.getRow();
-    }
-
-    public boolean queenRookBishopAddPieceProcess(int posRow, int posCol){
-        // If the proposed space is not on the board, don't add it.
-        if (!isOnBoard(new ChessPosition(posRow, posCol))){
-            return false;
-        }
-
-        //Attempt to add the move
-        addPiece(pieceMoves, posRow, posCol);
-
-        //if there is any piece you must stop advancing
-        if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         return "ChessPiece{" +
