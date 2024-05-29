@@ -1,13 +1,13 @@
-package Results;
+package results;
 
 import java.util.Objects;
 
 public class ClearResult {
     private final String message;
 
-    public ClearResult(String Message){
+    public ClearResult(String message){
 
-        message = Message;
+        this.message = message;
     }
 
     @Override

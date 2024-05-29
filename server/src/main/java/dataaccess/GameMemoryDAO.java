@@ -9,55 +9,55 @@ public class GameMemoryDAO implements GameDAO {
 
     @Override
     public void createGame(int gameID, String gameName ){
-        ListOfGames.put(gameID, new Game(gameID,null,null,gameName,new ChessGame()));
+        LIST_OF_GAMES.put(gameID, new Game(gameID,null,null,gameName,new ChessGame()));
     }
 
     @Override
     public Game getGame(int gameID){
-        return ListOfGames.get(gameID);
+        return LIST_OF_GAMES.get(gameID);
     }
 
     @Override
     public Collection<Game> listGames(){
         ArrayList<Game> games = new ArrayList<>();
-        for(int game : ListOfGames.keySet()){
-            games.add(ListOfGames.get(game));
+        for(int game : LIST_OF_GAMES.keySet()){
+            games.add(LIST_OF_GAMES.get(game));
         }
         return games;
     }
 
     @Override
     public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor){
-        Game gameOfInterest = ListOfGames.get(gameID);
+        Game gameOfInterest = LIST_OF_GAMES.get(gameID);
         if(teamColor == ChessGame.TeamColor.BLACK){
-            ListOfGames.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
+            LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
                     username, gameOfInterest.gameName(), gameOfInterest.game()));
         }else {
-            ListOfGames.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), username,
+            LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), username,
                     gameOfInterest.blackUsername(), gameOfInterest.gameName(), gameOfInterest.game()));
         }
     }
 
     @Override
     public void updateGame(int gameID, String newGamename){
-        Game gameOfInterest = ListOfGames.get(gameID);
-        ListOfGames.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
+        Game gameOfInterest = LIST_OF_GAMES.get(gameID);
+        LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
                 gameOfInterest.blackUsername(), newGamename, gameOfInterest.game()));
     }
 
     @Override
     public void updateGame(int gameID, ChessGame newGame){
-        Game gameOfInterest = ListOfGames.get(gameID);
-        ListOfGames.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
+        Game gameOfInterest = LIST_OF_GAMES.get(gameID);
+        LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
                 gameOfInterest.blackUsername(), gameOfInterest.gameName(), newGame));
 
     }
 
     @Override
     public int getGameID(String gameName){
-        for(int game : ListOfGames.keySet()){
-            if(Objects.equals(ListOfGames.get(game).gameName(), gameName)){
-                return ListOfGames.get(game).gameID();
+        for(int game : LIST_OF_GAMES.keySet()){
+            if(Objects.equals(LIST_OF_GAMES.get(game).gameName(), gameName)){
+                return LIST_OF_GAMES.get(game).gameID();
             }
         }
         return 0;
@@ -65,6 +65,6 @@ public class GameMemoryDAO implements GameDAO {
 
     @Override
     public void clear(){
-        ListOfGames.clear();
+        LIST_OF_GAMES.clear();
     }
 }

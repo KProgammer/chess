@@ -1,11 +1,11 @@
-package Requests;
+package requests;
 
 import java.util.Objects;
 
-public class ListGamesRequest {
+public class LogoutRequest {
     private final String authToken;
 
-    public ListGamesRequest(String authToken){
+    public LogoutRequest(String authToken){
 
         this.authToken = authToken;
     }
@@ -18,7 +18,7 @@ public class ListGamesRequest {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ListGamesRequest that = (ListGamesRequest) o;
+        LogoutRequest that = (LogoutRequest) o;
         return Objects.equals(authToken, that.authToken);
     }
 

@@ -1,7 +1,7 @@
 package server;
 
-import Requests.*;
-import Results.*;
+import requests.*;
+import results.*;
 import com.google.gson.Gson;
 import dataaccess.*;
 import service.*;
@@ -50,68 +50,68 @@ public class Server {
     private Object register(Request req, Response res) {
         String body = req.body();
         RegisterRequest request = new Gson().fromJson(body,RegisterRequest.class);
-        RegisterResult Result = new RegisterService().register(request);
-        if(Objects.equals(Result.getMessage(), "Error: already taken")){
+        RegisterResult register = new RegisterService().register(request);
+        if(Objects.equals(register.getMessage(), "Error: already taken")){
             res.status(403);
-        } else if(Objects.equals(Result.getMessage(), "Error: bad request")){
+        } else if(Objects.equals(register.getMessage(), "Error: bad request")){
             res.status(400);
         }
-        return new Gson().toJson(Result);
+        return new Gson().toJson(register);
     }
 
     private Object login(Request req, Response res) {
         String body = req.body();
         LoginRequest request = new Gson().fromJson(body,LoginRequest.class);
-        LoginResult Result = new LoginService().login(request);
-        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+        LoginResult result = new LoginService().login(request);
+        if(Objects.equals(result.getMessage(), "Error: unauthorized")){
             res.status(401);
         }
-        return new Gson().toJson(Result);
+        return new Gson().toJson(result);
     }
 
     private Object logout(Request req, Response res) {
         LogoutRequest request = new LogoutRequest(req.headers("authorization"));
-        LogoutResult Result = new LogoutService().logout(request);
-        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+        LogoutResult result = new LogoutService().logout(request);
+        if(Objects.equals(result.getMessage(), "Error: unauthorized")){
             res.status(401);
         }
-        return new Gson().toJson(Result);
+        return new Gson().toJson(result);
     }
 
     private Object listGames(Request req, Response res) {
         ListGamesRequest request = new ListGamesRequest(req.headers("authorization"));
-        ListGamesResult Result = new ListGamesService().List(request);
-        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+        ListGamesResult result = new ListGamesService().makeList(request);
+        if(Objects.equals(result.getMessage(), "Error: unauthorized")){
             res.status(401);
         }
-        return new Gson().toJson(Result);
+        return new Gson().toJson(result);
     }
 
     private Object creategame(Request req, Response res) {
         String body = req.body();
         CreateGameRequest request = new Gson().fromJson(body, CreateGameRequest.class);
         request.setAuthToken(req.headers("authorization"));
-        CreateGameResult Result = new CreateGamesService().CreateGame(request);
-        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+        CreateGameResult result = new CreateGamesService().createGame(request);
+        if(Objects.equals(result.getMessage(), "Error: unauthorized")){
             res.status(401);
-        } else if(Objects.equals(Result.getMessage(), "Error: bad request")){
+        } else if(Objects.equals(result.getMessage(), "Error: bad request")){
             res.status(400);
         }
-        return new Gson().toJson(Result);
+        return new Gson().toJson(result);
     }
 
     private Object joingame(Request req, Response res) {
         String body = req.body();
         JoinGameRequest request = new Gson().fromJson(body, JoinGameRequest.class);
         request.setAuthToken(req.headers("authorization"));
-        JoinGameResult Result = new JoinGameService().JoinGame(request);
-        if(Objects.equals(Result.getMessage(), "Error: unauthorized")){
+        JoinGameResult result = new JoinGameService().joinGame(request);
+        if(Objects.equals(result.getMessage(), "Error: unauthorized")){
             res.status(401);
-        } else if(Objects.equals(Result.getMessage(), "Error: already taken")){
+        } else if(Objects.equals(result.getMessage(), "Error: already taken")){
             res.status(403);
-        } else if(Objects.equals(Result.getMessage(), "Error: bad request")){
+        } else if(Objects.equals(result.getMessage(), "Error: bad request")){
             res.status(400);
         }
-        return new Gson().toJson(Result);
+        return new Gson().toJson(result);
     }
 }

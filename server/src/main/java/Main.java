@@ -8,7 +8,7 @@ public class Main {
 
 
         //Call server to run here
-        Server MainServer = new Server();
-        MainServer.run(8080);
+        Server mainServer = new Server();
+        mainServer.run(8080);
     }
 }

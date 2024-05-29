@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface GameDAO {
-    Map<Integer, Game> ListOfGames = new HashMap<>();
+    Map<Integer, Game> LIST_OF_GAMES = new HashMap<>();
 
     void createGame(int gameID, String gameName);
 

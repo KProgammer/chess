@@ -11,20 +11,20 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard cur_board;
-    private TeamColor cur_turn;
+    private ChessBoard curBoard;
+    private TeamColor curTurn;
 
     public ChessGame() {
-        this.cur_board = new ChessBoard();
-        cur_board.resetBoard();
-        this.cur_turn = TeamColor.WHITE;
+        this.curBoard = new ChessBoard();
+        curBoard.resetBoard();
+        this.curTurn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return cur_turn;
+        return curTurn;
     }
 
     /**
@@ -33,7 +33,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        cur_turn = team;
+        curTurn = team;
     }
 
     @Override
@@ -41,12 +41,12 @@ public class ChessGame {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(cur_board, chessGame.cur_board);
+        return Objects.equals(curBoard, chessGame.curBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(cur_board);
+        return Objects.hashCode(curBoard);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (cur_board.getPiece(startPosition) == null){
+        if (curBoard.getPiece(startPosition) == null){
             return null;
         } // Check if the king is in check.
 
@@ -73,17 +73,17 @@ public class ChessGame {
         ChessGame possibleGame = new ChessGame();
         ChessBoard possibleBoard;
         try {
-            possibleBoard = cur_board.clone();
+            possibleBoard = curBoard.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
 
         //This line stores the moves of the chess piece
-        Collection<ChessMove> movesOfInterest = new ChessPiece(cur_board.getPiece(startPosition).getTeamColor(),
-                cur_board.getPiece(startPosition).getPieceType()).pieceMoves(cur_board,startPosition);
+        Collection<ChessMove> movesOfInterest = new ChessPiece(curBoard.getPiece(startPosition).getTeamColor(),
+                curBoard.getPiece(startPosition).getPieceType()).pieceMoves(curBoard,startPosition);
 
         //this collects all the valid moves for the current piece
-        Collection<ChessMove> Val_Moves = new ArrayList<>();
+        Collection<ChessMove> valMoves = new ArrayList<>();
 
         //Set the possible game to have the same chessboard as the current game.
         possibleGame.setBoard(possibleBoard);
@@ -92,12 +92,12 @@ public class ChessGame {
         ChessMove possibleMove;
 
 
-        if (isInCheck(cur_board.getPiece(startPosition).getTeamColor())) {
+        if (isInCheck(curBoard.getPiece(startPosition).getTeamColor())) {
             //If the king is in check we must check if any of the moves will bring the king out of check
             for (ChessMove chessMove : movesOfInterest) {
                 //reset the board to the current board
                 try {
-                    possibleBoard = cur_board.clone();
+                    possibleBoard = curBoard.clone();
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
@@ -109,14 +109,14 @@ public class ChessGame {
                 possibleBoard.addPiece(startPosition, null);
                 possibleBoard.addPiece(possibleMove.getEndPosition(), null);
                 //Set the piece in the new position
-                possibleBoard.addPiece(possibleMove.getEndPosition(), cur_board.getPiece(startPosition));
+                possibleBoard.addPiece(possibleMove.getEndPosition(), curBoard.getPiece(startPosition));
 
                 //Set the new board to the possible game.
                 possibleGame.setBoard(possibleBoard);
 
-                //If the king is not in check, add the move to the Val_Moves variable
+                //If the king is not in check, add the move to the valMoves variable
                 if (!possibleGame.isInCheck(possibleBoard.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
-                    Val_Moves.add(possibleMove);
+                    valMoves.add(possibleMove);
                 }
 
             }
@@ -126,7 +126,7 @@ public class ChessGame {
             for (ChessMove chessMove : movesOfInterest) {
                 //reset the board to the current board
                 try {
-                    possibleBoard = cur_board.clone();
+                    possibleBoard = curBoard.clone();
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
@@ -138,20 +138,20 @@ public class ChessGame {
                 possibleBoard.addPiece(startPosition, null);
                 possibleBoard.addPiece(possibleMove.getEndPosition(), null);
                 //Set the piece in the new position
-                possibleBoard.addPiece(possibleMove.getEndPosition(), cur_board.getPiece(startPosition));
+                possibleBoard.addPiece(possibleMove.getEndPosition(), curBoard.getPiece(startPosition));
 
                 //Set the new board to the possible game.
                 possibleGame.setBoard(possibleBoard);
 
 
-                //If the king is not in check, add the move to the Val_Moves variable
+                //If the king is not in check, add the move to the valMoves variable
                 if (!possibleGame.isInCheck(possibleBoard.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
-                    Val_Moves.add(possibleMove);
+                    valMoves.add(possibleMove);
                 }
 
             }
         }
-        return Val_Moves;
+        return valMoves;
     }
 
     /**
@@ -167,9 +167,9 @@ public class ChessGame {
          //This is to point towards the chess piece were are looking at.
          ChessPiece pieceOfInterest = null;
 
-         if (cur_board.getPiece(move.getStartPosition()) != null) {
+         if (curBoard.getPiece(move.getStartPosition()) != null) {
              //Make a placeholder to point to the chesspiece we are interested
-             pieceOfInterest = cur_board.getPiece(move.getStartPosition());
+             pieceOfInterest = curBoard.getPiece(move.getStartPosition());
 
              //Look through all the possible moves of the piece and see if move is one of them
              for (ChessMove chessMove : validMoves(move.getStartPosition())) {
@@ -180,7 +180,7 @@ public class ChessGame {
              }
 
              //Check if the piece is the same color as the team whose turn it is.
-             if (pieceOfInterest.getTeamColor() != cur_turn) {
+             if (pieceOfInterest.getTeamColor() != curTurn) {
                  isAMove = false;
              }
          }
@@ -189,10 +189,10 @@ public class ChessGame {
          if (isAMove) {
              if(move.getPromotionPiece() != null){
                  //Add the piece to its new position.
-                 cur_board.addPiece(move.getEndPosition(), new ChessPiece(pieceOfInterest.getTeamColor(),move.getPromotionPiece()));
+                 curBoard.addPiece(move.getEndPosition(), new ChessPiece(pieceOfInterest.getTeamColor(),move.getPromotionPiece()));
              }else {
                  //Add the piece to its new position.
-                 cur_board.addPiece(move.getEndPosition(), cur_board.getPiece(move.getStartPosition()));
+                 curBoard.addPiece(move.getEndPosition(), curBoard.getPiece(move.getStartPosition()));
              }
 
              //Change the team turn.
@@ -203,7 +203,7 @@ public class ChessGame {
              }
 
              //Set the old position to null
-             cur_board.addPiece(move.getStartPosition(), null);
+             curBoard.addPiece(move.getStartPosition(), null);
          } else {
              throw new InvalidMoveException();
          }
@@ -219,37 +219,37 @@ public class ChessGame {
         ChessPosition kingsPos = null;
         ChessMove posOfInterest;
 
-        boolean $invalidState = false;
+        boolean invalidState = false;
 
 
         if (teamColor == TeamColor.BLACK){
             //First search the board to find the king
             for (int i = 1; i < 9; i++){
                 for(int j = 1; j < 9; j++){
-                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                    if(curBoard.getPiece(new ChessPosition(i,j)) == null){
                         continue;
                     }
 
-                    if (cur_board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
-                    cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
+                    if (curBoard.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
+                    curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
                         kingsPos = new ChessPosition(i,j);
-                        $invalidState = true;
+                        invalidState = true;
                     }
-                    if($invalidState){break;}
+                    if(invalidState){break;}
                 }
-                if($invalidState){break;}
+                if(invalidState){break;}
             }
             //Now that you have found the king, see if any one from the white team can kill him.
             //If they can, return true. Otherwise, return false.
             for (int i = 1; i < 9; i++){
                 for(int j = 1; j < 9; j++){
-                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                    if(curBoard.getPiece(new ChessPosition(i,j)) == null){
                         continue;
                     }
-                    if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
+                    if (curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
                         //Get the possible moves of that piece
-                        Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
-                                cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
+                        Collection<ChessMove> posMoves = new ChessPiece(curBoard.getPiece(new ChessPosition(i,j)).getTeamColor(),
+                                curBoard.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(curBoard,new ChessPosition(i,j));
                         //Now go through each move's endposition and see if it matches the kings position
                         for (ChessMove posMove : posMoves) {
 
@@ -269,16 +269,16 @@ public class ChessGame {
             //First search the board to find the king
             for (int i = 1; i < 9; i++){
                 for(int j = 1; j < 9; j++){
-                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                    if(curBoard.getPiece(new ChessPosition(i,j)) == null){
                         continue;
                     }
-                    if (cur_board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
-                            cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
+                    if (curBoard.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
+                            curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
                         kingsPos = new ChessPosition(i,j);
-                        $invalidState = true;
+                        invalidState = true;
                     }
-                    if($invalidState){break;}
-                }if($invalidState){break;}
+                    if(invalidState){break;}
+                }if(invalidState){break;}
             }
 
             //Now that you have found the king, see if any one from the black team can kill him.
@@ -286,13 +286,13 @@ public class ChessGame {
             //First search the board to find the king
             for (int i = 1; i < 9; i++){
                 for(int j = 1; j < 9; j++){
-                    if(cur_board.getPiece(new ChessPosition(i,j)) == null){
+                    if(curBoard.getPiece(new ChessPosition(i,j)) == null){
                         continue;
                     }
-                    if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
+                    if (curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
                         //Get the possible moves of the piece.
-                        Collection<ChessMove> posMoves = new ChessPiece(cur_board.getPiece(new ChessPosition(i,j)).getTeamColor(),
-                                cur_board.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(cur_board,new ChessPosition(i,j));
+                        Collection<ChessMove> posMoves = new ChessPiece(curBoard.getPiece(new ChessPosition(i,j)).getTeamColor(),
+                                curBoard.getPiece(new ChessPosition(i,j)).getPieceType()).pieceMoves(curBoard,new ChessPosition(i,j));
                         //Now go through each move's endposition and see if it matches the kings position
                         for (ChessMove posMove : posMoves) {
 
@@ -329,10 +329,10 @@ public class ChessGame {
 
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                if((cur_board.getPiece(new ChessPosition(i,j)) == null) ||
-                        ((cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
+                if((curBoard.getPiece(new ChessPosition(i,j)) == null) ||
+                        ((curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
                     continue;
-                } else if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
+                } else if (curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
                     Collection<ChessMove> moves = validMoves(new ChessPosition(i,j));
                     totalMoves.add(moves);
                 }
@@ -366,10 +366,10 @@ public class ChessGame {
 
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                if((cur_board.getPiece(new ChessPosition(i,j)) == null) ||
-                        ((cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
+                if((curBoard.getPiece(new ChessPosition(i,j)) == null) ||
+                        ((curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
                     continue;
-                } else if (cur_board.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
+                } else if (curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
                     Collection<ChessMove> moves = validMoves(new ChessPosition(i,j));
                     totalMoves.add(moves);
                 }
@@ -390,7 +390,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        cur_board = board;
+        curBoard = board;
     }
 
     /**
@@ -399,7 +399,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return cur_board;
+        return curBoard;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package Requests;
+package requests;
 
 import java.util.Objects;
 
@@ -17,10 +17,6 @@ public class CreateGameRequest {
 
     public String getAuthToken() {
         return authToken;
-    }
-
-    public void setGameName(String newGameName){
-        gameName = newGameName;
     }
 
     public void setAuthToken(String newAuthToken){

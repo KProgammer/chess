@@ -1,11 +1,11 @@
-package Results;
+package results;
 
 import java.util.Objects;
 
-public class LogoutResult {
+public class JoinGameResult {
     private final String message;
 
-    public LogoutResult (String message){
+    public JoinGameResult(String message){
 
         this.message = message;
     }
@@ -18,7 +18,7 @@ public class LogoutResult {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LogoutResult that = (LogoutResult) o;
+        JoinGameResult that = (JoinGameResult) o;
         return Objects.equals(message, that.message);
     }
 

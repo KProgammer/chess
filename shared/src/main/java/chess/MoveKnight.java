@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class MoveKnight extends ChessPiece {
     private final ChessBoard board;
     private final ChessPosition position;
-    private ArrayList<ChessMove> Piece_Moves;
-    private int pos_row;
-    private int pos_col;
-    private ChessGame cur_game;
+    private ArrayList<ChessMove> pieceMoves;
+    private int posRow;
+    private int posCol;
+    private ChessGame curGame;
     private ChessPiece knight;
 
     public MoveKnight(ChessBoard board, ChessPosition position){
@@ -18,15 +18,15 @@ public class MoveKnight extends ChessPiece {
         this.position = position;
 
         //Stores the list of moves the king can make
-        this.Piece_Moves = new ArrayList<>();
+        this.pieceMoves = new ArrayList<>();
 
         // Stores the possible positions for each piece
-        this.pos_row= position.getRow();
-        this.pos_col = position.getColumn();
+        this.posRow = position.getRow();
+        this.posCol = position.getColumn();
 
         //This is used to track the current game
-        this.cur_game = new ChessGame();
-        cur_game.setBoard(this.board);
+        this.curGame = new ChessGame();
+        curGame.setBoard(this.board);
 
         //This creates a chesspiece that refects what you are interested in.
         this.knight = new ChessPiece(board.getPiece(position).getTeamColor(), ChessPiece.PieceType.KNIGHT);
@@ -55,8 +55,8 @@ public class MoveKnight extends ChessPiece {
         for(int i = -2; i <= 2; i++) {
             for (int j = -2; j < 3; j += 2) {
                 //Reset the values of pos_row and pos_col
-                pos_row = myPosition.getRow();
-                pos_col = myPosition.getColumn();
+                posRow = myPosition.getRow();
+                posCol = myPosition.getColumn();
 
                 //The if statements below allow the program to follow the pattern shown in the schematic above.
                 //If i is zero have it increase itself by 1
@@ -71,14 +71,14 @@ public class MoveKnight extends ChessPiece {
                 else if(i%2 != 0 && j == 0){
                     j = 2;
                 }
-                pos_row += i;
-                pos_col += j;
+                posRow += i;
+                posCol += j;
 
                 //Attempt to add the move
-                AddPiece(Piece_Moves,pos_row,pos_col);
+                addPiece(pieceMoves, posRow, posCol);
             }
         }
 
-        return Piece_Moves;
+        return pieceMoves;
     }
 }

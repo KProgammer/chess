@@ -1,7 +1,7 @@
 package service;
 
-import Requests.LogoutRequest;
-import Results.LogoutResult;
+import requests.LogoutRequest;
+import results.LogoutResult;
 
 import static server.Server.authorizationObject;
 

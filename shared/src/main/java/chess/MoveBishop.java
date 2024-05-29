@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class MoveBishop extends ChessPiece {
     private final ChessBoard board;
     private final ChessPosition myPosition;
-    private ArrayList<ChessMove> Piece_Moves;
-    private int pos_row;
-    private int pos_col;
-    private ChessGame cur_game;
+    private ArrayList<ChessMove> pieceMoves;
+    private int posRow;
+    private int posCol;
+    private ChessGame curGame;
     private ChessPiece bishop;
 
     public MoveBishop(ChessBoard board, ChessPosition position){
@@ -17,15 +17,15 @@ public class MoveBishop extends ChessPiece {
         this.board = board;
         this.myPosition = position;
         //Stores the list of moves
-        this.Piece_Moves = new ArrayList<ChessMove>();
+        this.pieceMoves = new ArrayList<ChessMove>();
 
         //Store the possible positions for the bishop
-        this.pos_row = position.getRow();
-        this.pos_col = position.getColumn();
+        this.posRow = position.getRow();
+        this.posCol = position.getColumn();
 
         //Set up variable to hold the current board
-        this.cur_game = new ChessGame();
-        cur_game.setBoard(board);
+        this.curGame = new ChessGame();
+        curGame.setBoard(board);
 
         //This stores the current piece that we are interested in
         this.bishop = new ChessPiece(board.getPiece(position).getTeamColor(), ChessPiece.PieceType.BISHOP);
@@ -33,95 +33,126 @@ public class MoveBishop extends ChessPiece {
 
     public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
 
-        //Calculate moves for the upper right diagonal or towards row 8, col 8
-        while(pos_row < 8 && pos_col < 8){
+
+        for (int i = -1; i < 2; i+=2){
+            for(int j = -1; j < 2; j+=2){
+                while((posRow < 8 && posCol < 8 && Integer.signum(i) > 0 && Integer.signum(j) > 0) ||
+                        (posRow > 1 && posCol < 8 && Integer.signum(i) < 0 && Integer.signum(j) > 0) ||
+                        (posRow > 1 && posCol > 1 && Integer.signum(i) < 0 && Integer.signum(j) < 0) ||
+                        (posRow < 8 && posCol > 1 && Integer.signum(i) > 0 && Integer.signum(j) < 0)){
+                    //Add the values
+                    posRow += i;
+                    posCol += j;
+
+                    // If the proposed space is not on the board, don't add it.
+                    if (!isOnBoard(new ChessPosition(posRow, posCol))){
+                        break;
+                    }
+
+                    //Attempt to add the move
+                    addPiece(pieceMoves, posRow, posCol);
+
+                    //if there is any piece you must stop advancing
+                    if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
+                        break;
+                    }
+                }
+                //Reset the values of pos_row and pos_col
+                posRow = myPosition.getRow();
+                posCol = myPosition.getColumn();
+            }
+        }
+
+
+        /*//Calculate moves for the upper right diagonal or towards row 8, col 8
+        while(posRow < 8 && posCol < 8){
             //Add the values
-            pos_row += 1;
-            pos_col += 1;
+            posRow += 1;
+            posCol += 1;
 
             // If the proposed space is not on the board, don't add it.
-            if (!IsOnBoard(new ChessPosition(pos_row, pos_col))){
+            if (!isOnBoard(new ChessPosition(posRow, posCol))){
                 break;
             }
 
             //Attempt to add the move
-            AddPiece(Piece_Moves,pos_row,pos_col);
+            addPiece(pieceMoves, posRow, posCol);
 
             //if there is any piece you must stop advancing
-            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+            if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
                 break;
             }
         }
         //Reset the values of pos_row and pos_col
-        pos_row = myPosition.getRow();
-        pos_col = myPosition.getColumn();
+        posRow = myPosition.getRow();
+        posCol = myPosition.getColumn();
 
         //Calculate moves for the lower right diagonal or towards row 1, col 8
-        while(pos_row > 1 && pos_col < 8){
+        while(posRow > 1 && posCol < 8){
             //Add the values
-            pos_row -= 1;
-            pos_col += 1;
+            posRow -= 1;
+            posCol += 1;
 
             // If the proposed space is not on the board, don't add it.
-            if (!IsOnBoard(new ChessPosition(pos_row, pos_col))){
+            if (!isOnBoard(new ChessPosition(posRow, posCol))){
                 break;
             }
 
             //Attempt to add the move
-            AddPiece(Piece_Moves,pos_row,pos_col);
+            addPiece(pieceMoves, posRow, posCol);
 
             //if there is any piece you must stop advancing
-            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+            if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
                 break;
             }
         }
         //Reset the values of pos_row and pos_col
-        pos_row = myPosition.getRow();
-        pos_col = myPosition.getColumn();
+        posRow = myPosition.getRow();
+        posCol = myPosition.getColumn();
 
         //Calculate moves for the lower left diagonal or towards row 1, col 1
-        while(pos_row > 1 && pos_col > 1){
+        while(posRow > 1 && posCol > 1){
             //Add the values
-            pos_row -= 1;
-            pos_col -= 1;
+            posRow -= 1;
+            posCol -= 1;
 
             // If the proposed space is not on the board, don't add it.
-            if (!IsOnBoard(new ChessPosition(pos_row, pos_col))){
+            if (!isOnBoard(new ChessPosition(posRow, posCol))){
                 break;
             }
 
             //Attempt to add the move
-            AddPiece(Piece_Moves,pos_row,pos_col);
+            addPiece(pieceMoves, posRow, posCol);
 
             //if there is any piece you must stop advancing
-            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+            if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
                 break;
             }
         }
         //Reset the values of pos_row and pos_col
-        pos_row = myPosition.getRow();
-        pos_col = myPosition.getColumn();
+        posRow = myPosition.getRow();
+        posCol = myPosition.getColumn();
 
         //Calculate moves for the upper left diagonal or towards row 8, col 1
-        while(pos_row < 8 && pos_col < 8) {
+        while(posRow < 8 && posCol > 1) {
             //Add the values
-            pos_row += 1;
-            pos_col -= 1;
+            posRow += 1;
+            posCol -= 1;
 
             // If the proposed space is not on the board, don't add it.
-            if (!IsOnBoard(new ChessPosition(pos_row, pos_col))){
+            if (!isOnBoard(new ChessPosition(posRow, posCol))){
                 break;
             }
 
             //Attempt to add the move
-            AddPiece(Piece_Moves,pos_row,pos_col);
+            addPiece(pieceMoves, posRow, posCol);
 
             //if there is any piece you must stop advancing
-            if(board.getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+            if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
                 break;
             }
-        }
+        }*/
 
-        return Piece_Moves;
+        return pieceMoves;
     }
 }

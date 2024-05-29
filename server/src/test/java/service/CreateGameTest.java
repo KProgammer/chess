@@ -1,7 +1,7 @@
 package service;
 
-import Requests.CreateGameRequest;
-import Results.CreateGameResult;
+import requests.CreateGameRequest;
+import results.CreateGameResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -14,9 +14,9 @@ public class CreateGameTest {
     @Test
     @Order(1)
     @DisplayName("CreateGameTest")
-    public void CreateGameTest1() {
+    public void createGameTest1() {
         String authToken = authorizationObject.createAuth("practice");
-        new CreateGamesService().CreateGame(new CreateGameRequest("practiceGame",authToken));
+        new CreateGamesService().createGame(new CreateGameRequest("practiceGame",authToken));
 
         int gameID = gameObject.getGameID("practiceGame");
 
@@ -27,18 +27,18 @@ public class CreateGameTest {
     @Test
     @Order(2)
     @DisplayName("UnauthorizedCreation")
-    public void UnauthorizedCreateGame() {
-        Assertions.assertEquals(new CreateGamesService().CreateGame(new CreateGameRequest("practiceGame",null)),
+    public void unauthorizedCreateGame() {
+        Assertions.assertEquals(new CreateGamesService().createGame(new CreateGameRequest("practiceGame",null)),
                 new CreateGameResult(null,"Error: unauthorized"),"Unauthorized Error wasn't thrown");
     }
 
     @Test
     @Order(3)
     @DisplayName("BadRequestCreation")
-    public void BadRequestCreateGame() {
+    public void badRequestCreateGame() {
         String authToken = authorizationObject.createAuth("practice");
 
-        Assertions.assertEquals(new CreateGamesService().CreateGame(new CreateGameRequest(null,authToken)),
+        Assertions.assertEquals(new CreateGamesService().createGame(new CreateGameRequest(null,authToken)),
                 new CreateGameResult(null,"Error: bad request"),"Error wasn't thrown");
     }
 }

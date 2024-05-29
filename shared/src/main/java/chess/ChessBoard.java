@@ -106,19 +106,6 @@ public class ChessBoard implements Cloneable{
         return clone;
     }
 
-    /*
-    public ChessBoard clone()  {
-            //ChessBoard chessBoard = (ChessBoard) super.clone();
-            var clone = new ChessBoard();
-            ChessPiece[][] oldBoard = this.getBoard();
-            ChessPiece[][] newBoard = new ChessPiece[8][8];
-            for (int i = 0; i < oldBoard.length; i++) {
-                newBoard[i] = Arrays.copyOf(oldBoard[i], oldBoard[i].length);
-            }
-            clone.setBoard(newBoard);
-            return clone;
-    }*/
-
     /**
      * Makes the object more readable when it's printed.
      */

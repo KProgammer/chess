@@ -1,9 +1,7 @@
 package chess;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -18,7 +16,7 @@ public class ChessPiece {
     private final PieceType type;
     private final ChessBoard board;
     private final ChessPosition position;
-    private ArrayList<ChessMove> Piece_Moves;
+    private ArrayList<ChessMove> pieceMoves;
     private int pos_row;
     private int pos_col;
     private ChessGame cur_game;
@@ -37,7 +35,7 @@ public class ChessPiece {
         this.position = position;
 
         //Stores the list of moves the king can make
-        this.Piece_Moves = new ArrayList<>();
+        this.pieceMoves = new ArrayList<>();
 
         // Stores the possible positions for each piece
         this.pos_row= position.getRow();
@@ -103,58 +101,58 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //Get the piece that we are interested in moving
         //Placeholder used to figure out what moves a piece can make.
-        ChessPiece piece_of_interest = board.getPiece(myPosition);
+        ChessPiece pieceOfInterest = board.getPiece(myPosition);
 
         // Stores the list of moves
-        ArrayList<ChessMove> List_of_Moves = new ArrayList<>();
+        ArrayList<ChessMove> listOfMoves = new ArrayList<>();
 
         //Identify the type of piece (KING, QUEEN, etc.) and the find the moves it can do.
-        if (piece_of_interest.type == PieceType.KING){
+        if (pieceOfInterest.type == PieceType.KING){
             // This line goes to the MoveKing class and calculates the possible moves
-            MoveKing King = new MoveKing(board,myPosition);
+            MoveKing moveKing = new MoveKing(board,myPosition);
 
             // This line retrieves the calculated possible moves.
-            List_of_Moves = King.pieceMoves(myPosition);
+            listOfMoves = moveKing.pieceMoves(myPosition);
         }
-        else if (piece_of_interest.type == PieceType.QUEEN){
+        else if (pieceOfInterest.type == PieceType.QUEEN){
             // This line goes to the MovePawn class and calculates the possible moves
-            MoveQueen Queen = new MoveQueen(board,myPosition);
+            MoveQueen moveQueen = new MoveQueen(board,myPosition);
 
             // This line retrieves the calculated possible moves.
-            List_of_Moves = Queen.pieceMoves(myPosition);
+            listOfMoves = moveQueen.pieceMoves(myPosition);
         }
-        else if (piece_of_interest.type == PieceType.BISHOP){
+        else if (pieceOfInterest.type == PieceType.BISHOP){
             // This line goes to the MoveBishop class and calculates the possible moves
-            MoveBishop Bishop = new MoveBishop(board,myPosition);
+            MoveBishop moveBishop = new MoveBishop(board,myPosition);
 
             // This line retrieves the calculated possible moves.
-            List_of_Moves = Bishop.pieceMoves(myPosition);
+            listOfMoves = moveBishop.pieceMoves(myPosition);
 
         }
-        else if (piece_of_interest.type == PieceType.KNIGHT){
+        else if (pieceOfInterest.type == PieceType.KNIGHT){
             // This line goes to the MoveKnight class and calculates the possible moves
-            MoveKnight Knight = new MoveKnight(board,myPosition);
+            MoveKnight moveKnight = new MoveKnight(board,myPosition);
 
             // This line retrieves the calculated possible moves.
-            List_of_Moves = Knight.pieceMoves(myPosition);
+            listOfMoves = moveKnight.pieceMoves(myPosition);
         }
-        else if (piece_of_interest.type == PieceType.ROOK){
+        else if (pieceOfInterest.type == PieceType.ROOK){
             // This line goes to the MoveKing class and calculates the possible moves
-            MoveRook Rook = new MoveRook(board,myPosition);
+            MoveRook moveRook = new MoveRook(board,myPosition);
 
             // This line retrieves the calculated possible moves.
-            List_of_Moves = Rook.pieceMoves(myPosition);
+            listOfMoves = moveRook.pieceMoves(myPosition);
         }
-        else if (piece_of_interest.type == PieceType.PAWN){
+        else if (pieceOfInterest.type == PieceType.PAWN){
             // This line goes to the MovePawn class and calculates the possible moves
-            MovePawn Pawn = new MovePawn(board,myPosition);
+            MovePawn movePawn = new MovePawn(board,myPosition);
 
             // This line retrieves the calculated possible moves.
-            List_of_Moves = Pawn.pieceMoves(myPosition);
+            listOfMoves = movePawn.pieceMoves(myPosition);
 
         }
 
-        return List_of_Moves;
+        return listOfMoves;
         //throw new RuntimeException("Not implemented");
     }
 
@@ -169,7 +167,7 @@ public class ChessPiece {
      * @param col the col the piece is in
      * @return If there should be no more moves in the direction of the given move, this will return false
      */
-    public void AddPiece(ArrayList<ChessMove> Piece_Moves, int row, int col) {
+    public void addPiece(ArrayList<ChessMove> pieceMoves, int row, int col) {
 
         //Check to see if the space exists on the board and whether it is occupied by an piece of the same team.
         if ((row < 1) || (row > 8) || (col < 1) || (col > 8) ||
@@ -178,19 +176,19 @@ public class ChessPiece {
             return;
         } // If it is a piece that can be promoted, promote it.
         else if ((row == 1 || row == 8) && (board.getPiece(position).getPieceType() == ChessPiece.PieceType.PAWN)) {
-                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.ROOK));
-                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.KNIGHT));
-                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.BISHOP));
-                Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.QUEEN));
+                pieceMoves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.ROOK));
+                pieceMoves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.KNIGHT));
+                pieceMoves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.BISHOP));
+                pieceMoves.add(new ChessMove(position, new ChessPosition(row, col), ChessPiece.PieceType.QUEEN));
         }
         // Otherwise just add it
         else {
-            Piece_Moves.add(new ChessMove(position, new ChessPosition(row, col), null));
+            pieceMoves.add(new ChessMove(position, new ChessPosition(row, col), null));
         }
 
     }
 
-    public boolean IsOnBoard(ChessPosition possiblePos){
+    public boolean isOnBoard(ChessPosition possiblePos){
         // If the proposed space is not on the board, don't add it.
         if (possiblePos.getColumn() < 1 || possiblePos.getColumn() > 8 || possiblePos.getRow() < 1 || possiblePos.getRow() > 8){
             return  false;

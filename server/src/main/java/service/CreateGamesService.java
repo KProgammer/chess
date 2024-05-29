@@ -1,7 +1,7 @@
 package service;
 
-import Requests.CreateGameRequest;
-import Results.CreateGameResult;
+import requests.CreateGameRequest;
+import results.CreateGameResult;
 
 import java.util.Random;
 
@@ -10,7 +10,7 @@ import static server.Server.gameObject;
 
 public class CreateGamesService {
     //CreateGame
-    public CreateGameResult CreateGame(CreateGameRequest request){
+    public CreateGameResult createGame(CreateGameRequest request){
         if (authorizationObject.getAuth(request.getAuthToken()) == null){
             return new CreateGameResult(null,"Error: unauthorized");
         } else if (request.getGameName() == null) {

@@ -1,7 +1,7 @@
 package service;
 
-import Requests.JoinGameRequest;
-import Results.JoinGameResult;
+import requests.JoinGameRequest;
+import results.JoinGameResult;
 import chess.ChessGame;
 
 import static server.Server.authorizationObject;
@@ -9,7 +9,7 @@ import static server.Server.gameObject;
 
 public class JoinGameService {
     //JoinGame
-    public JoinGameResult JoinGame(JoinGameRequest request){
+    public JoinGameResult joinGame(JoinGameRequest request){
         if (authorizationObject.getAuth(request.getAuthToken()) == null){
             return new JoinGameResult("Error: unauthorized");
         } else if (request.getPlayerColor() == null ||

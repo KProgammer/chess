@@ -1,6 +1,6 @@
 package service;
 
-import Results.ClearResult;
+import results.ClearResult;
 
 import static server.Server.*;
 

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface AuthorizationDAO {
-    Map<String, Authorization> ListAuthtokenUser = new HashMap<>();
+    Map<String, Authorization> LIST_AUTHTOKEN_USER = new HashMap<>();
 
     String createAuth(String username);
 

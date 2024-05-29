@@ -1,7 +1,7 @@
 package service;
 
-import Requests.LoginRequest;
-import Results.LoginResult;
+import requests.LoginRequest;
+import results.LoginResult;
 
 import java.util.Objects;
 

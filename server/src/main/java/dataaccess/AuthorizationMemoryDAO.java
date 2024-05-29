@@ -10,25 +10,25 @@ public class AuthorizationMemoryDAO implements AuthorizationDAO {
         String authToken = UUID.randomUUID().toString();
 
         //Make sure that the authToken is unique.
-        while(ListAuthtokenUser.get(authToken) != null) {
+        while(LIST_AUTHTOKEN_USER.get(authToken) != null) {
             authToken = UUID.randomUUID().toString();
         }
         Authorization newAuth = new Authorization(authToken, username);
 
-        ListAuthtokenUser.put(authToken, newAuth);
+        LIST_AUTHTOKEN_USER.put(authToken, newAuth);
         return authToken;
     }
 
     @Override
     public Authorization getAuth(String authToken){
-        return ListAuthtokenUser.get(authToken);
+        return LIST_AUTHTOKEN_USER.get(authToken);
     }
 
     @Override
     public String getAuthToken(String username){
-        for(String token : ListAuthtokenUser.keySet()){
-            if(ListAuthtokenUser.get(token).username() == username){
-                return ListAuthtokenUser.get(token).authToken();
+        for(String token : LIST_AUTHTOKEN_USER.keySet()){
+            if(LIST_AUTHTOKEN_USER.get(token).username() == username){
+                return LIST_AUTHTOKEN_USER.get(token).authToken();
             }
         }
         return null;
@@ -36,11 +36,11 @@ public class AuthorizationMemoryDAO implements AuthorizationDAO {
 
     @Override
     public void deleteAuth(String authToken){
-        ListAuthtokenUser.remove(authToken);
+        LIST_AUTHTOKEN_USER.remove(authToken);
     }
 
     public void clear(){
-        ListAuthtokenUser.clear();
+        LIST_AUTHTOKEN_USER.clear();
     }
 }
 
