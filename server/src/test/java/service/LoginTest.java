@@ -1,23 +1,32 @@
 package service;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static server.Server.authorizationObject;
 
 public class LoginTest {
-    @Test
-    @DisplayName("LoginGameTest")
-    public void LoginGameTest() {
-        RegisterResult registerResult = new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com"));
 
+    @BeforeEach
+    public void init(){
+        RegisterResult registerResult = new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com"));
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("LoginSuccessGameTest")
+    public void LoginSuccessGameTest() {
         LoginResult loginResult = new LoginService().login(new LoginRequest("Gavin","CowsAreAwesome"));
 
         Assertions.assertNotNull(loginResult.getAuthToken(),
                 "Unable to login");
+    }
 
-        loginResult = new LoginService().login(new LoginRequest("Gavin","CowsStink"));
+    @Test
+    @Order(2)
+    @DisplayName("LoginGameTest")
+    public void UnauthorizedLoginGameTest() {
+        LoginResult loginResult = new LoginService().login(new LoginRequest("Gavin","CowsStink"));
+
         Assertions.assertEquals(loginResult,new LoginResult(null,null,"Error: unauthorized"), "Should have thrown a error.");
     }
 }

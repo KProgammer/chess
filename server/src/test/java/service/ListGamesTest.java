@@ -2,9 +2,7 @@ package service;
 
 import chess.ChessGame;
 import model.Game;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,16 +13,25 @@ import static server.Server.authorizationObject;
 import static server.Server.gameObject;
 
 public class ListGamesTest {
+
+
+
+    @AfterEach
+    public void clear(){
+        new ClearService().clear();
+    }
+
     @Test
-    @DisplayName("ListGamesTest")
-    public void CreateGameTest() {
+    @Order(1)
+    @DisplayName("ListGamesTestSuccess")
+    public void SuccessListGameTest() {
         String authToken = authorizationObject.createAuth("practice");
         String authTokenLance = authorizationObject.createAuth("Lance");
         String authTokenIvan = authorizationObject.createAuth("Ivan");
 
         new CreateGamesService().CreateGame(new CreateGameRequest("practiceGame",authToken));
-        new CreateGamesService().CreateGame(new CreateGameRequest("LancesGame",authToken));
-        new CreateGamesService().CreateGame(new CreateGameRequest("IvansGame",authToken));
+        new CreateGamesService().CreateGame(new CreateGameRequest("LancesGame",authTokenLance));
+        new CreateGamesService().CreateGame(new CreateGameRequest("IvansGame",authTokenIvan));
 
         int practiceGameID = gameObject.getGameID("practiceGame");
         int LancesGameID = gameObject.getGameID("LancesGame");
@@ -51,7 +58,12 @@ public class ListGamesTest {
 
         Assertions.assertEquals(new ListGamesService().List(new ListGamesRequest(authToken)),new ListGamesResult(gameList,null),
                 "Not all games listed or not in the right order.");
+    }
 
+    @Test
+    @Order(2)
+    @DisplayName("UnauthorizedListGamesTest")
+    public void UnauthorizedCreateGameTest() {
         Assertions.assertEquals(new ListGamesService().List(new ListGamesRequest(null)), new ListGamesResult(null,"Error: unauthorized"),
                 "Not authorized error not thrown.");
     }
