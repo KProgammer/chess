@@ -156,10 +156,6 @@ public class ChessPiece {
         //throw new RuntimeException("Not implemented");
     }
 
-    public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition){
-        return new ArrayList<>();
-    }
-
     /**
      * Adds a move to the list of valid moves
      *
@@ -192,6 +188,27 @@ public class ChessPiece {
         // If the proposed space is not on the board, don't add it.
         if (possiblePos.getColumn() < 1 || possiblePos.getColumn() > 8 || possiblePos.getRow() < 1 || possiblePos.getRow() > 8){
             return  false;
+        }
+        return true;
+    }
+
+    public void resetToStartPosition(){
+        posCol = position.getColumn();
+        posRow = position.getRow();
+    }
+
+    public boolean queenRookBishopAddPieceProcess(int posRow, int posCol){
+        // If the proposed space is not on the board, don't add it.
+        if (!isOnBoard(new ChessPosition(posRow, posCol))){
+            return false;
+        }
+
+        //Attempt to add the move
+        addPiece(pieceMoves, posRow, posCol);
+
+        //if there is any piece you must stop advancing
+        if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
+            return false;
         }
         return true;
     }
