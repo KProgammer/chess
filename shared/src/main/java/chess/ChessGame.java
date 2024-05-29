@@ -188,7 +188,6 @@ public class ChessGame {
 
         boolean invalidState = false;
 
-
         //First search the board to find the king
         for (int i = 1; i < 9; i++){
             for(int j = 1; j < 9; j++){
@@ -238,33 +237,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        //Stores any valid move that brings the king out of check
-        ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<>();
-
-        //This is to hold the number of valid moves.
-        int numValidMoves = 0;
-
-        //This is to be used to iterate through total moves and find the number of validmoves available.
-        Collection<ChessMove> placeholder;
-
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                if((curBoard.getPiece(new ChessPosition(i,j)) == null) ||
-                        ((curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor))){
-                    continue;
-                } else if (curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
-                    Collection<ChessMove> moves = validMoves(new ChessPosition(i,j));
-                    totalMoves.add(moves);
-                }
-            }
-        }
-        for (Collection<ChessMove> totalMove : totalMoves) {
-            placeholder = totalMove;
-            numValidMoves += placeholder.size();
-
-        }
-
-        return (numValidMoves == 0) && isInCheck(teamColor);
+        return (numberValidMoves(teamColor) == 0) && isInCheck(teamColor);
     }
 
     /**
@@ -275,6 +248,10 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        return (numberValidMoves(teamColor) == 0) && (!isInCheck(teamColor));
+    }
+
+    public Integer numberValidMoves(TeamColor teamColor){
         //Stores any valid move that brings the king out of check
         ArrayList<Collection<ChessMove>> totalMoves = new ArrayList<>();
 
@@ -300,8 +277,7 @@ public class ChessGame {
             numValidMoves += placeholder.size();
 
         }
-
-        return (numValidMoves == 0) && (!isInCheck(teamColor));
+        return numValidMoves;
     }
 
     /**
