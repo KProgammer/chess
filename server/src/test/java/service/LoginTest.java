@@ -16,7 +16,7 @@ public class LoginTest {
     @Test
     @Order(1)
     @DisplayName("LoginSuccessGameTest")
-    public void LoginSuccessGameTest() {
+    public void loginSuccessGameTest() {
         LoginResult loginResult = new LoginService().login(new LoginRequest("Gavin","CowsAreAwesome"));
 
         Assertions.assertNotNull(loginResult.getAuthToken(),
@@ -26,7 +26,7 @@ public class LoginTest {
     @Test
     @Order(2)
     @DisplayName("LoginGameTest")
-    public void UnauthorizedLoginGameTest() {
+    public void unauthorizedLoginGameTest() {
         LoginResult loginResult = new LoginService().login(new LoginRequest("Gavin","CowsStink"));
 
         Assertions.assertEquals(loginResult,new LoginResult(null,null,"Error: unauthorized"), "Should have thrown a error.");

@@ -91,7 +91,33 @@ public class ChessGame {
         //This stores the move that is being considered
         ChessMove possibleMove;
 
+        for (ChessMove chessMove : movesOfInterest) {
+            //reset the board to the current board
+            try {
+                possibleBoard = curBoard.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
 
+            //Add the move possible move
+            possibleMove = chessMove;
+
+            //Clear both squares
+            possibleBoard.addPiece(startPosition, null);
+            possibleBoard.addPiece(possibleMove.getEndPosition(), null);
+            //Set the piece in the new position
+            possibleBoard.addPiece(possibleMove.getEndPosition(), curBoard.getPiece(startPosition));
+
+            //Set the new board to the possible game.
+            possibleGame.setBoard(possibleBoard);
+
+
+            //If the king is not in check, add the move to the valMoves variable
+            if (!possibleGame.isInCheck(possibleBoard.getPiece(possibleMove.getEndPosition()).getTeamColor())) {
+                valMoves.add(possibleMove);
+            }
+        }
+        /*
         if (isInCheck(curBoard.getPiece(startPosition).getTeamColor())) {
             //If the king is in check we must check if any of the moves will bring the king out of check
             for (ChessMove chessMove : movesOfInterest) {
@@ -150,7 +176,7 @@ public class ChessGame {
                 }
 
             }
-        }
+        }*/
         return valMoves;
     }
 

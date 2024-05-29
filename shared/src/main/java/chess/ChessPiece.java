@@ -17,9 +17,9 @@ public class ChessPiece {
     private final ChessBoard board;
     private final ChessPosition position;
     private ArrayList<ChessMove> pieceMoves;
-    private int pos_row;
-    private int pos_col;
-    private ChessGame cur_game;
+    private int posRow;
+    private int posCol;
+    private ChessGame curGame;
     private ChessPiece bishop;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
@@ -38,12 +38,12 @@ public class ChessPiece {
         this.pieceMoves = new ArrayList<>();
 
         // Stores the possible positions for each piece
-        this.pos_row= position.getRow();
-        this.pos_col = position.getColumn();
+        this.posRow = position.getRow();
+        this.posCol = position.getColumn();
 
         //This is used to track the current game
-        this.cur_game = new ChessGame();
-        cur_game.setBoard(board);
+        this.curGame = new ChessGame();
+        curGame.setBoard(board);
 
         this.type = board.getPiece(position).getPieceType();
         this.pieceColor = board.getPiece(position).getTeamColor();

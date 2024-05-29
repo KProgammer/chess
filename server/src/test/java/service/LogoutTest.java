@@ -15,7 +15,7 @@ public class LogoutTest {
     @Test
     @Order(1)
     @DisplayName("LogoutGameTest")
-    public void LogoutGameTest() {
+    public void logoutGameTest() {
         RegisterResult registerResult = new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com"));
 
         LogoutResult logoutResult = new LogoutService().logout(new LogoutRequest(registerResult.getAuthToken()));
@@ -27,7 +27,7 @@ public class LogoutTest {
     @Test
     @Order(2)
     @DisplayName("UnauthorizedLogoutGameTest")
-    public void UnauthorizedLogoutGameTest() {
+    public void unauthorizedLogoutGameTest() {
         RegisterResult registerResult = new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com"));
 
         LogoutResult logoutResult = new LogoutService().logout(new LogoutRequest(registerResult.getAuthToken()));
