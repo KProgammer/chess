@@ -1,5 +1,9 @@
 package service;
 
+import Requests.LogoutRequest;
+import Requests.RegisterRequest;
+import Results.LogoutResult;
+import Results.RegisterResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;

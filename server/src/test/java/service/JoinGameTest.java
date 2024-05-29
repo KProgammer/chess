@@ -1,5 +1,8 @@
 package service;
 
+import Requests.CreateGameRequest;
+import Requests.JoinGameRequest;
+import Results.JoinGameResult;
 import chess.ChessGame;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

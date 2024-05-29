@@ -1,5 +1,8 @@
 package service;
 
+import Requests.CreateGameRequest;
+import Results.CreateGameResult;
+
 import java.util.Random;
 
 import static server.Server.authorizationObject;

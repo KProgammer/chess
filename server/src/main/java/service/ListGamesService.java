@@ -1,5 +1,8 @@
 package service;
 
+import Requests.ListGamesRequest;
+import Results.ListGamesResult;
+
 import static server.Server.authorizationObject;
 import static server.Server.gameObject;
 

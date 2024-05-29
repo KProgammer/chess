@@ -1,8 +1,7 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import Requests.RegisterRequest;
+import Results.RegisterResult;
 
 import static server.Server.authorizationObject;
 import static server.Server.userObject;

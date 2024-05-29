@@ -1,16 +1,15 @@
-package service;
+package Requests;
 
 import java.util.Objects;
 
-public class RegisterRequest {
+public class LoginRequest {
     private final String username;
     private final String password;
-    private final String email;
 
-    RegisterRequest(String username, String password, String email){
+    public LoginRequest(String username, String password){
+
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 
     public String getUsername() {
@@ -21,20 +20,16 @@ public class RegisterRequest {
         return password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RegisterRequest request = (RegisterRequest) o;
-        return Objects.equals(username, request.username) && Objects.equals(password, request.password) && Objects.equals(email, request.email);
+        LoginRequest that = (LoginRequest) o;
+        return Objects.equals(username, that.username) && Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, email);
+        return Objects.hash(username, password);
     }
 }

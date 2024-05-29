@@ -1,5 +1,7 @@
 package service;
 
+import Results.ClearResult;
+
 import static server.Server.*;
 
 public class ClearService {

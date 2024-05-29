@@ -1,12 +1,13 @@
 package service;
 
+import Requests.RegisterRequest;
+import Results.RegisterResult;
 import model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import static server.Server.authorizationObject;
 import static server.Server.userObject;
 
 public class RegisterTest {

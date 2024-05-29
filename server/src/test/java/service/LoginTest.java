@@ -1,8 +1,10 @@
 package service;
 
+import Requests.LoginRequest;
+import Requests.RegisterRequest;
+import Results.LoginResult;
+import Results.RegisterResult;
 import org.junit.jupiter.api.*;
-
-import static server.Server.authorizationObject;
 
 public class LoginTest {
 

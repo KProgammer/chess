@@ -1,7 +1,7 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import Requests.LogoutRequest;
+import Results.LogoutResult;
 
 import static server.Server.authorizationObject;
 

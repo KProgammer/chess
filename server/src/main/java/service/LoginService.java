@@ -1,6 +1,7 @@
 package service;
 
-import spark.Response;
+import Requests.LoginRequest;
+import Results.LoginResult;
 
 import java.util.Objects;
 

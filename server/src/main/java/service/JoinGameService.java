@@ -1,5 +1,7 @@
 package service;
 
+import Requests.JoinGameRequest;
+import Results.JoinGameResult;
 import chess.ChessGame;
 
 import static server.Server.authorizationObject;
