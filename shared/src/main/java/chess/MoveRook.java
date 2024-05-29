@@ -30,6 +30,36 @@ public class MoveRook extends ChessPiece {
 
     public ArrayList<ChessMove> pieceMoves(ChessPosition myPosition) {
 
+        for (int i = -1; i < 2; i++){
+            for(int j = -1; j < 2; j++){
+                while((posCol < 8 && Integer.signum(i) == 0 && Integer.signum(j) > 0) ||
+                        (posRow > 1 && Integer.signum(i) < 0 && Integer.signum(j) == 0) ||
+                        (posCol > 1 && Integer.signum(i) == 0 && Integer.signum(j) < 0) ||
+                        (posRow < 8 && Integer.signum(i) > 0 && Integer.signum(j) == 0)){
+                    //Add the values
+                    posRow += i;
+                    posCol += j;
+
+                    // If the proposed space is not on the board, don't add it.
+                    if (!isOnBoard(new ChessPosition(posRow, posCol))){
+                        break;
+                    }
+
+                    //Attempt to add the move
+                    addPiece(pieceMoves, posRow, posCol);
+
+                    //if there is any piece you must stop advancing
+                    if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
+                        break;
+                    }
+                }
+                //Reset the values of pos_row and pos_col
+                posRow = myPosition.getRow();
+                posCol = myPosition.getColumn();
+            }
+        }
+
+        /*
         //Calculate moves for the right or towards col 8
         while(posCol < 8){
             //Add the values
@@ -113,7 +143,7 @@ public class MoveRook extends ChessPiece {
             if(board.getPiece(new ChessPosition(posRow, posCol)) != null) {
                 break;
             }
-        }
+        }*/
 
         return pieceMoves;
     }
