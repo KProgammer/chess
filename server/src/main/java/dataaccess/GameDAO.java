@@ -24,5 +24,5 @@ public interface GameDAO {
 
     int getGameID(String gameName);
 
-    void clear();
+    void clear() throws Exception;
 }

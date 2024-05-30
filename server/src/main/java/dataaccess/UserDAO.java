@@ -12,5 +12,5 @@ public interface UserDAO {
 
     User getUser(String username);
 
-    void clear();
+    void clear() throws Exception;
 }

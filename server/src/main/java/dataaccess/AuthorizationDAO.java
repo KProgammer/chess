@@ -8,7 +8,7 @@ import java.util.Map;
 public interface AuthorizationDAO {
     Map<String, Authorization> LIST_AUTHTOKEN_USER = new HashMap<>();
 
-    String createAuth(String username);
+    String createAuth(String username) throws Exception;
 
     Authorization getAuth(String authToken);
 
@@ -16,5 +16,5 @@ public interface AuthorizationDAO {
 
     void deleteAuth(String authToken);
 
-    void clear();
+    void clear() throws Exception;
 }
