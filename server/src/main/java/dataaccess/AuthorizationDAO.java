@@ -10,11 +10,11 @@ public interface AuthorizationDAO {
 
     String createAuth(String username) throws Exception;
 
-    Authorization getAuth(String authToken);
+    Authorization getAuth(String authToken) throws Exception;
 
-    String getAuthToken(String username);
+    String getAuthToken(String username) throws Exception;
 
-    void deleteAuth(String authToken);
+    void deleteAuth(String authToken) throws Exception;
 
     void clear() throws Exception;
 }

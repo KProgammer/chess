@@ -3,8 +3,7 @@ package dataaccess;
 import model.Authorization;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 public class AuthorizationSqlDAO implements AuthorizationDAO {
 
@@ -14,27 +13,51 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
 
     @Override
     public String createAuth(String username) throws Exception{
+        String newAuthtoken = UUID.randomUUID().toString();
+
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO  game")) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (id, username, authToken, json) " +
+                    "VALUES ("+newAuthtoken+", "+username+", "+newAuthtoken+")")) {
+                var rs = preparedStatement.executeQuery();
+                 rs.next();
+            }
+        }
+        return newAuthtoken;
+    }
+
+    @Override
+    public Authorization getAuth(String authToken) throws Exception {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT username, authToken FROM authorization WHERE" +
+                    "authToken = '"+authToken+"' LIMIT 1")) {
                 var rs = preparedStatement.executeQuery();
                 rs.next();
             }
         }
+        return null;
     }
 
     @Override
-    public Authorization getAuth(String authToken){
-
+    public String getAuthToken(String username) throws Exception {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authorization WHERE" +
+                    "username = '"+username+"' LIMIT 1")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
+        return null;
     }
 
     @Override
-    public String getAuthToken(String username){
-
-    }
-
-    @Override
-    public void deleteAuth(String authToken){
-
+    public void deleteAuth(String authToken) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM authorization WHERE" +
+                    "authToken = '"+authToken+"' LIMIT 1")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
     }
 
     @Override
@@ -50,7 +73,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  authorization (
-              `id` int NOT NULL AUTO_INCREMENT
+              `id` varchar(256) NOT NULL AUTO_INCREMENT
               `userName` varchar(256),
               `authToken` varchar(256),
               `json` TEXT DEFAULT NULL,
