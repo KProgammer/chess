@@ -8,9 +8,9 @@ import java.util.Map;
 public interface UserDAO {
     Map<String, User> LIST_OF_USERS = new HashMap<>();
 
-    void createUser(String username, String password, String email);
+    void createUser(String username, String password, String email) throws Exception;
 
-    User getUser(String username);
+    User getUser(String username) throws Exception;
 
     void clear() throws Exception;
 }

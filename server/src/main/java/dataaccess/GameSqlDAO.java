@@ -2,18 +2,10 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.Game;
-import org.eclipse.jetty.client.HttpResponse;
-import org.eclipse.jetty.client.HttpResponseException;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.http.HttpVersion;
 
-import javax.xml.crypto.Data;
-import java.sql.*;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GameSqlDAO implements GameDAO{
@@ -22,55 +14,84 @@ public class GameSqlDAO implements GameDAO{
     public GameSqlDAO() throws DataAccessException {
         configureDatabase();
     }
-    public void example() throws Exception {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT 1+1")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
-                System.out.println(rs.getInt(1));
-            }
-        }
-    }
 
     @Override
     public void createGame(int gameID, String gameName) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT 1+1")) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, ChessGame) " +
+                            "VALUES ('"+gameID+"', NULL, NULL, '"+gameName+", '"+new ChessGame()+"'")) {
                 var rs = preparedStatement.executeQuery();
                 rs.next();
-                System.out.println(rs.getInt(1));
             }
         }
     }
 
     @Override
-    public Game getGame(int gameID){
-
+    public Game getGame(int gameID) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, ChessGame FROM authorization WHERE" +
+                    "gameID = '"+gameID+"' LIMIT 1")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
+        return null;
     }
 
     @Override
-    public Collection<Game> listGames(){
-
+    public Collection<Game> listGames() throws Exception {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM authorization")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
+        return null;
     }
 
     @Override
-    public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor){
-
+    public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET teamColor = '"+teamColor+
+                    "' WHERE gameID = '"+gameID+"'")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
     }
 
     @Override
-    public void updateGame(int gameID, String newGamename){
-
+    public void updateGame(int gameID, String newGamename) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET gameName = '"+newGamename+
+                    "' WHERE gameID = '"+gameID+"'")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
     }
 
     @Override
-    public void updateGame(int gameID, ChessGame newGame){
-
+    public void updateGame(int gameID, ChessGame newGame) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET ChessGame = '"+newGame+
+                    "' WHERE gameID = '"+gameID+"'")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
     }
 
     @Override
-    public int getGameID(String gameName){
-
+    public int getGameID(String gameName) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM authorization WHERE" +
+                    "gameName = '"+gameName+"' LIMIT 1")) {
+             var rs = preparedStatement.executeQuery();
+             rs.next();
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -91,12 +112,14 @@ public class GameSqlDAO implements GameDAO{
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256),
+              `ChessGame` varchar(256),
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`),
               INDEX(gameID),
               INDEX(whiteUsername),
               INDEX(blackUsername),
               INDEX(gameName)
+              INDEX(ChessGame)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

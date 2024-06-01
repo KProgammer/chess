@@ -14,13 +14,26 @@ public class UserSqlDAO implements UserDAO{
     }
 
     @Override
-    public void createUser(String username, String password, String email){
-
+    public void createUser(String username, String password, String email) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) " +
+                    "VALUES ('"+username+"', '"+password+", '"+email+"'")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
     }
 
     @Override
-    public User getUser(String username){
-
+    public User getUser(String username) throws Exception{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT user, password, email FROM user WHERE" +
+                    "username = '"+username+"' LIMIT 1")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -41,7 +54,7 @@ public class UserSqlDAO implements UserDAO{
               `password` varchar(256),
               `email` varchar(256),
               `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`id`),
+              PRIMARY KEY (`username`),
               INDEX(username),
               INDEX(password),
               INDEX(email)
