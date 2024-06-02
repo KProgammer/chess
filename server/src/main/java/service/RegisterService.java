@@ -1,5 +1,6 @@
 package service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import requests.RegisterRequest;
 import results.RegisterResult;
 
@@ -19,7 +20,9 @@ public class RegisterService {
                 return new RegisterResult(null, null,"Error: bad request");
             }
 
-            userObject.createUser(request.getUsername(), request.getPassword(),request.getEmail());
+            String hashPassword = BCrypt.hashpw(request.getPassword(),BCrypt.gensalt());
+
+            userObject.createUser(request.getUsername(), hashPassword,request.getEmail());
             String authToken = authorizationObject.createAuth(request.getUsername());
 
             return new RegisterResult(request.getUsername(), authToken,null);

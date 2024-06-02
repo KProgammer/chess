@@ -1,5 +1,6 @@
 package service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import requests.LoginRequest;
 import results.LoginResult;
 
@@ -14,10 +15,9 @@ public class LoginService {
     public LoginResult login(LoginRequest request) {
         try {
             if(userObject.getUser(request.getUsername()) == null ||
-                    !Objects.equals(userObject.getUser(request.getUsername()).password(), request.getPassword())){
+                    !Objects.equals(userObject.getUser(request.getUsername()).password(), BCrypt.hashpw(request.getPassword(),BCrypt.gensalt()))){
                 return new LoginResult(null,null,"Error: unauthorized");
             }
-
             String authToken = authorizationObject.createAuth(request.getUsername());
         } catch (Exception e) {
             System.out.println("Threw Runtime Error in login");
