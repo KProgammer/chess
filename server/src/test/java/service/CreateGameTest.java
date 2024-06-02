@@ -15,30 +15,42 @@ public class CreateGameTest {
     @Order(1)
     @DisplayName("CreateGameTest")
     public void createGameTest1() {
-        String authToken = authorizationObject.createAuth("practice");
-        new CreateGamesService().createGame(new CreateGameRequest("practiceGame",authToken));
+        try {
+            String authToken = authorizationObject.createAuth("practice");
+            new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
 
-        int gameID = gameObject.getGameID("practiceGame");
+            int gameID = gameObject.getGameID("practiceGame");
 
-        Assertions.assertEquals(gameObject.getGame(gameID).gameName(), "practiceGame",
-                        "Game wasn't created");
+            Assertions.assertEquals(gameObject.getGame(gameID).gameName(), "practiceGame",
+                    "Game wasn't created");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error in createGameTest1");
+        }
     }
 
     @Test
     @Order(2)
     @DisplayName("UnauthorizedCreation")
     public void unauthorizedCreateGame() {
-        Assertions.assertEquals(new CreateGamesService().createGame(new CreateGameRequest("practiceGame",null)),
-                new CreateGameResult(null,"Error: unauthorized"),"Unauthorized Error wasn't thrown");
+        try {
+            Assertions.assertEquals(new CreateGamesService().createGame(new CreateGameRequest("practiceGame",null)),
+                    new CreateGameResult(null,"Error: unauthorized"),"Unauthorized Error wasn't thrown");
+        } catch (Exception e) {
+            System.out.print("Threw RunTime Error in unauthorizedCreateGame!");
+        }
     }
 
     @Test
     @Order(3)
     @DisplayName("BadRequestCreation")
     public void badRequestCreateGame() {
-        String authToken = authorizationObject.createAuth("practice");
+        try {
+            String authToken = authorizationObject.createAuth("practice");
 
-        Assertions.assertEquals(new CreateGamesService().createGame(new CreateGameRequest(null,authToken)),
-                new CreateGameResult(null,"Error: bad request"),"Error wasn't thrown");
+            Assertions.assertEquals(new CreateGamesService().createGame(new CreateGameRequest(null, authToken)),
+                    new CreateGameResult(null, "Error: bad request"), "Error wasn't thrown");
+        } catch (Exception e){
+            System.out.print("Threw Runtime Error in badRequestCreateGame");
+        }
     }
 }

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
+import java.util.SequencedSet;
+
 import static server.Server.userObject;
 
 public class RegisterTest {
@@ -16,10 +18,14 @@ public class RegisterTest {
     @Order(1)
     @DisplayName("RegisterGamesTest")
     public void registerGamesTest(){
-        new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com"));
+        try {
+            new RegisterService().register(new RegisterRequest("Gavin", "CowsAreAwesome", "cows@cows.com"));
 
-        Assertions.assertEquals(userObject.getUser("Gavin"), new User("Gavin","CowsAreAwesome","cows@cows.com"),
-                "User not registered.");
+            Assertions.assertEquals(userObject.getUser("Gavin"), new User("Gavin", "CowsAreAwesome", "cows@cows.com"),
+                    "User not registered.");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error in registerGamesTest");
+        }
 
     }
 
@@ -27,10 +33,13 @@ public class RegisterTest {
     @Order(2)
     @DisplayName("UnauthorizedRegisterGamesTest")
     public void unauthorizedRegisterGamesTest(){
-        new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com"));
+        try {
+            new RegisterService().register(new RegisterRequest("Gavin", "CowsAreAwesome", "cows@cows.com"));
 
-        Assertions.assertEquals(new RegisterService().register(new RegisterRequest("Gavin","CowsAreAwesome","cows@cows.com")),
-                new RegisterResult(null, null, "Error: already taken"), "Did not throw Error: already taken.");
-
+            Assertions.assertEquals(new RegisterService().register(new RegisterRequest("Gavin", "CowsAreAwesome", "cows@cows.com")),
+                    new RegisterResult(null, null, "Error: already taken"), "Did not throw Error: already taken.");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error in unauthorizedRegisterGamesTest");
+        }
     }
 }

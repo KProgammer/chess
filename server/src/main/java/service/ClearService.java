@@ -7,9 +7,13 @@ import static server.Server.*;
 public class ClearService {
     public ClearResult clear(){
 
-        authorizationObject.clear();
-        gameObject.clear();
-        userObject.clear();
+        try {
+            authorizationObject.clear();
+            gameObject.clear();
+            userObject.clear();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return new ClearResult(null);
     }

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class AuthorizationSqlDAO implements AuthorizationDAO {
 
-    AuthorizationSqlDAO() throws DataAccessException {
+    public AuthorizationSqlDAO() throws DataAccessException {
         configureDatabase();
     }
 

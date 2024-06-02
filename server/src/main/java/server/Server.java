@@ -10,9 +10,19 @@ import spark.*;
 import java.util.Objects;
 
 public class Server {
-    public static GameDAO gameObject = new GameMemoryDAO();
-    public static UserDAO userObject = new UserMemoryDAO();
-    public static AuthorizationDAO authorizationObject = new AuthorizationMemoryDAO();
+    public static GameDAO gameObject;
+    public static UserDAO userObject;
+    public static AuthorizationDAO authorizationObject;
+
+    static {
+        try {
+            gameObject = new GameSqlDAO();
+            userObject = new UserSqlDAO();
+            authorizationObject = new AuthorizationSqlDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

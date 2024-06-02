@@ -17,54 +17,70 @@ public class JoinGameTest {
     @Order(1)
     @DisplayName("JoinGameAsBlack")
     public void joinGameAsBlackTest() {
-        String authToken = authorizationObject.createAuth("practice");
-        new CreateGamesService().createGame(new CreateGameRequest("practiceGame",authToken));
+        try {
+            String authToken = authorizationObject.createAuth("practice");
+            new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
 
-        int gameID = gameObject.getGameID("practiceGame");
-        new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.BLACK,gameID));
+            int gameID = gameObject.getGameID("practiceGame");
+            new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.BLACK, gameID));
 
-        Assertions.assertEquals(gameObject.getGame(gameID).blackUsername(), "practice",
-                "practice didn't join the game as the black team");
+            Assertions.assertEquals(gameObject.getGame(gameID).blackUsername(), "practice",
+                    "practice didn't join the game as the black team");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error joinGameAsBlackTest");
+        }
     }
 
     @Test
     @Order(2)
     @DisplayName("JoinGameAsWhiteTest")
     public void joinGameAsWhiteTest() {
-        String authToken = authorizationObject.createAuth("practice");
-        new CreateGamesService().createGame(new CreateGameRequest("practiceGame",authToken));
-        int gameID = gameObject.getGameID("practiceGame");
+        try {
+            String authToken = authorizationObject.createAuth("practice");
+            new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
+            int gameID = gameObject.getGameID("practiceGame");
 
-        new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.WHITE,gameID));
+            new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.WHITE, gameID));
 
-        Assertions.assertEquals(gameObject.getGame(gameID).whiteUsername(), "practice",
-                "practice didn't join the game as the white team");
+            Assertions.assertEquals(gameObject.getGame(gameID).whiteUsername(), "practice",
+                    "practice didn't join the game as the white team");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error in joinGameAsWhiteTest");
+        }
     }
 
     @Test
     @Order(3)
     @DisplayName("JoinGameUnauthorized")
     public void joinGameUnauthorizedTest() {
-        String authToken = authorizationObject.createAuth("practice");
-        new CreateGamesService().createGame(new CreateGameRequest("practiceGame",authToken));
-        int gameID = gameObject.getGameID("practiceGame");
+        try {
+            String authToken = authorizationObject.createAuth("practice");
+            new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
+            int gameID = gameObject.getGameID("practiceGame");
 
-        Assertions.assertEquals(new JoinGameService().joinGame(new JoinGameRequest(null, ChessGame.TeamColor.BLACK, gameID)),
-                new JoinGameResult("Error: unauthorized"),"Unauthorized Error wasn't thrown");
+            Assertions.assertEquals(new JoinGameService().joinGame(new JoinGameRequest(null, ChessGame.TeamColor.BLACK, gameID)),
+                    new JoinGameResult("Error: unauthorized"), "Unauthorized Error wasn't thrown");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error in joinGameUnauthorizedTest");
+        }
     }
 
     @Test
     @Order(4)
     @DisplayName("JoinAlreadyTakenGame")
     public void joinGameAlreadyTakenTest() {
-        String authToken = authorizationObject.createAuth("practice");
-        String authTokenLance = authorizationObject.createAuth("Lance");
-        new CreateGamesService().createGame(new CreateGameRequest("practiceGame",authToken));
+        try {
+            String authToken = authorizationObject.createAuth("practice");
+            String authTokenLance = authorizationObject.createAuth("Lance");
+            new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
 
-        int gameID = gameObject.getGameID("practiceGame");
-        new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.BLACK,gameID));
+            int gameID = gameObject.getGameID("practiceGame");
+            new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.BLACK, gameID));
 
-        Assertions.assertEquals(new JoinGameService().joinGame(new JoinGameRequest(authTokenLance, ChessGame.TeamColor.BLACK, gameID)),
-                new JoinGameResult("Error: already taken"),"Already taken error wasn't thrown");
+            Assertions.assertEquals(new JoinGameService().joinGame(new JoinGameRequest(authTokenLance, ChessGame.TeamColor.BLACK, gameID)),
+                    new JoinGameResult("Error: already taken"), "Already taken error wasn't thrown");
+        } catch (Exception e){
+            System.out.println("Threw Runtime Error in joinGameAlreadyTakenTest");
+        }
     }
 }

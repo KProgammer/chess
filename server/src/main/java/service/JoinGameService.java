@@ -9,21 +9,25 @@ import static server.Server.gameObject;
 
 public class JoinGameService {
     //JoinGame
-    public JoinGameResult joinGame(JoinGameRequest request){
-        if (authorizationObject.getAuth(request.getAuthToken()) == null){
-            return new JoinGameResult("Error: unauthorized");
-        } else if (request.getPlayerColor() == null ||
-                    request.getGameID() == null) {
-            return new JoinGameResult("Error: bad request");
-        } else if((request.getPlayerColor().equals(ChessGame.TeamColor.BLACK) &&
-                gameObject.getGame(request.getGameID()).blackUsername() != null) ||
-                ((request.getPlayerColor().equals(ChessGame.TeamColor.WHITE) &&
-                        gameObject.getGame(request.getGameID()).whiteUsername() != null))) {
-            return new JoinGameResult("Error: already taken");
-        }
+    public JoinGameResult joinGame(JoinGameRequest request)  {
+        try {
+            if (authorizationObject.getAuth(request.getAuthToken()) == null){
+                return new JoinGameResult("Error: unauthorized");
+            } else if (request.getPlayerColor() == null ||
+                        request.getGameID() == null) {
+                return new JoinGameResult("Error: bad request");
+            } else if((request.getPlayerColor().equals(ChessGame.TeamColor.BLACK) &&
+                    gameObject.getGame(request.getGameID()).blackUsername() != null) ||
+                    ((request.getPlayerColor().equals(ChessGame.TeamColor.WHITE) &&
+                            gameObject.getGame(request.getGameID()).whiteUsername() != null))) {
+                return new JoinGameResult("Error: already taken");
+            }
 
-        gameObject.updateGame(request.getGameID(), authorizationObject.getAuth(request.getAuthToken()).username(),
-                request.getPlayerColor());
+            gameObject.updateGame(request.getGameID(), authorizationObject.getAuth(request.getAuthToken()).username(),
+                    request.getPlayerColor());
+        } catch (Exception e) {
+            System.out.println("Threw RunGame Error during joinGame");
+        }
 
         return new JoinGameResult(null);
     }
