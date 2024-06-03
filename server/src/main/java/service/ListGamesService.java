@@ -14,7 +14,8 @@ public class ListGamesService {
     //ListGame
     public ListGamesResult makeList(ListGamesRequest request) {
         try {
-            if (authorizationObject.getAuth(request.getAuthToken()) == null){
+            if ((request.getAuthToken() == null) ||
+                    (authorizationObject.getAuth(request.getAuthToken()) == null)){
                 return new ListGamesResult(null, "Error: unauthorized");
             }
 

@@ -31,7 +31,7 @@ public class UserSqlDAO implements UserDAO{
         String email = null;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT user, password, email FROM user WHERE username = ? LIMIT 1")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT username, password, email FROM user WHERE username = ? LIMIT 1")) {
                 preparedStatement.setString(1,username);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()){
@@ -57,7 +57,7 @@ public class UserSqlDAO implements UserDAO{
             //`json` TEXT DEFAULT NULL,
             """
             CREATE TABLE IF NOT EXISTS  user (
-              `id` int NOT NULL AUTO_INCREMENT
+              `id` int NOT NULL AUTO_INCREMENT,
               `username` varchar(256),
               `password` varchar(256),
               `email` varchar(256),
