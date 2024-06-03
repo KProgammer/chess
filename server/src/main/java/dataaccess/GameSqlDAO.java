@@ -18,10 +18,11 @@ public class GameSqlDAO implements GameDAO{
     @Override
     public void createGame(int gameID, String gameName) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, ChessGame) " +
-                            "VALUES ('"+gameID+"', NULL, NULL, '"+gameName+", '"+new ChessGame()+"'")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, ChessGame) VALUES (?, NULL, NULL,?, ?)")) {
+                preparedStatement.setInt(1,gameID);
+                preparedStatement.setString(2,gameName);
+                preparedStatement.setObject(3,new ChessGame() );
+                preparedStatement.executeUpdate();
             }
         }
     }

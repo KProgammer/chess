@@ -16,9 +16,11 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         String newAuthtoken = UUID.randomUUID().toString();
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (id, username, authToken) " +
-                    "VALUES ("+newAuthtoken+", "+username+", "+newAuthtoken+")")) {
-                var rs = preparedStatement.executeUpdate();
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (username, authToken) VALUES (?, ?)")) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2,newAuthtoken);
+                preparedStatement.executeUpdate();
+                // var rs = preparedStatement.executeUpdate();
                 //rs.next();
             }
         }
@@ -27,35 +29,49 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
 
     @Override
     public Authorization getAuth(String authToken) throws Exception {
+        String username = null;
+        String recauthToken = null;
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT username, authToken FROM authorization WHERE" +
-                    "authToken = '"+authToken+"' LIMIT 1")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+                    "authToken = ? LIMIT 1")) {
+                preparedStatement.setString(1,authToken);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        username = rs.getString("username");
+                        recauthToken = rs.getString("authToken");
+                    }
+                }
+
             }
         }
-        return null;
+        return new Authorization(username, recauthToken);
     }
 
     @Override
     public String getAuthToken(String username) throws Exception {
+        String authToken = null;
+
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authorization WHERE" +
-                    "username = '"+username+"' LIMIT 1")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authorization WHERE username = ? LIMIT 1")) {
+                preparedStatement.setString(1,username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while(rs.next()){
+                        authToken = rs.getString("authToken");
+                    }
+                }
             }
         }
-        return null;
+        return authToken;
     }
 
     @Override
     public void deleteAuth(String authToken) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("DELETE FROM authorization WHERE" +
-                    "authToken = '"+authToken+"' LIMIT 1")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+                    "authToken = ? LIMIT 1")) {
+                preparedStatement.setString(1, authToken);
+                preparedStatement.executeUpdate();
             }
         }
     }
@@ -64,8 +80,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     public void clear() throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("DELETE FROM authorization")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+                preparedStatement.executeUpdate();
             }
         }
     }
@@ -74,10 +89,9 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
             //NOT NULL AUTO_INCREMENT
             """
             CREATE TABLE IF NOT EXISTS authorization (
-              `id` varchar(256),
+              `id` INT NOT NULL AUTO_INCREMENT,
               `userName` varchar(256),
               `authToken` varchar(256),
-              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`),
               INDEX(username),
               INDEX(authToken)
