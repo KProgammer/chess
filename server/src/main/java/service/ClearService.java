@@ -12,7 +12,7 @@ public class ClearService {
             gameObject.clear();
             userObject.clear();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Threw Runtime Error in clear.");
         }
 
         return new ClearResult(null);

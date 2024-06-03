@@ -97,7 +97,7 @@ public class GameSqlDAO implements GameDAO{
     @Override
     public void clear() throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DROP TABLE game")) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM game")) {
                 var rs = preparedStatement.executeQuery();
                 rs.next();
             }
@@ -107,7 +107,7 @@ public class GameSqlDAO implements GameDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  game (
-              `id` int NOT NULL AUTO_INCREMENT
+              `id` int NOT NULL AUTO_INCREMENT,
               `gameID` SMALLINT(255),
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
@@ -118,7 +118,7 @@ public class GameSqlDAO implements GameDAO{
               INDEX(gameID),
               INDEX(whiteUsername),
               INDEX(blackUsername),
-              INDEX(gameName)
+              INDEX(gameName),
               INDEX(ChessGame)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """

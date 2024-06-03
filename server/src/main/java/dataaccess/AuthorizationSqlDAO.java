@@ -16,10 +16,10 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         String newAuthtoken = UUID.randomUUID().toString();
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (id, username, authToken, json) " +
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (id, username, authToken) " +
                     "VALUES ("+newAuthtoken+", "+username+", "+newAuthtoken+")")) {
-                var rs = preparedStatement.executeQuery();
-                 rs.next();
+                var rs = preparedStatement.executeUpdate();
+                //rs.next();
             }
         }
         return newAuthtoken;
@@ -63,7 +63,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     @Override
     public void clear() throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DROP TABLE game")) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM authorization")) {
                 var rs = preparedStatement.executeQuery();
                 rs.next();
             }
@@ -71,9 +71,10 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     }
 
     private final String[] createStatements = {
+            //NOT NULL AUTO_INCREMENT
             """
-            CREATE TABLE IF NOT EXISTS  authorization (
-              `id` varchar(256) NOT NULL AUTO_INCREMENT
+            CREATE TABLE IF NOT EXISTS authorization (
+              `id` varchar(256),
               `userName` varchar(256),
               `authToken` varchar(256),
               `json` TEXT DEFAULT NULL,

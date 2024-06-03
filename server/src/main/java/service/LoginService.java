@@ -15,10 +15,13 @@ public class LoginService {
     public LoginResult login(LoginRequest request) {
         try {
             if(userObject.getUser(request.getUsername()) == null ||
-                    !Objects.equals(userObject.getUser(request.getUsername()).password(), BCrypt.hashpw(request.getPassword(),BCrypt.gensalt()))){
+                    !Objects.equals(userObject.getUser(request.getUsername()).password(),
+                            BCrypt.hashpw(request.getPassword(),BCrypt.gensalt()))){
                 return new LoginResult(null,null,"Error: unauthorized");
             }
             String authToken = authorizationObject.createAuth(request.getUsername());
+
+            return new LoginResult(request.getUsername(),authToken, null);
         } catch (Exception e) {
             System.out.println("Threw Runtime Error in login");
         }

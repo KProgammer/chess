@@ -39,7 +39,7 @@ public class UserSqlDAO implements UserDAO{
     @Override
     public void clear() throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DROP TABLE user")) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM user")) {
                 var rs = preparedStatement.executeQuery();
                 rs.next();
             }
@@ -47,9 +47,9 @@ public class UserSqlDAO implements UserDAO{
     }
 
     private final String[] createStatements = {
+            //`id` int NOT NULL AUTO_INCREMENT,
             """
             CREATE TABLE IF NOT EXISTS  user (
-              `id` int NOT NULL AUTO_INCREMENT
               `username` varchar(256),
               `password` varchar(256),
               `email` varchar(256),
