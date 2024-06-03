@@ -4,6 +4,7 @@ import chess.ChessGame;
 import model.Game;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,34 +30,61 @@ public class GameSqlDAO implements GameDAO{
 
     @Override
     public Game getGame(int gameID) throws Exception{
+        int storedGameID = 0;
+        String whiteUsername = null;
+        String blackUsername = null;
+        String gameName = null;
+        ChessGame chessGame = null;
+
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, ChessGame FROM authorization WHERE" +
-                    "gameID = '"+gameID+"' LIMIT 1")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, ChessGame FROM game WHERE gameID = ? LIMIT 1")) {
+                preparedStatement.setInt(1, gameID);
+                try (var rs = preparedStatement.executeQuery()){
+                    while(rs.next()) {
+                        whiteUsername = rs.getString("whiteUsername");
+                        blackUsername = rs.getString("blackUsername");
+                        gameName = rs.getString("gameName");
+                        chessGame = (ChessGame) rs.getObject("ChessGame");
+                    }
+                }
             }
         }
-        return null;
+        return new Game(gameID, whiteUsername,blackUsername,gameName,chessGame);
     }
 
     @Override
     public Collection<Game> listGames() throws Exception {
+        ArrayList<Game> games = new ArrayList<>();
+        int gameID = 0;
+        String whiteUsername = null;
+        String blackUsername = null;
+        String gameName = null;
+        ChessGame chessGame = null;
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT * FROM authorization")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+                try (var rs = preparedStatement.executeQuery()){
+                    while (rs.next()){
+                        gameID = rs.getInt("gameID");
+                        whiteUsername = rs.getString("whiteUsername");
+                        blackUsername = rs.getString("blackUsername");
+                        gameName = rs.getString("gameName");
+                        chessGame = (ChessGame) rs.getObject("ChessGame");
+                        games.add(new Game(gameID,whiteUsername,blackUsername,gameName,chessGame));
+                    }
+                }
             }
         }
-        return null;
+        return games;
     }
 
     @Override
     public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("UPDATE game SET teamColor = '"+teamColor+
-                    "' WHERE gameID = '"+gameID+"'")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET teamColor = ? WHERE gameID = ?")) {
+                preparedStatement.setObject(1, teamColor);
+                preparedStatement.setInt(2,gameID);
+                preparedStatement.executeUpdate();
             }
         }
     }
@@ -64,10 +92,10 @@ public class GameSqlDAO implements GameDAO{
     @Override
     public void updateGame(int gameID, String newGamename) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("UPDATE game SET gameName = '"+newGamename+
-                    "' WHERE gameID = '"+gameID+"'")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET gameName = ? WHERE gameID = ?")) {
+                preparedStatement.setString(1,newGamename);
+                preparedStatement.setInt(2,gameID);
+                preparedStatement.executeUpdate();
             }
         }
     }
@@ -75,37 +103,43 @@ public class GameSqlDAO implements GameDAO{
     @Override
     public void updateGame(int gameID, ChessGame newGame) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("UPDATE game SET ChessGame = '"+newGame+
-                    "' WHERE gameID = '"+gameID+"'")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET ChessGame = ? WHERE gameID = ?")) {
+                preparedStatement.setObject(1,newGame);
+                preparedStatement.setInt(2,gameID);
+                preparedStatement.executeUpdate();
             }
         }
     }
 
     @Override
     public int getGameID(String gameName) throws Exception{
+        int gameID = 0;
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM authorization WHERE" +
                     "gameName = '"+gameName+"' LIMIT 1")) {
-             var rs = preparedStatement.executeQuery();
-             rs.next();
+                preparedStatement.setString(1,gameName);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()){
+                        gameID = rs.getInt("gameID");
+                    }
+                }
             }
         }
-        return 0;
+        return gameID;
     }
 
     @Override
     public void clear() throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("DELETE FROM game")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
+                preparedStatement.executeUpdate();
             }
         }
     }
 
     private final String[] createStatements = {
+            //`json` TEXT DEFAULT NULL,
             """
             CREATE TABLE IF NOT EXISTS  game (
               `id` int NOT NULL AUTO_INCREMENT,
@@ -114,7 +148,6 @@ public class GameSqlDAO implements GameDAO{
               `blackUsername` varchar(256),
               `gameName` varchar(256),
               `ChessGame` varchar(256),
-              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`),
               INDEX(gameID),
               INDEX(whiteUsername),
