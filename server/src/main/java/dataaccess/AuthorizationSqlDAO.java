@@ -82,8 +82,6 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     }
 
     public String[] createStatement() {
-        //PRIMARY KEY (`id`),
-        //`id` int NOT NULL AUTO_INCREMENT,
         String[] createStatements = {
                 """
             CREATE TABLE IF NOT EXISTS  authorization (
