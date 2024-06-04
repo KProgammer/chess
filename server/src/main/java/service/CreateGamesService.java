@@ -12,8 +12,9 @@ public class CreateGamesService {
     //CreateGame
     public CreateGameResult createGame(CreateGameRequest request) {
         try {
-            if ((request.getAuthToken() == null)
-                    || (authorizationObject.getAuth(request.getAuthToken()) == null)) {
+            if ((request.getAuthToken() == null) ||
+                    (authorizationObject.getAuth(request.getAuthToken()).authToken() == null) ||
+                    (authorizationObject.getAuth(request.getAuthToken()).username() == null)) {
                 return new CreateGameResult(null, "Error: unauthorized");
             } else if (request.getGameName() == null) {
                 return new CreateGameResult(null, "Error: bad request");

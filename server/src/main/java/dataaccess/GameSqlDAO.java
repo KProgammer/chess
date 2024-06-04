@@ -4,7 +4,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.Game;
 
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,8 +114,7 @@ public class GameSqlDAO implements GameDAO{
         int gameID = 0;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM authorization WHERE" +
-                    "gameName = '"+gameName+"' LIMIT 1")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM authorization WHERE gameName = ? LIMIT 1")) {
                 preparedStatement.setString(1,gameName);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()){
@@ -138,8 +136,6 @@ public class GameSqlDAO implements GameDAO{
     }
 
     private final String[] createStatements = {
-            //`json` TEXT DEFAULT NULL,
-            //INDEX(ChessGame)
             """
             CREATE TABLE IF NOT EXISTS  game (
               `id` int NOT NULL AUTO_INCREMENT,

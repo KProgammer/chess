@@ -12,7 +12,8 @@ public class JoinGameService {
     public JoinGameResult joinGame(JoinGameRequest request)  {
         try {
             if ((request.getAuthToken() == null) ||
-                    (authorizationObject.getAuth(request.getAuthToken()) == null)){
+                    (authorizationObject.getAuth(request.getAuthToken()).authToken() == null) ||
+                    (authorizationObject.getAuth(request.getAuthToken()).username() == null)){
                 return new JoinGameResult("Error: unauthorized");
             } else if (request.getPlayerColor() == null ||
                         request.getGameID() == null) {

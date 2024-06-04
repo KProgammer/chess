@@ -67,8 +67,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     @Override
     public void deleteAuth(String authToken) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DELETE FROM authorization WHERE" +
-                    "authToken = ? LIMIT 1")) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM authorization WHERE authToken = ? LIMIT 1")) {
                 preparedStatement.setString(1, authToken);
                 preparedStatement.executeUpdate();
             }
