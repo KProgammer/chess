@@ -18,11 +18,25 @@ public class ClearTest {
 
             new ClearService().clear();
 
-            Assertions.assertEquals(authorizationObject.getAuth(authToken), null,
+            Assertions.assertEquals(authorizationObject.getAuth(authToken).username(), null,
                     "Didn't delete authorizations");
-            Assertions.assertEquals(gameObject.getGame(1234), null,
+            Assertions.assertEquals(authorizationObject.getAuth(authToken).authToken(), null,
+                    "Didn't delete authorizations");
+
+            Assertions.assertEquals(gameObject.getGame(1234).gameID(), 0,
                     "Game still exists");
-            Assertions.assertEquals(userObject.getUser("Lance"), null, "User still exists");
+            Assertions.assertEquals(gameObject.getGame(1234).gameName(), null,
+                    "Game still exists");
+            Assertions.assertEquals(gameObject.getGame(1234).game(), null,
+                    "Game still exists");
+            Assertions.assertEquals(gameObject.getGame(1234).whiteUsername(), null,
+                    "Game still exists");
+            Assertions.assertEquals(gameObject.getGame(1234).blackUsername(), null,
+                    "Game still exists");
+
+            Assertions.assertEquals(userObject.getUser("Lance").username(), null, "User still exists");
+            Assertions.assertEquals(userObject.getUser("Lance").password(), null, "User still exists");
+            Assertions.assertEquals(userObject.getUser("Lance").email(), null, "User still exists");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in clearAllGamesTest");
         }

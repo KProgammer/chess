@@ -1,5 +1,6 @@
 package service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import requests.RegisterRequest;
 import results.RegisterResult;
 import model.User;
@@ -21,7 +22,11 @@ public class RegisterTest {
         try {
             new RegisterService().register(new RegisterRequest("Gavin", "CowsAreAwesome", "cows@cows.com"));
 
-            Assertions.assertEquals(userObject.getUser("Gavin"), new User("Gavin", "CowsAreAwesome", "cows@cows.com"),
+            Assertions.assertEquals(userObject.getUser("Gavin").username(), "Gavin",
+                    "User not registered.");
+            Assertions.assertTrue(BCrypt.checkpw("CowsAreAwesome", userObject.getUser("Gavin").password()),
+                    "User not registered.");
+            Assertions.assertEquals(userObject.getUser("Gavin").email(), "cows@cows.com",
                     "User not registered.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in registerGamesTest");

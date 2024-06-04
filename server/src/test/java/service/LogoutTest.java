@@ -21,7 +21,9 @@ public class LogoutTest {
 
             LogoutResult logoutResult = new LogoutService().logout(new LogoutRequest(registerResult.getAuthToken()));
 
-            Assertions.assertEquals(authorizationObject.getAuth(registerResult.getAuthToken()), null,
+            Assertions.assertEquals(authorizationObject.getAuth(registerResult.getAuthToken()).authToken(), null,
+                    "Unable to logout");
+            Assertions.assertEquals(authorizationObject.getAuth(registerResult.getAuthToken()).username(), null,
                     "Unable to logout");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in logoutGameTest");
