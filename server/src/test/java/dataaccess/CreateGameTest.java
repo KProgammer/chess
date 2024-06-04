@@ -12,7 +12,7 @@ public class CreateGameTest {
     @Test
     @Order(1)
     @DisplayName("CreateAGameTest")
-    public void CreateAGameTest () throws Exception {
+    public void createAGameTest () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(1111,"Practice24");
@@ -30,7 +30,7 @@ public class CreateGameTest {
     @Test
     @Order(2)
     @DisplayName("CreateAGameFailTest")
-    public void CreateAGameFailTest () throws Exception {
+    public void createAGameFailTest () throws Exception {
         try {
             gameObject.createGame(1111,null);
             Assertions.fail();
@@ -42,7 +42,7 @@ public class CreateGameTest {
     @Test
     @Order(3)
     @DisplayName("CreateAGameFailTest2")
-    public void CreateAGameFailTest2 (){
+    public void createAGameFailTest2 (){
         try {
             gameObject.createGame(null,"practice24");
             Assertions.fail();

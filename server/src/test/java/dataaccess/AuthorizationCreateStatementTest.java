@@ -26,9 +26,9 @@ public class AuthorizationCreateStatementTest {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """};
 
-            Boolean Test = Arrays.equals(statement, testStatement);
+            Boolean test = Arrays.equals(statement, testStatement);
 
-            Assertions.assertEquals(Test, true,"Statement was not creating the correct table.");
+            Assertions.assertEquals(test, true,"Statement was not creating the correct table.");
 
         } catch (Exception e){
             System.out.println("Threw Runtime Error in AuthorizationClearTests");
@@ -39,7 +39,7 @@ public class AuthorizationCreateStatementTest {
     @Test
     @Order(2)
     @DisplayName("AuthCreateStatementFailTest")
-    public void AuthCreateStatementFailTest (){
+    public void authCreateStatementFailTest (){
         try {
             String[] statement = authorizationObject.createStatement();
 

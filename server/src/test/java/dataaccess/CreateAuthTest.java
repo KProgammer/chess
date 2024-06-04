@@ -11,7 +11,7 @@ public class CreateAuthTest {
     @Test
     @Order(1)
     @DisplayName("CreateAuthorizationTest")
-    public void CreateAuthorizationTest () throws Exception {
+    public void createAuthorizationTest () throws Exception {
         try {
             authorizationObject.clear();
             String authToken = authorizationObject.createAuth("Gavin");
@@ -27,7 +27,7 @@ public class CreateAuthTest {
     @Test
     @Order(2)
     @DisplayName("CreateAuthorizationFailTest")
-    public void CreateAuthorizationFailTest () throws Exception {
+    public void createAuthorizationFailTest () throws Exception {
         try {
             String authToken = authorizationObject.createAuth(null);
             Assertions.fail();

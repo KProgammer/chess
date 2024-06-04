@@ -13,7 +13,7 @@ public class UserCreateStatementTest {
     @Test
     @Order(1)
     @DisplayName("UserCreatStatementTest")
-    public void UserCreatStatementTest (){
+    public void userCreatStatementTest (){
         try {
             String[] statement = userObject.createStatement();
 
@@ -30,9 +30,9 @@ public class UserCreateStatementTest {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """};
 
-            Boolean Test = Arrays.equals(statement, testStatement);
+            Boolean test = Arrays.equals(statement, testStatement);
 
-            Assertions.assertEquals(Test, true,"Statement was not creating the correct table.");
+            Assertions.assertEquals(test, true,"Statement was not creating the correct table.");
 
         } catch (Exception e){
             System.out.println("Threw Runtime Error in AuthorizationClearTests");
@@ -43,7 +43,7 @@ public class UserCreateStatementTest {
     @Test
     @Order(2)
     @DisplayName("UserCreatStatementFailTest")
-    public void UserCreatStatementFailTest (){
+    public void userCreatStatementFailTest (){
         try {
             String[] statement = userObject.createStatement();
 

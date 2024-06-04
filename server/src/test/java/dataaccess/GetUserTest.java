@@ -11,7 +11,7 @@ public class GetUserTest {
     @Test
     @Order(1)
     @DisplayName("GetAUserTest")
-    public void GetAUserTest () throws Exception {
+    public void getAUserTest () throws Exception {
         try {
             userObject.clear();
             userObject.createUser("Wierdo","IamWierd","WierdosRule@wierd.com");
@@ -31,7 +31,7 @@ public class GetUserTest {
     @Test
     @Order(2)
     @DisplayName("GetAUserFail")
-    public void GetAUserFail () throws Exception {
+    public void getAUserFail () throws Exception {
         try {
             userObject.getUser(null);
             Assertions.fail();

@@ -11,7 +11,7 @@ public class GetAuthTest {
     @Test
     @Order(1)
     @DisplayName("GetAnAuthTest")
-    public void GetAnAuthTest () throws Exception {
+    public void getAnAuthTest () throws Exception {
         try {
             authorizationObject.clear();
             String authToken = authorizationObject.createAuth("Lance");
@@ -29,7 +29,7 @@ public class GetAuthTest {
     @Test
     @Order(2)
     @DisplayName("GetAnAuthTestFail")
-    public void GetAnAuthTestFail () throws Exception {
+    public void getAnAuthTestFail () throws Exception {
         try {
             Assertions.assertNull(authorizationObject.getAuth(null).username(),
                     "Username should be null.");

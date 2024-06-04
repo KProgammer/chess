@@ -14,7 +14,7 @@ public class CreateUserTest {
     @Test
     @Order(1)
     @DisplayName("CreateAUserTest")
-    public void CreateAUserTest () throws Exception {
+    public void createAUserTest () throws Exception {
         try {
             userObject.clear();
             userObject.createUser("Lance","Practice24","email@norway.com");
@@ -62,7 +62,7 @@ public class CreateUserTest {
     @DisplayName("CreateAUserFailTest2")
     public void CreateAUserFailTest3 (){
         try {
-            userObject.createUser(null,"WierdAl","email");
+            userObject.createUser("username","WierdAl",null);
             Assertions.fail();
         } catch (Exception e){
             System.out.println("Threw Runtime Error in CreateAUserTest");

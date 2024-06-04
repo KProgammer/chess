@@ -12,7 +12,7 @@ public class GetGameIDTest {
     @Test
     @Order(1)
     @DisplayName("GetAgameIDTest")
-    public void GetAgameIDTest () throws Exception {
+    public void getAgameIDTest () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(3333,"HappyFeet");
@@ -28,7 +28,7 @@ public class GetGameIDTest {
     @Test
     @Order(2)
     @DisplayName("GetAnAuthTestFail")
-    public void GetAgameIDFail () throws Exception {
+    public void getAgameIDFail () throws Exception {
         try {
             gameObject.getGameID(null);
             Assertions.fail();

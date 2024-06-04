@@ -13,7 +13,7 @@ public class GameCreateStatementTest {
     @Test
     @Order(1)
     @DisplayName("CreateStatementTest")
-    public void CreateStatementTest (){
+    public void createStatementTest (){
         try {
             String[] statement = gameObject.createStatement();
 
@@ -33,9 +33,9 @@ public class GameCreateStatementTest {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """};
 
-            Boolean Test = Arrays.equals(statement, testStatement);
+            Boolean test = Arrays.equals(statement, testStatement);
 
-            Assertions.assertEquals(Test, true,"Statement was not creating the correct table.");
+            Assertions.assertEquals(test, true,"Statement was not creating the correct table.");
 
         } catch (Exception e){
             System.out.println("Threw Runtime Error in GameCreateStatementTests");
@@ -46,7 +46,7 @@ public class GameCreateStatementTest {
     @Test
     @Order(2)
     @DisplayName("CreateStatementFailTest")
-    public void CreateStatementFailTest (){
+    public void createStatementFailTest (){
         try {
             String[] statement = gameObject.createStatement();
 

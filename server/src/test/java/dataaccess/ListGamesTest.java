@@ -17,7 +17,7 @@ public class ListGamesTest {
     @Test
     @Order(1)
     @DisplayName("ListAllGamesTest")
-    public void ListAllGamesTest () throws Exception {
+    public void listAllGamesTest () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(5555,"AnotherGame");
@@ -51,7 +51,7 @@ public class ListGamesTest {
     @Test
     @Order(2)
     @DisplayName("ListAllGamesFail")
-    public void ListAllGamesFail () throws Exception {
+    public void listAllGamesFail () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(5555,"AnotherGame");

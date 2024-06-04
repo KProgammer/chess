@@ -14,7 +14,7 @@ public class UpdateGameTest {
     @Test
     @Order(1)
     @DisplayName("UpdateAGameTest")
-    public void UpdateAGameTest () throws Exception {
+    public void updateAGameTest () throws Exception {
         try {
             userObject.clear();
             userObject.createUser("Abigail","penguins","dragonsrock@aol.com");
@@ -34,7 +34,7 @@ public class UpdateGameTest {
     @Test
     @Order(2)
     @DisplayName("UpdateAGameTest2")
-    public void UpdateAGameTest2 () throws Exception {
+    public void updateAGameTest2 () throws Exception {
         try {
             userObject.clear();
             userObject.createUser("Abigail","penguins","dragonsrock@aol.com");
@@ -54,7 +54,7 @@ public class UpdateGameTest {
     @Test
     @Order(3)
     @DisplayName("UpdateAGameTest3")
-    public void UpdateAGameTest3 () throws Exception {
+    public void updateAGameTest3 () throws Exception {
         try {
             userObject.clear();
             userObject.createUser("Abigail","penguins","dragonsrock@aol.com");
@@ -75,7 +75,7 @@ public class UpdateGameTest {
     @Test
     @Order(4)
     @DisplayName("UpdateAGameFail")
-    public void UpdateAGameFail () throws Exception {
+    public void updateAGameFail () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(8888,"RandomGame");
@@ -92,7 +92,7 @@ public class UpdateGameTest {
     @Test
     @Order(5)
     @DisplayName("UpdateAGameFail2")
-    public void UpdateAGameFail2 () throws Exception {
+    public void updateAGameFail2 () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(8888,"RandomGame");
@@ -107,7 +107,7 @@ public class UpdateGameTest {
     @Test
     @Order(6)
     @DisplayName("UpdateAGameFail3")
-    public void UpdateAGameFail3 () throws Exception {
+    public void updateAGameFail3 () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(8888,"RandomGame");

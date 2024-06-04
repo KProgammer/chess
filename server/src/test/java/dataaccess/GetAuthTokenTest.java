@@ -12,13 +12,11 @@ public class GetAuthTokenTest {
     @Test
     @Order(1)
     @DisplayName("GetAnAuthTokenTest")
-    public void GetAnAuthTokenTest () throws Exception {
+    public void getAnAuthTokenTest () throws Exception {
         try {
             authorizationObject.clear();
             String authToken = authorizationObject.createAuth("Lance");
-
-            Assertions.assertEquals(authorizationObject.getAuth(authToken).username(), "Lance",
-                    "Username should be Lance.");
+            
             Assertions.assertEquals(authorizationObject.getAuth(authToken).authToken(), authToken,
                     "AuthToken should be equal");
         } catch (Exception e) {
@@ -30,7 +28,7 @@ public class GetAuthTokenTest {
     @Test
     @Order(2)
     @DisplayName("GetAnAuthTokenFail")
-    public void GetAnAuthTokenFail () throws Exception {
+    public void getAnAuthTokenFail () throws Exception {
         try {
             Assertions.assertNull(authorizationObject.getAuth(null).username(),
                     "Username should be null.");

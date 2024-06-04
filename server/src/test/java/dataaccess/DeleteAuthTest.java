@@ -12,7 +12,7 @@ public class DeleteAuthTest {
     @Test
     @Order(1)
     @DisplayName("DeleteAUserTest")
-    public void DeleteAUserTest () throws Exception {
+    public void deleteAUserTest () throws Exception {
         try {
             String authToken = authorizationObject.createAuth("Lance");
 
@@ -31,7 +31,7 @@ public class DeleteAuthTest {
     @Test
     @Order(2)
     @DisplayName("DeleteAUserFailTest")
-    public void DeleteAUserFailTest () throws Exception {
+    public void deleteAUserFailTest () throws Exception {
         try {
             String authToken = authorizationObject.createAuth("Lance");
 

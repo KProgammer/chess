@@ -11,7 +11,7 @@ public class GetGameTest {
     @Test
     @Order(1)
     @DisplayName("GetAGameTest")
-    public void GetAGameTest () throws Exception {
+    public void getAGameTest () throws Exception {
         try {
             gameObject.clear();
             gameObject.createGame(4444,"UglyFeet");
@@ -29,7 +29,7 @@ public class GetGameTest {
     @Test
     @Order(2)
     @DisplayName("GetAGameFail")
-    public void GetAGameFail () throws Exception {
+    public void getAGameFail () throws Exception {
         try {
             gameObject.getGameID(null);
             Assertions.fail();
