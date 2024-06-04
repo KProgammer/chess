@@ -9,7 +9,8 @@ public class LogoutService {
     //logout
     public LogoutResult logout(LogoutRequest request) {
         try {
-            if(authorizationObject.getAuth(request.getAuthToken()) == null){
+            if((request.getAuthToken() == null)||
+            (authorizationObject.getAuth(request.getAuthToken()) == null)){
                 return new LogoutResult("Error: unauthorized");
             }
 

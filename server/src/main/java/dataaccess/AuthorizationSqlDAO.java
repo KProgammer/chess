@@ -16,9 +16,9 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         String newAuthtoken = UUID.randomUUID().toString();
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (username, authToken) VALUES (?, ?)")) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (userName, authToken) VALUES (?, ?)")) {
                 preparedStatement.setString(1, username);
-                preparedStatement.setString(2,newAuthtoken);
+                preparedStatement.setString(2, newAuthtoken);
                 preparedStatement.executeUpdate();
                 // var rs = preparedStatement.executeUpdate();
                 //rs.next();
@@ -33,12 +33,12 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         String recauthToken = null;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT username, authToken FROM authorization WHERE" +
+            try (var preparedStatement = conn.prepareStatement("SELECT userName, authToken FROM authorization WHERE" +
                     "authToken = ? LIMIT 1")) {
                 preparedStatement.setString(1,authToken);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
-                        username = rs.getString("username");
+                        username = rs.getString("userName");
                         recauthToken = rs.getString("authToken");
                     }
                 }
@@ -53,7 +53,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         String authToken = null;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authorization WHERE username = ? LIMIT 1")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authorization WHERE userName = ? LIMIT 1")) {
                 preparedStatement.setString(1,username);
                 try (var rs = preparedStatement.executeQuery()) {
                     while(rs.next()){
@@ -86,14 +86,13 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     }
 
     private final String[] createStatements = {
-            //NOT NULL AUTO_INCREMENT
+            //PRIMARY KEY (`id`),
+            //`id` int NOT NULL AUTO_INCREMENT,
             """
-            CREATE TABLE IF NOT EXISTS authorization (
-              `id` INT NOT NULL AUTO_INCREMENT,
+            CREATE TABLE IF NOT EXISTS  authorization (
               `userName` varchar(256),
               `authToken` varchar(256),
-              PRIMARY KEY (`id`),
-              INDEX(username),
+              INDEX(userName),
               INDEX(authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
@@ -102,6 +101,9 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("DROP TABLE authorization")) {
+                preparedStatement.executeUpdate();
+            }
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

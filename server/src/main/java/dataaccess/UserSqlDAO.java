@@ -27,6 +27,7 @@ public class UserSqlDAO implements UserDAO{
 
     @Override
     public User getUser(String username) throws Exception{
+        String recUsername = null;
         String password = null;
         String email = null;
 
@@ -35,13 +36,14 @@ public class UserSqlDAO implements UserDAO{
                 preparedStatement.setString(1,username);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()){
+                        recUsername = rs.getString("username");
                         password = rs.getString("password");
                         email = rs.getString("email");
                     }
                 }
             }
         }
-        return new User(username,password,email);
+        return new User(recUsername,password,email);
     }
 
     @Override
@@ -57,11 +59,11 @@ public class UserSqlDAO implements UserDAO{
             //`json` TEXT DEFAULT NULL,
             """
             CREATE TABLE IF NOT EXISTS  user (
-              `id` int NOT NULL AUTO_INCREMENT,
+              `id` INT NOT NULL AUTO_INCREMENT,
               `username` varchar(256),
               `password` varchar(256),
               `email` varchar(256),
-              PRIMARY KEY (`id`),
+              PRIMARY KEY (id),
               INDEX(username),
               INDEX(password),
               INDEX(email)
@@ -72,6 +74,9 @@ public class UserSqlDAO implements UserDAO{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("DROP TABLE authorization")) {
+                preparedStatement.executeUpdate();
+            }
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
