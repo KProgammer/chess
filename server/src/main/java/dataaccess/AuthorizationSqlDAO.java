@@ -20,8 +20,6 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
                 preparedStatement.setString(1, username);
                 preparedStatement.setString(2, newAuthtoken);
                 preparedStatement.executeUpdate();
-                // var rs = preparedStatement.executeUpdate();
-                //rs.next();
             }
         }
         return newAuthtoken;

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserSqlDAO implements UserDAO{
-    Map<String, User> LIST_OF_USERS = new HashMap<>();
 
     public UserSqlDAO() throws DataAccessException{
         configureDatabase();

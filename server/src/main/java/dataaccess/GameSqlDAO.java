@@ -7,11 +7,8 @@ import model.Game;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GameSqlDAO implements GameDAO{
-    Map<Integer, Game> LIST_OF_GAMES = new HashMap<>();
 
     public GameSqlDAO() throws DataAccessException {
         configureDatabase();
@@ -102,7 +99,7 @@ public class GameSqlDAO implements GameDAO{
     public void updateGame(int gameID, ChessGame newGame) throws Exception{
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("UPDATE game SET ChessGame = ? WHERE gameID = ?")) {
-                preparedStatement.setObject(1,newGame);
+                preparedStatement.setString(1,new Gson().toJson(newGame));
                 preparedStatement.setInt(2,gameID);
                 preparedStatement.executeUpdate();
             }
@@ -114,7 +111,7 @@ public class GameSqlDAO implements GameDAO{
         int gameID = 0;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM authorization WHERE gameName = ? LIMIT 1")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM game WHERE gameName = ? LIMIT 1")) {
                 preparedStatement.setString(1,gameName);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()){
@@ -156,9 +153,6 @@ public class GameSqlDAO implements GameDAO{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-//            try (var preparedStatement = conn.prepareStatement("DROP TABLE game")) {
-//                preparedStatement.executeUpdate();
-//            }
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

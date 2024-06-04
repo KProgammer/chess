@@ -116,14 +116,13 @@ public class ChessPiece {
         }
         else if (pieceOfInterest.type == PieceType.QUEEN){
             // This line goes to the MovePawn class and calculates the possible moves
-            MoveQueen moveQueen = new MoveQueen(board,myPosition);
+            MoveQueenRookBishop moveQueen = new MoveQueenRookBishop(board,myPosition,pieceOfInterest);
 
             // This line retrieves the calculated possible moves.
             listOfMoves = moveQueen.pieceMoves(myPosition);
         }
         else if (pieceOfInterest.type == PieceType.BISHOP){
-            // This line goes to the MoveBishop class and calculates the possible moves
-            MoveBishop moveBishop = new MoveBishop(board,myPosition);
+            MoveQueenRookBishop moveBishop = new MoveQueenRookBishop(board,myPosition,pieceOfInterest);
 
             // This line retrieves the calculated possible moves.
             listOfMoves = moveBishop.pieceMoves(myPosition);
@@ -138,7 +137,7 @@ public class ChessPiece {
         }
         else if (pieceOfInterest.type == PieceType.ROOK){
             // This line goes to the MoveKing class and calculates the possible moves
-            MoveRook moveRook = new MoveRook(board,myPosition);
+            MoveQueenRookBishop moveRook = new MoveQueenRookBishop(board,myPosition,pieceOfInterest);
 
             // This line retrieves the calculated possible moves.
             listOfMoves = moveRook.pieceMoves(myPosition);

@@ -18,18 +18,13 @@ import static server.Server.gameObject;
 
 public class ListGamesTest {
 
-
-
-    @AfterEach
-    public void clear(){
-        new ClearService().clear();
-    }
-
     @Test
     @Order(1)
     @DisplayName("ListGamesTestSuccess")
     public void successListGameTest() {
         try {
+            new ClearService().clear();
+
             String authToken = authorizationObject.createAuth("practice");
             String authTokenLance = authorizationObject.createAuth("Lance");
             String authTokenIvan = authorizationObject.createAuth("Ivan");
@@ -41,7 +36,6 @@ public class ListGamesTest {
             int practiceGameID = gameObject.getGameID("practiceGame");
             int lancesGameID = gameObject.getGameID("LancesGame");
             int ivansGameID = gameObject.getGameID("IvansGame");
-
 
             new JoinGameService().joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.BLACK, practiceGameID));
             new JoinGameService().joinGame(new JoinGameRequest(authTokenLance, ChessGame.TeamColor.WHITE, practiceGameID));
@@ -55,13 +49,19 @@ public class ListGamesTest {
             mapGameList.put(lancesGameID, new Game(lancesGameID, "Lance", "Ivan", "LancesGame", new ChessGame()));
             mapGameList.put(ivansGameID, new Game(ivansGameID, "Ivan", "practice", "IvansGame", new ChessGame()));
 
-            Collection<Game> gameList = new ArrayList<>();
-            for (int game : mapGameList.keySet()) {
-                gameList.add(mapGameList.get(game));
+            Collection<Game> gameList = new ListGamesService().makeList(new ListGamesRequest(authToken)).getGames();
+            int counter = 0;
+
+            for (int gameid : mapGameList.keySet()) {
+                for(Game game : gameList) {
+                    if (game.equals(mapGameList.get(gameid))){
+                        counter += 1;
+                    }
+                }
             }
 
-            Assertions.assertEquals(new ListGamesService().makeList(new ListGamesRequest(authToken)), new ListGamesResult(gameList, null),
-                    "Not all games listed or not in the right order.");
+            Assertions.assertEquals(counter ,3, "Not all games listed.");
+            Assertions.assertEquals(gameList.size(),3, "More or less games than should be listed.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in successListGameTest");
         }

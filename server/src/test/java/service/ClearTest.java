@@ -12,6 +12,7 @@ public class ClearTest {
     @DisplayName("ClearAllGamesTest")
     public void clearAllGamesTest() {
         try {
+
             String authToken = authorizationObject.createAuth("practice");
             gameObject.createGame(1234, "practiceGame");
             userObject.createUser("Lance", "password", "LanceHasMail");

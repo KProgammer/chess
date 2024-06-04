@@ -9,8 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import java.util.SequencedSet;
-
 import static server.Server.userObject;
 
 public class RegisterTest {

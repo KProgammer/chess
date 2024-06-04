@@ -1,16 +1,15 @@
 package service;
 
+import dataaccess.*;
+import org.junit.jupiter.api.*;
 import requests.CreateGameRequest;
 import results.CreateGameResult;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 
 import static server.Server.authorizationObject;
 import static server.Server.gameObject;
 
 public class CreateGameTest {
+
     @Test
     @Order(1)
     @DisplayName("CreateGameTest")
