@@ -25,13 +25,6 @@ public class UpdateGameTest {
             gameObject.updateGame(8888,"Abigail", ChessGame.TeamColor.WHITE);
             Assertions.assertEquals(gameObject.getGame(8888).whiteUsername() ,"Abigail", "Wrong username listed.");
 
-            gameObject.updateGame(8888,"MoreGames");
-            Assertions.assertEquals(gameObject.getGame(8888).gameName(),"MoreGames", "Wrong gameName listed.");
-
-            ChessGame Testgame = new ChessGame();
-            gameObject.updateGame(8888,Testgame);
-            Assertions.assertEquals(gameObject.getGame(8888).game(),Testgame, "Wrong ChessGame listed.");
-
         } catch (Exception e) {
             System.out.println("Threw Runtime Error in UpdateAGameTest");
             throw e;
@@ -40,6 +33,47 @@ public class UpdateGameTest {
 
     @Test
     @Order(2)
+    @DisplayName("UpdateAGameTest2")
+    public void UpdateAGameTest2 () throws Exception {
+        try {
+            userObject.clear();
+            userObject.createUser("Abigail","penguins","dragonsrock@aol.com");
+
+            gameObject.clear();
+            gameObject.createGame(8888,"RandomGame");
+
+            gameObject.updateGame(8888,"MoreGames");
+            Assertions.assertEquals(gameObject.getGame(8888).gameName(),"MoreGames", "Wrong gameName listed.");
+
+        } catch (Exception e) {
+            System.out.println("Threw Runtime Error in UpdateAGameTest2");
+            throw e;
+        }
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("UpdateAGameTest3")
+    public void UpdateAGameTest3 () throws Exception {
+        try {
+            userObject.clear();
+            userObject.createUser("Abigail","penguins","dragonsrock@aol.com");
+
+            gameObject.clear();
+            gameObject.createGame(8888,"RandomGame");
+
+            ChessGame Testgame = new ChessGame();
+            gameObject.updateGame(8888,Testgame);
+            Assertions.assertEquals(gameObject.getGame(8888).game(),Testgame, "Wrong ChessGame listed.");
+
+        } catch (Exception e) {
+            System.out.println("Threw Runtime Error in UpdateAGameTest3");
+            throw e;
+        }
+    }
+
+    @Test
+    @Order(4)
     @DisplayName("UpdateAGameFail")
     public void UpdateAGameFail () throws Exception {
         try {
@@ -56,7 +90,7 @@ public class UpdateGameTest {
     }
 
     @Test
-    @Order(3)
+    @Order(5)
     @DisplayName("UpdateAGameFail2")
     public void UpdateAGameFail2 () throws Exception {
         try {
@@ -71,7 +105,7 @@ public class UpdateGameTest {
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     @DisplayName("UpdateAGameFail3")
     public void UpdateAGameFail3 () throws Exception {
         try {
