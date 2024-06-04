@@ -34,7 +34,7 @@ public class CreateUserTest {
     @Test
     @Order(2)
     @DisplayName("CreateAUserFailTest")
-    public void CreateAUserFailTest (){
+    public void createAUserFailTest (){
         try {
             userObject.createUser(null,"WierdAl","email");
             Assertions.fail();
@@ -47,7 +47,7 @@ public class CreateUserTest {
     @Test
     @Order(3)
     @DisplayName("CreateAUserFailTest2")
-    public void CreateAUserFailTest2 (){
+    public void createAUserFailTest2 (){
         try {
             userObject.createUser("username",null,"email");
             Assertions.fail();
@@ -60,7 +60,7 @@ public class CreateUserTest {
     @Test
     @Order(4)
     @DisplayName("CreateAUserFailTest2")
-    public void CreateAUserFailTest3 (){
+    public void createAUserFailTest3 (){
         try {
             userObject.createUser("username","WierdAl",null);
             Assertions.fail();

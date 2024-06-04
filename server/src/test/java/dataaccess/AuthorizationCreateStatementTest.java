@@ -13,7 +13,7 @@ public class AuthorizationCreateStatementTest {
     @Test
     @Order(1)
     @DisplayName("AuthCreateStatementTest")
-    public void AuthCreateStatementTest (){
+    public void authCreateStatementTest (){
         try {
             String[] statement = authorizationObject.createStatement();
 

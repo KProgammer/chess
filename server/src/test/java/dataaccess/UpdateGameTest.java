@@ -62,9 +62,9 @@ public class UpdateGameTest {
             gameObject.clear();
             gameObject.createGame(8888,"RandomGame");
 
-            ChessGame Testgame = new ChessGame();
-            gameObject.updateGame(8888,Testgame);
-            Assertions.assertEquals(gameObject.getGame(8888).game(),Testgame, "Wrong ChessGame listed.");
+            ChessGame testgame = new ChessGame();
+            gameObject.updateGame(8888,testgame);
+            Assertions.assertEquals(gameObject.getGame(8888).game(),testgame, "Wrong ChessGame listed.");
 
         } catch (Exception e) {
             System.out.println("Threw Runtime Error in UpdateAGameTest3");
