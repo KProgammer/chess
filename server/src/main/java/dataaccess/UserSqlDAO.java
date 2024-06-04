@@ -12,6 +12,11 @@ public class UserSqlDAO implements UserDAO{
 
     @Override
     public void createUser(String username, String password, String email) throws Exception{
+        if(username == null ||
+                password == null ||
+                email == null){
+            throw new Exception("input was invalid.");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)")) {
                 preparedStatement.setString(1,username);
@@ -27,6 +32,10 @@ public class UserSqlDAO implements UserDAO{
         String recUsername = null;
         String password = null;
         String email = null;
+
+        if(username == null) {
+            throw new Exception("input was invalid.");
+        }
 
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT username, password, email FROM user WHERE username = ? LIMIT 1")) {

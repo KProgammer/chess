@@ -3,13 +3,12 @@ package dataaccess;
 import chess.ChessGame;
 import model.Game;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public class GameMemoryDAO implements GameDAO {
 
     @Override
-    public void createGame(int gameID, String gameName ){
+    public void createGame(Integer gameID, String gameName ){
         LIST_OF_GAMES.put(gameID, new Game(gameID,null,null,gameName,new ChessGame()));
     }
 
@@ -28,7 +27,7 @@ public class GameMemoryDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor){
+    public void updateGame(Integer gameID, String username, ChessGame.TeamColor teamColor){
         Game gameOfInterest = LIST_OF_GAMES.get(gameID);
         if(teamColor == ChessGame.TeamColor.BLACK){
             LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
@@ -40,14 +39,14 @@ public class GameMemoryDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, String newGamename){
+    public void updateGame(Integer gameID, String newGamename){
         Game gameOfInterest = LIST_OF_GAMES.get(gameID);
         LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
                 gameOfInterest.blackUsername(), newGamename, gameOfInterest.game()));
     }
 
     @Override
-    public void updateGame(int gameID, ChessGame newGame){
+    public void updateGame(Integer gameID, ChessGame newGame){
         Game gameOfInterest = LIST_OF_GAMES.get(gameID);
         LIST_OF_GAMES.put(gameOfInterest.gameID(), new Game(gameOfInterest.gameID(), gameOfInterest.whiteUsername(),
                 gameOfInterest.blackUsername(), gameOfInterest.gameName(), newGame));

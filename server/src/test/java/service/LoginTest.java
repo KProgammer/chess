@@ -24,6 +24,7 @@ public class LoginTest {
                     "Unable to login");
         } catch (Exception e) {
             System.out.println("loginSuccessGameTest");
+            throw e;
         }
     }
 
@@ -37,6 +38,7 @@ public class LoginTest {
             Assertions.assertEquals(loginResult, new LoginResult(null, null, "Error: unauthorized"), "Should have thrown a error.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in unauthorizedLoginGameTest");
+            throw e;
         }
     }
 }

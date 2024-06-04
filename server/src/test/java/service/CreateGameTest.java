@@ -13,7 +13,7 @@ public class CreateGameTest {
     @Test
     @Order(1)
     @DisplayName("CreateGameTest")
-    public void createGameTest1() {
+    public void createGameTest1() throws Exception {
         try {
             String authToken = authorizationObject.createAuth("practice");
             new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
@@ -24,6 +24,7 @@ public class CreateGameTest {
                     "Game wasn't created");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in createGameTest1");
+            throw e;
         }
     }
 
@@ -36,13 +37,14 @@ public class CreateGameTest {
                     new CreateGameResult(null,"Error: unauthorized"),"Unauthorized Error wasn't thrown");
         } catch (Exception e) {
             System.out.print("Threw RunTime Error in unauthorizedCreateGame!");
+            throw e;
         }
     }
 
     @Test
     @Order(3)
     @DisplayName("BadRequestCreation")
-    public void badRequestCreateGame() {
+    public void badRequestCreateGame() throws Exception {
         try {
             String authToken = authorizationObject.createAuth("practice");
 
@@ -50,6 +52,7 @@ public class CreateGameTest {
                     new CreateGameResult(null, "Error: bad request"), "Error wasn't thrown");
         } catch (Exception e){
             System.out.print("Threw Runtime Error in badRequestCreateGame");
+            throw e;
         }
     }
 }

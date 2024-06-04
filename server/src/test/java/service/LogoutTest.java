@@ -15,7 +15,7 @@ public class LogoutTest {
     @Test
     @Order(1)
     @DisplayName("LogoutGameTest")
-    public void logoutGameTest() {
+    public void logoutGameTest() throws Exception {
         try {
             RegisterResult registerResult = new RegisterService().register(new RegisterRequest("Gavin", "CowsAreAwesome", "cows@cows.com"));
 
@@ -27,6 +27,7 @@ public class LogoutTest {
                     "Unable to logout");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in logoutGameTest");
+            throw e;
         }
     }
 
@@ -43,6 +44,7 @@ public class LogoutTest {
             Assertions.assertEquals(logoutResult, new LogoutResult("Error: unauthorized"), "Should have thrown a error.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in unauthorizedLogoutGameTest");
+            throw e;
         }
     }
 }

@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public interface DAO {
 
-    public String[] createStatement();
+    String[] createStatement();
 
     default void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();

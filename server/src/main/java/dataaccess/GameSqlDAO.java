@@ -4,7 +4,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.Game;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,7 +14,11 @@ public class GameSqlDAO implements GameDAO{
     }
 
     @Override
-    public void createGame(int gameID, String gameName) throws Exception{
+    public void createGame(Integer gameID, String gameName) throws Exception{
+        if(gameName == null){
+            throw new Exception("gameName was invalid.");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, ChessGame) VALUES (?, NULL, NULL,?, ?)")) {
                 preparedStatement.setInt(1,gameID);
@@ -68,7 +71,13 @@ public class GameSqlDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor) throws Exception{
+    public void updateGame(Integer gameID, String username, ChessGame.TeamColor teamColor) throws Exception{
+        if((gameID == null) ||
+                (username == null) ||
+                (teamColor == null)){
+            throw new Exception("Invalid input.");
+        }
+
         String statement = null;
         try (var conn = DatabaseManager.getConnection()) {
             if(teamColor == ChessGame.TeamColor.WHITE){
@@ -85,7 +94,12 @@ public class GameSqlDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, String newGamename) throws Exception{
+    public void updateGame(Integer gameID, String newGamename) throws Exception{
+        if((gameID == null) ||
+                (newGamename == null)){
+            throw new Exception("Invalid input.");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("UPDATE game SET gameName = ? WHERE gameID = ?")) {
                 preparedStatement.setString(1,newGamename);
@@ -96,7 +110,12 @@ public class GameSqlDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, ChessGame newGame) throws Exception{
+    public void updateGame(Integer gameID, ChessGame newGame) throws Exception{
+        if((gameID == null) ||
+                (newGame == null)){
+            throw new Exception("Invalid input.");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("UPDATE game SET ChessGame = ? WHERE gameID = ?")) {
                 preparedStatement.setString(1,new Gson().toJson(newGame));
@@ -109,6 +128,10 @@ public class GameSqlDAO implements GameDAO{
     @Override
     public int getGameID(String gameName) throws Exception{
         int gameID = 0;
+
+        if(gameName == null){
+            throw new Exception("Invalid input.");
+        }
 
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM game WHERE gameName = ? LIMIT 1")) {

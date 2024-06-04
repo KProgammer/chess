@@ -2,8 +2,11 @@ package dataaccess;
 
 import model.Authorization;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.UUID;
+
+import static java.lang.Character.getType;
 
 public class AuthorizationSqlDAO implements AuthorizationDAO {
 
@@ -15,6 +18,10 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     public String createAuth(String username) throws Exception{
         String newAuthtoken = UUID.randomUUID().toString();
 
+        if(username == null){
+            throw new Exception("Username was invalid.");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("INSERT INTO authorization (userName, authToken) VALUES (?, ?)")) {
                 preparedStatement.setString(1, username);
@@ -22,6 +29,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
                 preparedStatement.executeUpdate();
             }
         }
+
         return newAuthtoken;
     }
 
@@ -81,6 +89,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         }
     }
 
+    @Override
     public String[] createStatement() {
         String[] createStatements = {
                 """

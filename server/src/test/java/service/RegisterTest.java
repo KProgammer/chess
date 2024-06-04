@@ -16,7 +16,7 @@ public class RegisterTest {
     @Test
     @Order(1)
     @DisplayName("RegisterGamesTest")
-    public void registerGamesTest(){
+    public void registerGamesTest() throws Exception {
         try {
             new RegisterService().register(new RegisterRequest("Gavin", "CowsAreAwesome", "cows@cows.com"));
 
@@ -28,6 +28,7 @@ public class RegisterTest {
                     "User not registered.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in registerGamesTest");
+            throw e;
         }
 
     }
@@ -43,6 +44,7 @@ public class RegisterTest {
                     new RegisterResult(null, null, "Error: already taken"), "Did not throw Error: already taken.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in unauthorizedRegisterGamesTest");
+            throw e;
         }
     }
 }

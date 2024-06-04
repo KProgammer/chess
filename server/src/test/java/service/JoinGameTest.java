@@ -16,7 +16,7 @@ public class JoinGameTest {
     @Test
     @Order(1)
     @DisplayName("JoinGameAsBlack")
-    public void joinGameAsBlackTest() {
+    public void joinGameAsBlackTest() throws Exception {
         try {
             String authToken = authorizationObject.createAuth("practice");
             new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
@@ -28,13 +28,14 @@ public class JoinGameTest {
                     "practice didn't join the game as the black team");
         } catch (Exception e){
             System.out.println("Threw Runtime Error joinGameAsBlackTest");
+            throw e;
         }
     }
 
     @Test
     @Order(2)
     @DisplayName("JoinGameAsWhiteTest")
-    public void joinGameAsWhiteTest() {
+    public void joinGameAsWhiteTest() throws Exception {
         try {
             String authToken = authorizationObject.createAuth("practice");
             new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
@@ -46,13 +47,14 @@ public class JoinGameTest {
                     "practice didn't join the game as the white team");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in joinGameAsWhiteTest");
+            throw e;
         }
     }
 
     @Test
     @Order(3)
     @DisplayName("JoinGameUnauthorized")
-    public void joinGameUnauthorizedTest() {
+    public void joinGameUnauthorizedTest() throws Exception {
         try {
             String authToken = authorizationObject.createAuth("practice");
             new CreateGamesService().createGame(new CreateGameRequest("practiceGame", authToken));
@@ -62,13 +64,14 @@ public class JoinGameTest {
                     new JoinGameResult("Error: unauthorized"), "Unauthorized Error wasn't thrown");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in joinGameUnauthorizedTest");
+            throw e;
         }
     }
 
     @Test
     @Order(4)
     @DisplayName("JoinAlreadyTakenGame")
-    public void joinGameAlreadyTakenTest() {
+    public void joinGameAlreadyTakenTest() throws Exception {
         try {
             String authToken = authorizationObject.createAuth("practice");
             String authTokenLance = authorizationObject.createAuth("Lance");
@@ -81,6 +84,7 @@ public class JoinGameTest {
                     new JoinGameResult("Error: already taken"), "Already taken error wasn't thrown");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in joinGameAlreadyTakenTest");
+            throw e;
         }
     }
 }

@@ -10,7 +10,7 @@ public class ClearTest {
 
     @Test
     @DisplayName("ClearAllGamesTest")
-    public void clearAllGamesTest() {
+    public void clearAllGamesTest() throws Exception {
         try {
 
             String authToken = authorizationObject.createAuth("practice");
@@ -40,6 +40,7 @@ public class ClearTest {
             Assertions.assertEquals(userObject.getUser("Lance").email(), null, "User still exists");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in clearAllGamesTest");
+            throw e;
         }
     }
 }

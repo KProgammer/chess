@@ -21,7 +21,7 @@ public class ListGamesTest {
     @Test
     @Order(1)
     @DisplayName("ListGamesTestSuccess")
-    public void successListGameTest() {
+    public void successListGameTest() throws Exception {
         try {
             new ClearService().clear();
 
@@ -64,6 +64,7 @@ public class ListGamesTest {
             Assertions.assertEquals(gameList.size(),3, "More or less games than should be listed.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in successListGameTest");
+            throw e;
         }
     }
 
@@ -76,6 +77,7 @@ public class ListGamesTest {
                     "Not authorized error not thrown.");
         } catch (Exception e) {
             System.out.println("Threw Runtime Exception in unauthorizedCreateGameTest");
+            throw e;
         }
     }
 }
