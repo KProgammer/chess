@@ -33,8 +33,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         String recauthToken = null;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT userName, authToken FROM authorization WHERE" +
-                    "authToken = ? LIMIT 1")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT userName, authToken FROM authorization WHERE authToken = ? LIMIT 1")) {
                 preparedStatement.setString(1,authToken);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
@@ -45,7 +44,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
 
             }
         }
-        return new Authorization(username, recauthToken);
+        return new Authorization(recauthToken, username);
     }
 
     @Override
@@ -101,9 +100,6 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DROP TABLE authorization")) {
-                preparedStatement.executeUpdate();
-            }
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

@@ -1,8 +1,10 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.Game;
 
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +24,7 @@ public class GameSqlDAO implements GameDAO{
             try (var preparedStatement = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, ChessGame) VALUES (?, NULL, NULL,?, ?)")) {
                 preparedStatement.setInt(1,gameID);
                 preparedStatement.setString(2,gameName);
-                preparedStatement.setObject(3,new ChessGame() );
+                preparedStatement.setString(3, new Gson().toJson(new ChessGame()));
                 preparedStatement.executeUpdate();
             }
         }
@@ -41,36 +43,27 @@ public class GameSqlDAO implements GameDAO{
                 preparedStatement.setInt(1, gameID);
                 try (var rs = preparedStatement.executeQuery()){
                     while(rs.next()) {
+                        storedGameID = rs.getInt("gameID");
                         whiteUsername = rs.getString("whiteUsername");
                         blackUsername = rs.getString("blackUsername");
                         gameName = rs.getString("gameName");
-                        chessGame = (ChessGame) rs.getObject("ChessGame");
+                        chessGame = new Gson().fromJson(rs.getString("ChessGame"),ChessGame.class);
                     }
                 }
             }
         }
-        return new Game(gameID, whiteUsername,blackUsername,gameName,chessGame);
+        return new Game(storedGameID, whiteUsername,blackUsername,gameName,chessGame);
     }
 
     @Override
     public Collection<Game> listGames() throws Exception {
         ArrayList<Game> games = new ArrayList<>();
-        int gameID = 0;
-        String whiteUsername = null;
-        String blackUsername = null;
-        String gameName = null;
-        ChessGame chessGame = null;
 
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT * FROM authorization")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM game")) {
                 try (var rs = preparedStatement.executeQuery()){
                     while (rs.next()){
-                        gameID = rs.getInt("gameID");
-                        whiteUsername = rs.getString("whiteUsername");
-                        blackUsername = rs.getString("blackUsername");
-                        gameName = rs.getString("gameName");
-                        chessGame = (ChessGame) rs.getObject("ChessGame");
-                        games.add(new Game(gameID,whiteUsername,blackUsername,gameName,chessGame));
+                        games.add(getGame(rs.getInt("gameID")));
                     }
                 }
             }
@@ -80,9 +73,15 @@ public class GameSqlDAO implements GameDAO{
 
     @Override
     public void updateGame(int gameID, String username, ChessGame.TeamColor teamColor) throws Exception{
+        String statement = null;
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("UPDATE game SET teamColor = ? WHERE gameID = ?")) {
-                preparedStatement.setObject(1, teamColor);
+            if(teamColor == ChessGame.TeamColor.WHITE){
+                statement = "UPDATE game SET whiteUsername = ? WHERE gameID = ?";
+            } else{
+                statement = "UPDATE game SET blackUsername = ? WHERE gameID = ?";
+            }
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
                 preparedStatement.setInt(2,gameID);
                 preparedStatement.executeUpdate();
             }
@@ -140,6 +139,7 @@ public class GameSqlDAO implements GameDAO{
 
     private final String[] createStatements = {
             //`json` TEXT DEFAULT NULL,
+            //INDEX(ChessGame)
             """
             CREATE TABLE IF NOT EXISTS  game (
               `id` int NOT NULL AUTO_INCREMENT,
@@ -147,13 +147,12 @@ public class GameSqlDAO implements GameDAO{
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256),
-              `ChessGame` varchar(256),
+              `ChessGame` TEXT,
               PRIMARY KEY (`id`),
               INDEX(gameID),
               INDEX(whiteUsername),
               INDEX(blackUsername),
-              INDEX(gameName),
-              INDEX(ChessGame)
+              INDEX(gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -161,9 +160,9 @@ public class GameSqlDAO implements GameDAO{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DROP TABLE authorization")) {
-                preparedStatement.executeUpdate();
-            }
+//            try (var preparedStatement = conn.prepareStatement("DROP TABLE game")) {
+//                preparedStatement.executeUpdate();
+//            }
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

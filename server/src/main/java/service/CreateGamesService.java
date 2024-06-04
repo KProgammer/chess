@@ -24,7 +24,7 @@ public class CreateGamesService {
 
             return new CreateGameResult(gameID, request.getGameName());
         } catch (Exception e) {
-            System.out.println("Threw RunTime Error in Create Game.");
+            System.out.println("Threw Runtime Error in createGame.");
         }
         return null;
     }
