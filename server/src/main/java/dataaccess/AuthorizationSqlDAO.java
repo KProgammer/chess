@@ -81,10 +81,11 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
         }
     }
 
-    private final String[] createStatements = {
-            //PRIMARY KEY (`id`),
-            //`id` int NOT NULL AUTO_INCREMENT,
-            """
+    public String[] createStatement() {
+        //PRIMARY KEY (`id`),
+        //`id` int NOT NULL AUTO_INCREMENT,
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  authorization (
               `userName` varchar(256),
               `authToken` varchar(256),
@@ -92,18 +93,7 @@ public class AuthorizationSqlDAO implements AuthorizationDAO {
               INDEX(authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
+        };
+        return createStatements;
     }
 }

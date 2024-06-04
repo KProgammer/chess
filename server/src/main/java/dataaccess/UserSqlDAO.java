@@ -52,9 +52,11 @@ public class UserSqlDAO implements UserDAO{
         }
     }
 
-    private final String[] createStatements = {
-            //`json` TEXT DEFAULT NULL,
-            """
+    @Override
+    public String[] createStatement() {
+        String[] createStatements = new String[]{
+                //`json` TEXT DEFAULT NULL,
+                """
             CREATE TABLE IF NOT EXISTS  user (
               `id` INT NOT NULL AUTO_INCREMENT,
               `username` varchar(256),
@@ -66,18 +68,8 @@ public class UserSqlDAO implements UserDAO{
               INDEX(email)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
-    };
+        };
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
+        return createStatements;
     }
 }

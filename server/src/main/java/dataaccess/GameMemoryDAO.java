@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import model.Game;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class GameMemoryDAO implements GameDAO {
@@ -66,5 +67,10 @@ public class GameMemoryDAO implements GameDAO {
     @Override
     public void clear(){
         LIST_OF_GAMES.clear();
+    }
+
+    @Override
+    public String[] createStatement(){
+        return null;
     }
 }

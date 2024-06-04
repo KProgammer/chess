@@ -132,8 +132,10 @@ public class GameSqlDAO implements GameDAO{
         }
     }
 
-    private final String[] createStatements = {
-            """
+    @Override
+    public String[] createStatement(){
+        String[] createStatements = {
+                """
             CREATE TABLE IF NOT EXISTS  game (
               `id` int NOT NULL AUTO_INCREMENT,
               `gameID` SMALLINT(255),
@@ -148,18 +150,7 @@ public class GameSqlDAO implements GameDAO{
               INDEX(gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
+        };
+        return createStatements;
     }
 }

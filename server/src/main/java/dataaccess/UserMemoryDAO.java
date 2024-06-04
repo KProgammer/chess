@@ -18,4 +18,9 @@ public class UserMemoryDAO implements UserDAO{
     public void clear(){
         LIST_OF_USERS.clear();
     }
+
+    @Override
+    public String[] createStatement() {
+        return null;
+    }
 }

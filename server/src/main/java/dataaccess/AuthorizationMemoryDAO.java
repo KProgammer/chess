@@ -1,6 +1,8 @@
 package dataaccess;
 
 import model.Authorization;
+
+import java.sql.SQLException;
 import java.util.*;
 
 public class AuthorizationMemoryDAO implements AuthorizationDAO {
@@ -39,9 +41,16 @@ public class AuthorizationMemoryDAO implements AuthorizationDAO {
         LIST_AUTHTOKEN_USER.remove(authToken);
     }
 
+    @Override
     public void clear(){
         LIST_AUTHTOKEN_USER.clear();
     }
+
+    @Override
+    public String[] createStatement(){
+        return null;
+    }
+
 }
 
 
