@@ -7,6 +7,6 @@ public class Main {
 
         //DisplayBoard board = new DisplayBoard();
         //board.main(args);
-        DisplayBoard.main(args);
+        DisplayBoard.main(args, ChessGame.TeamColor.WHITE);
     }
 }

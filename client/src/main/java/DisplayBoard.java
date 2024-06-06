@@ -1,3 +1,6 @@
+import chess.ChessGame;
+import chess.ChessPiece;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
@@ -5,8 +8,8 @@ import java.util.Random;
 import static ui.EscapeSequences.*;
 
 public class DisplayBoard {
-    private static final int BOARD_SIZE_IN_SQUARES = 3;
-    private static final int SQUARE_SIZE_IN_CHARS = 3;
+    private static final int BOARD_SIZE_IN_SQUARES = 8;
+    private static final int SQUARE_SIZE_IN_CHARS = 8;
     private static final int LINE_WIDTH_IN_CHARS = 1;
     private static final String EMPTY = "   ";
     private static final String X = " X ";
@@ -14,12 +17,12 @@ public class DisplayBoard {
     private static Random rand = new Random();
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args, ChessGame.TeamColor teamColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
-        drawHeaders(out);
+        drawHeaders(out, teamColor);
 
         drawTicTacToeBoard(out);
 
@@ -27,11 +30,17 @@ public class DisplayBoard {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out) {
+    private static void drawHeaders(PrintStream out, ChessGame.TeamColor teamColor) {
 
         setBlack(out);
 
-        String[] headers = { "TIC", "TAC", "TOE" };
+        String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+
+        if(teamColor == ChessGame.TeamColor.BLACK ) {
+            //String[] headers = {"TIC", "TAC", "TOE"};
+            headers = new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
+        }
+
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             drawHeader(out, headers[boardCol]);
 
