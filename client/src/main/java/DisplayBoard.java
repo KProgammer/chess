@@ -86,32 +86,37 @@ public class DisplayBoard {
     private static void drawTicTacToeBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
             if (teamColor == ChessGame.TeamColor.BLACK){
-                pos_row = (8-boardRow);
-            } else {
                 pos_row = (boardRow + 1);
+            } else {
+                pos_row = (8-boardRow);
             }
             drawRowOfSquares(out, chessGame, teamColor);
-            //pos_row += 1;
         }
     }
 
     private static void drawRowOfSquares(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
-        int columnPosition = 1;
-
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
             printSideBarText(squareRow, teamColor);
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-                setWhite(out);
+                if(teamColor == ChessGame.TeamColor.WHITE) {
+                    setBlack(out);
+                } else {
+                    setWhite(out);
+                }
 
                 if (teamColor == ChessGame.TeamColor.BLACK){
-                    columnPosition = (8-boardCol);
+                    pos_col = (8-boardCol);
                 } else {
-                    columnPosition = (boardCol + 1);
+                    pos_col = (boardCol + 1);
                 }
 
                 if((boardCol%2 == 0) && (pos_row%2 == 0) ||
                         (boardCol%2 != 0 && (pos_row%2 != 0))){
-                    setBlack(out);
+                    if(teamColor == ChessGame.TeamColor.WHITE) {
+                        setWhite(out);
+                    } else {
+                        setBlack(out);
+                    }
                 }
 
                 if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
@@ -119,9 +124,9 @@ public class DisplayBoard {
                     int suffixLength = SQUARE_SIZE_IN_CHARS - prefixLength - 1;
 
                     out.print(EMPTY.repeat(prefixLength));
-                    if(chessGame.getBoard().getPiece(new ChessPosition(pos_row,columnPosition)) != null) {
-                        printPlayer(out, PieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(pos_row, columnPosition))),
-                                chessGame.getBoard().getPiece(new ChessPosition(pos_row, columnPosition)).getTeamColor());
+                    if(chessGame.getBoard().getPiece(new ChessPosition(pos_row,pos_col)) != null) {
+                        printPlayer(out, PieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col))),
+                                chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col)).getTeamColor());
                     } else {
                         printPlayer(out, "   ", null);
                     }
