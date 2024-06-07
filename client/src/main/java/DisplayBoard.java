@@ -1,4 +1,3 @@
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -12,7 +11,7 @@ import static ui.EscapeSequences.*;
 public class DisplayBoard {
     private static final int BOARD_SIZE_IN_SQUARES = 8;
     private static final int SQUARE_SIZE_IN_CHARS = 3;
-    private static final int LINE_WIDTH_IN_CHARS = 0;
+    private static final int LINE_WIDTH_IN_CHARS = 1;
     private static int pos_row = 1;
     private static int pos_col = 1;
     private static final String EMPTY = "   ";
@@ -30,6 +29,8 @@ public class DisplayBoard {
 
         drawTicTacToeBoard(out, chessGame, teamColor);
 
+        drawHeaders(out, teamColor);
+
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
@@ -39,19 +40,15 @@ public class DisplayBoard {
         setBlack(out);
 
         String[] headers = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
-        //String[] headers = {"TIC", "TAC", "TOE", "TIC", "TAC", "TOE", "TIC", "TAC"};
 
         if(teamColor == ChessGame.TeamColor.BLACK ) {
-            //String[] headers = {"TIC", "TAC", "TOE"};
             headers = new String[]{" h ", " g ", " f ", " e ", " d ", " c ", " b ", " a "};
         }
 
+        out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             drawHeader(out, headers[boardCol]);
-
-            if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
-            }
         }
 
         out.println();
@@ -78,21 +75,23 @@ public class DisplayBoard {
     private static void drawTicTacToeBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
             drawRowOfSquares(out, chessGame, teamColor);
             pos_row += 1;
-
-            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
-                drawVerticalLine(out);
-                setBlack(out);
-            }
         }
     }
 
     private static void drawRowOfSquares(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
+            if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
+                out.print(SET_TEXT_COLOR_GREEN);
+                out.print(" "+pos_row+" ");
+            }
+            else {
+                out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+            }
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+
                 setWhite(out);
 
                 pos_col = (boardCol + 1);
@@ -107,7 +106,6 @@ public class DisplayBoard {
                     int suffixLength = SQUARE_SIZE_IN_CHARS - prefixLength - 1;
 
                     out.print(EMPTY.repeat(prefixLength));
-                    //printPlayer(out, rand.nextBoolean() ? X : O);
                     if(chessGame.getBoard().getPiece(new ChessPosition(pos_row,pos_col)) != null) {
                         printPlayer(out, PieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col))),
                                 chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col)).getTeamColor());
@@ -119,16 +117,8 @@ public class DisplayBoard {
                 else {
                     out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
                 }
-
-                if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                    // Draw right line
-                    setRed(out);
-                    out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
-                }
-
                 setBlack(out);
             }
-
             out.println();
         }
     }
