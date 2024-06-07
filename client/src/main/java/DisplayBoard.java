@@ -73,7 +73,7 @@ public class DisplayBoard {
         setBlack(out);
     }
 
-    private static void printSideBarText(Integer squareRow){
+    private static void printSideBarText(Integer squareRow, ChessGame.TeamColor teamColor){
         if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
             out.print(SET_TEXT_COLOR_GREEN);
             out.print(" "+pos_row+" ");
@@ -84,22 +84,30 @@ public class DisplayBoard {
     }
 
     private static void drawTicTacToeBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
-
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
+            if (teamColor == ChessGame.TeamColor.BLACK){
+                pos_row = (8-boardRow);
+            } else {
+                pos_row = (boardRow + 1);
+            }
             drawRowOfSquares(out, chessGame, teamColor);
-            pos_row += 1;
+            //pos_row += 1;
         }
     }
 
     private static void drawRowOfSquares(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
+        int columnPosition = 1;
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
-            printSideBarText(squareRow);
+            printSideBarText(squareRow, teamColor);
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-
                 setWhite(out);
 
-                pos_col = (boardCol + 1);
+                if (teamColor == ChessGame.TeamColor.BLACK){
+                    columnPosition = (8-boardCol);
+                } else {
+                    columnPosition = (boardCol + 1);
+                }
 
                 if((boardCol%2 == 0) && (pos_row%2 == 0) ||
                         (boardCol%2 != 0 && (pos_row%2 != 0))){
@@ -111,9 +119,9 @@ public class DisplayBoard {
                     int suffixLength = SQUARE_SIZE_IN_CHARS - prefixLength - 1;
 
                     out.print(EMPTY.repeat(prefixLength));
-                    if(chessGame.getBoard().getPiece(new ChessPosition(pos_row,pos_col)) != null) {
-                        printPlayer(out, PieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col))),
-                                chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col)).getTeamColor());
+                    if(chessGame.getBoard().getPiece(new ChessPosition(pos_row,columnPosition)) != null) {
+                        printPlayer(out, PieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(pos_row, columnPosition))),
+                                chessGame.getBoard().getPiece(new ChessPosition(pos_row, columnPosition)).getTeamColor());
                     } else {
                         printPlayer(out, "   ", null);
                     }
@@ -124,13 +132,12 @@ public class DisplayBoard {
                 }
                 setBlack(out);
             }
-            printSideBarText(squareRow);
+            printSideBarText(squareRow, teamColor);
             out.println();
         }
     }
 
     private static void drawVerticalLine(PrintStream out) {
-
         int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_CHARS +
                 (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_CHARS;
 
