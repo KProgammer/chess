@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
+import static java.lang.System.out;
 import static ui.EscapeSequences.*;
 
 public class DisplayBoard {
@@ -72,6 +73,16 @@ public class DisplayBoard {
         setBlack(out);
     }
 
+    private static void printSideBarText(Integer squareRow){
+        if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
+            out.print(SET_TEXT_COLOR_GREEN);
+            out.print(" "+pos_row+" ");
+        }
+        else {
+            out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+        }
+    }
+
     private static void drawTicTacToeBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
@@ -83,13 +94,7 @@ public class DisplayBoard {
     private static void drawRowOfSquares(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
-            if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
-                out.print(SET_TEXT_COLOR_GREEN);
-                out.print(" "+pos_row+" ");
-            }
-            else {
-                out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
-            }
+            printSideBarText(squareRow);
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
 
                 setWhite(out);
@@ -119,6 +124,7 @@ public class DisplayBoard {
                 }
                 setBlack(out);
             }
+            printSideBarText(squareRow);
             out.println();
         }
     }
