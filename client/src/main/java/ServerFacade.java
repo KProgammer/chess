@@ -14,11 +14,11 @@ import java.net.URI;
 import java.util.Collection;
 
 public class ServerFacade {
-    private static URI url;
+    /*private static URI url;
 
     public ServerFacade(URI url){
         this.url = url;
-    }
+    }*/
 
     //port included in url
     public Object run(String endpoint, URI url,  String jsonBody, Object response, String key, String value) {

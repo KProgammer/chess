@@ -14,12 +14,7 @@ public class Client {
         boolean loggedIn = false;
         ServerFacade serverFacade;
         String authToken = null;
-
-        try {
-            serverFacade = new ServerFacade(new URI("http://localhost:8080"));
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        serverFacade = new ServerFacade();
 
         while(true){
             String line = readIn();
