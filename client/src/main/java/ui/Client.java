@@ -145,7 +145,10 @@ public class Client {
                 }
 
             } else if ((line.equals("observegame")) && (loggedIn)) {
-                serverFacade.observeGame();
+                System.out.println("Type in the gameID of the desired game.");
+                int gameID = Integer.parseInt(readIn());
+
+                serverFacade.observeGame(gameID);
             } else {
                 System.out.println("Error: Didn't recognize command. Try again.");
             }

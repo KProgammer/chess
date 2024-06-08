@@ -82,13 +82,13 @@ public class ServerFacade {
     }
 
     public CreateGameResult createGame(URI url, String gameName, String authToken){
-        var jsonBody = new Gson().toJson(gameName);
+        var jsonBody = new Gson().toJson(new GameName(gameName));
         CreateGameResult response = new CreateGameResult(null,null);
         return (CreateGameResult) run("POST", url, jsonBody,response,"authorization",authToken);
     }
 
     public JoinGameResult joinGame(URI url, ChessGame.TeamColor playerColor, Integer gameID, String authToken) {
-        var jsonBody = new Gson().toJson(playerColor) + new Gson().toJson(gameID);
+        var jsonBody = new Gson().toJson(new JoinGameHelper(playerColor,gameID));
         JoinGameResult response = new JoinGameResult(null);
         return (JoinGameResult) run("PUT", url, jsonBody,response,"authorization",authToken);
     }
@@ -152,8 +152,15 @@ public class ServerFacade {
         return  registerResult;
     }*/
 
-    public void observeGame(){
-        DisplayBoard.main( ChessGame.TeamColor.WHITE,new ChessGame());
-        DisplayBoard.main( ChessGame.TeamColor.BLACK,new ChessGame());
+    public Boolean observeGame(Integer gameID){
+        if((gameID == null) ||
+                ((gameID > 999) && (gameID < 10000))){
+            System.out.println("Not a valid gameID.");
+            return false;
+        } else {
+            DisplayBoard.main(ChessGame.TeamColor.WHITE, new ChessGame());
+            DisplayBoard.main(ChessGame.TeamColor.BLACK, new ChessGame());
+            return true;
+        }
     }
 }
