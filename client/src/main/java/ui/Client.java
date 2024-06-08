@@ -1,8 +1,11 @@
+package ui;
+
 import chess.ChessGame;
 import model.Game;
+import results.*;
+import serverfacade.ServerFacade;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -35,11 +38,15 @@ public class Client {
                 }
                 
             } else if (line.equals("quit")) {
-                System.out.println("Logged out and shutting down.");
+                if(loggedIn){
+                    serverFacade.logout(URI.create("http://localhost:8080/session"),authToken);
+                    System.out.println("Logged out.");
+                }
 
                 loggedIn = false;
-                serverFacade.logout(URI.create("http://localhost:8080/session"),authToken);
                 serverFacade.clear(URI.create("http://localhost:8080/db"));
+                System.out.println("All users and games deleted.");
+                System.out.println("Shutting down.");
                 break;
                 
             } else if (line.equals("login")) {
@@ -49,8 +56,15 @@ public class Client {
                 System.out.println("Type in your password");
                 String password = readIn();
 
-                authToken = (serverFacade.login(URI.create("http://localhost:8080/session"),username, password)).getAuthToken();
-                loggedIn = true;
+                LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),username, password);
+
+                if(result == null){
+                    System.out.println("Login unsuccessful. Try again.");
+                } else {
+                    authToken = result.getAuthToken();
+                    loggedIn = true;
+                    System.out.println("You are logged in.");
+                }
                 
             } else if (line.equals("register")) {
                 System.out.println("Type in your username");
@@ -62,29 +76,51 @@ public class Client {
                 System.out.println("Type in your email");
                 String email = readIn();
 
-                serverFacade.register(URI.create("http://localhost:8080/user"), username, password, email);
-                
-            } else if (line.equals("logout")) {
-                System.out.println("Logged out.");
-                serverFacade.logout(URI.create("http://localhost:8080/session"),authToken);
+                RegisterResult result = serverFacade.register(URI.create("http://localhost:8080/user"), username, password, email);
 
-                loggedIn = false;
-                authToken = null;
+                if(result != null){
+                    System.out.println("Registration successful!");
+                } else {
+                    System.out.println("Registration unsuccessful.");
+                }
+            } else if (line.equals("logout")) {
+                LogoutResult result = serverFacade.logout(URI.create("http://localhost:8080/session"),authToken);
+
+                if(result == null){
+                    System.out.println("Unable to logout. If unauthorized error above, you may already be logged out.");
+                } else {
+                    System.out.println("You are logged out.");
+                    loggedIn = false;
+                    authToken = null;
+                }
 
             } else if ((line.equals("creategame")) && (loggedIn)) {
                 System.out.println("Enter the name of chess game");
                 String gameName = readIn();
 
                 System.out.println("Creating game...");
-                int gameID = serverFacade.createGame(URI.create("http://localhost:8080/game"),gameName,authToken);
-                System.out.println("Game created! gameID is: "+gameID);
+                CreateGameResult result = serverFacade.createGame(URI.create("http://localhost:8080/game"),gameName,authToken);
+
+                if(result == null){
+                    System.out.println("Error creating game. See error messages above.");
+                } else {
+                    int gameID = (serverFacade.createGame(URI.create("http://localhost:8080/game"), gameName, authToken)).getGameID();
+                    System.out.println("Game created! gameID is: " + gameID);
+                }
 
             } else if ((line.equals("listgames")) && (loggedIn)) {
-                System.out.println("List of games:");
-                ArrayList<Game> listGames = (ArrayList<Game>) serverFacade.listGames(URI.create("http://localhost:8080/game"),authToken);
-                for (var i = 0; i < listGames.size(); i++) {
-                    //System.out.printf("%d. %s%n", i+1, listGames.get(i));
-                    System.out.println(listGames.get(i));
+                ListGamesResult result = serverFacade.listGames(URI.create("http://localhost:8080/game"),authToken);
+
+                if(result == null){
+                    System.out.println("Could not access games. See errors above.");
+                } else {
+                    System.out.println("List of games:");
+                    ArrayList<Game> listGames = (ArrayList<Game>) (serverFacade.listGames(URI.create("http://localhost:8080/game"), authToken)).getGames();
+
+                    for (var i = 0; i < listGames.size(); i++) {
+                        //System.out.printf("%d. %s%n", i+1, listGames.get(i));
+                        System.out.println(listGames.get(i));
+                    }
                 }
             } else if ((line.equals("playgame")) && (loggedIn)) {
                 System.out.println("Type in the gameID of the desired game.");
@@ -100,7 +136,13 @@ public class Client {
                     teamColor = ChessGame.TeamColor.BLACK;
                 }
 
-                serverFacade.joinGame(URI.create("http://localhost:8080/game"),teamColor,gameID,authToken);
+                JoinGameResult result = serverFacade.joinGame(URI.create("http://localhost:8080/game"),teamColor,gameID,authToken);
+
+                if(result == null){
+                    System.out.println("Unable to join game "+gameID+" as "+color+".");
+                } else {
+                    System.out.println("Successfully joined game "+gameID+" as "+color+".");
+                }
 
             } else if ((line.equals("observegame")) && (loggedIn)) {
                 serverFacade.observeGame();
@@ -112,7 +154,7 @@ public class Client {
     }
 
     private String readIn(){
-        System.out.printf("Type here%n>>> ");
+        System.out.printf("%n>>> ");
         Scanner scanner = new Scanner(System.in);
         String line = scanner.nextLine();
         line = line.toLowerCase();

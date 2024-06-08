@@ -1,16 +1,12 @@
-import chess.*;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.LowerCase;
-
-import java.io.IOException;
-import java.io.InputStream;
+import ui.Client;
 
 public class Main {
     public static void main(String[] args) {
         //var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        //System.out.println("♕ 240 Chess Client: " + piece);
+        //System.out.println("♕ 240 Chess ui.Client: " + piece);
 
-        //DisplayBoard.main(args, ChessGame.TeamColor.WHITE, new ChessGame());
-        //DisplayBoard.main(args, ChessGame.TeamColor.BLACK, new ChessGame());
+        //ui.DisplayBoard.main(args, ChessGame.TeamColor.WHITE, new ChessGame());
+        //ui.DisplayBoard.main(args, ChessGame.TeamColor.BLACK, new ChessGame());
 
         //Supposedly this code starts up a server, however Repl doesn't work.
         var serverUrl = "http://localhost:8080";

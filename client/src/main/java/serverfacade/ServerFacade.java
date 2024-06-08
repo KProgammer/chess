@@ -1,22 +1,22 @@
+package serverfacade;
+
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.Game;
 import requests.LoginRequest;
-import requests.LogoutRequest;
 import requests.RegisterRequest;
 import results.*;
+import ui.DisplayBoard;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Collection;
 
 public class ServerFacade {
     /*private static URI url;
 
-    public ServerFacade(URI url){
+    public serverfacade.ServerFacade(URI url){
         this.url = url;
     }*/
 
@@ -58,12 +58,15 @@ public class ServerFacade {
             result = new Gson().fromJson(inputStreamReader, response.getClass());
         } catch (IOException e) {
             result = null;
-            if(e.getMessage().equals("Server returned HTTP response code: 400 for URL: http://localhost:8080/user")){
+            if(e.getMessage().equals("Server returned HTTP response code: 400 for URL: http://localhost:8080/user")||
+                    e.getMessage().equals("Server returned HTTP response code: 400 for URL: http://localhost:8080/game")){
                 System.out.println("Something was wrong with the http request. Tell Kendall to fix it.");
-            } else if(e.getMessage().equals("Server returned HTTP response code: 401 for URL: http://localhost:8080/user")) {
+            } else if(e.getMessage().equals("Server returned HTTP response code: 401 for URL: http://localhost:8080/session") ||
+                    e.getMessage().equals("Server returned HTTP response code: 401 for URL: http://localhost:8080/game")) {
                 System.out.println("Unauthorized. You must login.");
-            } else if(e.getMessage().equals("Server returned HTTP response code: 403 for URL: http://localhost:8080/user")){
-                System.out.println("Username already taken.");
+            } else if(e.getMessage().equals("Server returned HTTP response code: 403 for URL: http://localhost:8080/user") ||
+                    e.getMessage().equals("Server returned HTTP response code: 403 for URL: http://localhost:8080/game")){
+                System.out.println("Username or game color already taken.");
             } else {
                 throw new RuntimeException(e);
             }
@@ -73,45 +76,43 @@ public class ServerFacade {
     }
 
     public void clear(URI url){
-        run("DELETE", url,null,null, null,null);
+        var jsonBody = new Gson().toJson(null);
+        ClearResult response = new ClearResult(null);
+        run("DELETE", url,jsonBody,response, null,null);
     }
 
-    public Integer createGame(URI url, String gameName, String authToken){
+    public CreateGameResult createGame(URI url, String gameName, String authToken){
         var jsonBody = new Gson().toJson(gameName);
         CreateGameResult response = new CreateGameResult(null,null);
-        CreateGameResult result = (CreateGameResult) run("POST", url, jsonBody,response,"authorization",authToken);
-        return result.getGameID();
+        return (CreateGameResult) run("POST", url, jsonBody,response,"authorization",authToken);
     }
 
-    public void joinGame(URI url, ChessGame.TeamColor playerColor, Integer gameID, String authToken) {
+    public JoinGameResult joinGame(URI url, ChessGame.TeamColor playerColor, Integer gameID, String authToken) {
         var jsonBody = new Gson().toJson(playerColor) + new Gson().toJson(gameID);
         JoinGameResult response = new JoinGameResult(null);
-        run("POST", url, jsonBody,response,"authorization",authToken);
+        return (JoinGameResult) run("PUT", url, jsonBody,response,"authorization",authToken);
     }
 
-    public Collection<Game> listGames(URI url, String authToken){
+    public ListGamesResult listGames(URI url, String authToken){
         ListGamesResult response = new ListGamesResult(null,null);
-        ListGamesResult result =  (ListGamesResult) run("POST", url, null,response,"authorization",authToken);
-        return result.getGames();
+        return (ListGamesResult) run("GET", url, null,response,"authorization",authToken);
     }
 
     public LoginResult login(URI url, String username, String password){
         var jsonBody = new Gson().toJson(new LoginRequest(username,password));
         LoginResult response = new LoginResult(null,null,null);
-        LoginResult result = (LoginResult) run("POST", url, jsonBody,response,null,null);
-        return result;
+        return (LoginResult) run("POST", url, jsonBody,response,null,null);
     }
 
-    public void logout(URI url, String authToken){
+    public LogoutResult logout(URI url, String authToken){
         LogoutResult response = new LogoutResult(null);
-        run("POST", url, null,response,"authorization",authToken);
+        return (LogoutResult) run("DELETE", url, null,response,"authorization",authToken);
     }
 
     public  RegisterResult register(URI url, String username, String password, String email){
         var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
         RegisterResult response = new RegisterResult(null,null,null);
-        RegisterResult result = (RegisterResult) run("POST", url, jsonBody,response,null,null);
-        return result;
+        return (RegisterResult) run("POST", url, jsonBody,response,null,null);
     }
 
     /*public RegisterResult register(URI url, String username, String password, String email){

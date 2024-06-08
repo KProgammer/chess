@@ -1,7 +1,9 @@
 package service;
 
 import requests.CreateGameRequest;
+import requests.ListGamesRequest;
 import results.CreateGameResult;
+import results.ListGamesResult;
 
 import java.util.Random;
 
@@ -20,6 +22,12 @@ public class CreateGamesService {
                 return new CreateGameResult(null, "Error: bad request");
             }
 
+            ListGamesResult listGamesResult = new ListGamesService().makeList(new ListGamesRequest(request.getAuthToken()));
+            if(listGamesResult.getGames().size() > 1000){
+                System.out.println("Too many games. Cannot create another one.");
+                return new CreateGameResult(null, "Error: bad request");
+            }
+
             int gameID = createGameID();
             gameObject.createGame(gameID, request.getGameName());
 
@@ -30,13 +38,14 @@ public class CreateGamesService {
         return null;
     }
 
-    private int createGameID(    ) {
+    private int createGameID() {
         Random rand = new Random();
         int min = 1000;
         int max = 10000;
         int gameID = (rand.nextInt(max-min+1)+min);
+        //int gameID = rand.nextInt();
 
-        //Make sure that the authToken is unique.
+        //Make sure that the gameID is unique.
         while(true) {
             try {
                 if (gameObject.getGame(gameID) != null) break;

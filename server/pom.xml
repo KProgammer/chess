@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.tyrus.bundles</groupId>
-            <artifactId>tyrus-standalone-Client</artifactId>
+            <artifactId>tyrus-standalone-ui.Client</artifactId>
             <version>1.15</version>
             <scope>test</scope>
         </dependency>
