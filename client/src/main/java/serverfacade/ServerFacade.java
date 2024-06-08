@@ -14,11 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 
 public class ServerFacade {
-    /*private static URI url;
-
-    public serverfacade.ServerFacade(URI url){
-        this.url = url;
-    }*/
 
     //port included in url
     public Object run(String endpoint, URI url,  String jsonBody, Object response, String key, String value) {
@@ -130,57 +125,10 @@ public class ServerFacade {
     }
 
     public  RegisterResult register(URI url, String username, String password, String email){
-        /*if(username == null){
-            username = "";
-        }
-        if(password == null){
-            password = "";
-        }
-        if(email == null){
-            email = "";
-        }*/
-
-        var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
+                var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
         RegisterResult response = new RegisterResult(null,null,null);
         return (RegisterResult) run("POST", url, jsonBody,response,null,null);
     }
-
-    /*public RegisterResult register(URI url, String username, String password, String email){
-        HttpURLConnection http;
-        try {
-            // Specify the desired endpoint
-            URI uri;
-            uri = url;
-            http = (HttpURLConnection) uri.toURL().openConnection();
-            http.setRequestMethod("POST");
-
-            // Specify that we are going to write out data
-            http.setDoOutput(true);
-
-            // Write out the body
-            RegisterRequest registerRequest = new RegisterRequest(username,password, email);
-            try (var outputStream = http.getOutputStream()) {
-                var jsonBody = new Gson().toJson(registerRequest);
-                outputStream.write(jsonBody.getBytes());
-            }
-
-            // Make the request
-            http.connect();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        RegisterResult registerResult;
-        // Output the response body
-        try (InputStream respBody = http.getInputStream()) {
-            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            registerResult = new Gson().fromJson(inputStreamReader, RegisterResult.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return  registerResult;
-    }*/
 
     public Boolean observeGame(Integer gameID){
         if((gameID == null) ||
