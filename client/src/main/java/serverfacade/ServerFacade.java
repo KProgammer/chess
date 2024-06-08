@@ -72,7 +72,6 @@ public class ServerFacade {
                 throw new RuntimeException(e);
             }
         }
-
         return  result;
     }
 
