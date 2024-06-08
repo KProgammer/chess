@@ -82,34 +82,64 @@ public class ServerFacade {
     }
 
     public CreateGameResult createGame(URI url, String gameName, String authToken){
+        if(gameName == null){
+            gameName = "";
+        } if(authToken == null){
+            authToken = "";
+        }
         var jsonBody = new Gson().toJson(new GameName(gameName));
         CreateGameResult response = new CreateGameResult(null,null);
         return (CreateGameResult) run("POST", url, jsonBody,response,"authorization",authToken);
     }
 
     public JoinGameResult joinGame(URI url, ChessGame.TeamColor playerColor, Integer gameID, String authToken) {
+        if(authToken == null){
+            authToken = "";
+        }
         var jsonBody = new Gson().toJson(new JoinGameHelper(playerColor,gameID));
         JoinGameResult response = new JoinGameResult(null);
         return (JoinGameResult) run("PUT", url, jsonBody,response,"authorization",authToken);
     }
 
     public ListGamesResult listGames(URI url, String authToken){
+        if(authToken == null){
+            authToken = "";
+        }
         ListGamesResult response = new ListGamesResult(null,null);
         return (ListGamesResult) run("GET", url, null,response,"authorization",authToken);
     }
 
     public LoginResult login(URI url, String username, String password){
+        if(username == null){
+            username = "";
+        } if (password == null){
+            password = "";
+        }
+
         var jsonBody = new Gson().toJson(new LoginRequest(username,password));
         LoginResult response = new LoginResult(null,null,null);
         return (LoginResult) run("POST", url, jsonBody,response,null,null);
     }
 
     public LogoutResult logout(URI url, String authToken){
+        if(authToken == null){
+            authToken = "";
+        }
         LogoutResult response = new LogoutResult(null);
         return (LogoutResult) run("DELETE", url, null,response,"authorization",authToken);
     }
 
     public  RegisterResult register(URI url, String username, String password, String email){
+        /*if(username == null){
+            username = "";
+        }
+        if(password == null){
+            password = "";
+        }
+        if(email == null){
+            email = "";
+        }*/
+
         var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
         RegisterResult response = new RegisterResult(null,null,null);
         return (RegisterResult) run("POST", url, jsonBody,response,null,null);
@@ -154,7 +184,7 @@ public class ServerFacade {
 
     public Boolean observeGame(Integer gameID){
         if((gameID == null) ||
-                ((gameID > 999) && (gameID < 10000))){
+                ((gameID < 999) || (gameID > 10000))){
             System.out.println("Not a valid gameID.");
             return false;
         } else {

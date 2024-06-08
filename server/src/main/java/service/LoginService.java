@@ -14,7 +14,9 @@ public class LoginService {
     //login
     public LoginResult login(LoginRequest request) {
         try {
-            if((userObject.getUser(request.getUsername()) == null) ||
+            if((request.getUsername() == null) ||
+                    (request.getPassword() == null) ||
+                    (userObject.getUser(request.getUsername()) == null) ||
                     (!verifyUser(request.getUsername(), request.getPassword()))){
                 return new LoginResult(null,null,"Error: unauthorized");
             }

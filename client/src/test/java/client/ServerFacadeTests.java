@@ -40,24 +40,24 @@ public class ServerFacadeTests {
     @DisplayName("ClearTest")
     public void clearTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
         serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
         serverFacade.logout(URI.create("http://localhost:8080/session"), result.getAuthToken());
 
-        serverFacade.clear(URI.create("http://localhost:8080"));
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
 
         LoginResult newResult = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
 
         Assertions.assertEquals(newResult, null, "Clear didn't delete all the users");
 
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
-
         LoginResult newNewresult = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
         ListGamesResult listGames = serverFacade.listGames(URI.create("http://localhost:8080/game"),newNewresult.getAuthToken());
 
-        Assertions.assertEquals(listGames, null, "Not all games were deleted.");
+        Assertions.assertEquals(listGames.getGames().size(), 0, "Not all games were deleted.");
     }
 
     @Test
@@ -65,6 +65,7 @@ public class ServerFacadeTests {
     @DisplayName("createGameTest")
     public void createGameTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
@@ -88,6 +89,7 @@ public class ServerFacadeTests {
     @DisplayName("createGameFailTest")
     public void createGameFailTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         CreateGameResult result = serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", null);
 
         Assertions.assertNull(result,"Not null.");
@@ -98,6 +100,7 @@ public class ServerFacadeTests {
     @DisplayName("joinGameTest")
     public void joinGameTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
         serverFacade.register(URI.create("http://localhost:8080/user"),"kendall","kendall", "kendall");
 
@@ -129,6 +132,7 @@ public class ServerFacadeTests {
     @DisplayName("joinGameFailTest")
     public void joinGameFailTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
         serverFacade.register(URI.create("http://localhost:8080/user"),"kendall","kendall", "kendall");
 
@@ -154,6 +158,7 @@ public class ServerFacadeTests {
     @DisplayName("listGamesTest")
     public void listGamesTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
@@ -181,6 +186,7 @@ public class ServerFacadeTests {
     @DisplayName("listGamesFailTest")
     public void listGamesFailTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
@@ -198,6 +204,7 @@ public class ServerFacadeTests {
     @DisplayName("loginTest")
     public void loginTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
@@ -213,6 +220,7 @@ public class ServerFacadeTests {
     @DisplayName("loginFailTest")
     public void loginFailTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),null, "password");
@@ -227,6 +235,7 @@ public class ServerFacadeTests {
     @DisplayName("logoutTest")
     public void logoutTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
@@ -242,6 +251,7 @@ public class ServerFacadeTests {
     @DisplayName("logoutFailTest")
     public void logoutFailTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
@@ -257,6 +267,7 @@ public class ServerFacadeTests {
     @DisplayName("registerTest")
     public void registerTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         RegisterResult registerResult = serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
 
         Assertions.assertNull(registerResult.getMessage(),"Should be null if registration was successful.");
@@ -271,6 +282,7 @@ public class ServerFacadeTests {
     @DisplayName("registerFailTest")
     public void registerFailTest(){
         ServerFacade serverFacade = new ServerFacade();
+        serverFacade.clear(URI.create("http://localhost:8080/db"));
         RegisterResult registerResult = serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
         RegisterResult secondRegisterResult = serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
         RegisterResult thirdRegisterResult = serverFacade.register(URI.create("http://localhost:8080/user"),null,"password", "email");
