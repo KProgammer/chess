@@ -78,12 +78,8 @@ public class ServerFacadeTests {
 
         ArrayList<Game> listOfGames = (ArrayList<Game>) listGames.getGames();
         Collection<Game> testCollection = new ArrayList<>();
-        for (Game listOfGame : listOfGames) {
-            int gameID = listOfGame.gameID();
-            String gameName = listOfGame.gameName();
-            ChessGame chessGame = listOfGame.game();
-            testCollection.add(new Game(gameID, null, null, gameName, chessGame));
-        }
+        testCollection.add(new Game(listOfGames.getFirst().gameID(),listOfGames.getFirst().whiteUsername(),
+                listOfGames.getFirst().blackUsername(),listOfGames.getFirst().gameName(),listOfGames.getFirst().game()));
 
         Assertions.assertTrue(listGames.getGames().equals(testCollection),"Game wasn't created");
     }

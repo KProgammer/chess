@@ -12,8 +12,4 @@ public class GameName {
     public String getGameName() {
         return gameName;
     }
-
-    public void setGameName(String newGameName){
-        gameName = newGameName;
-    }
 }

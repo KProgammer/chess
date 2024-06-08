@@ -6,7 +6,6 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import static java.lang.System.out;
 import static ui.EscapeSequences.*;
@@ -15,12 +14,9 @@ public class DisplayBoard {
     private static final int BOARD_SIZE_IN_SQUARES = 8;
     private static final int SQUARE_SIZE_IN_CHARS = 3;
     private static final int LINE_WIDTH_IN_CHARS = 1;
-    private static int pos_row = 1;
-    private static int pos_col = 1;
+    private static int posRow = 1;
+    private static int posCol = 1;
     private static final String EMPTY = "   ";
-    private static final String X = " X ";
-    private static final String O = " O ";
-    private static Random rand = new Random();
 
 
     public static void main(ChessGame.TeamColor teamColor, ChessGame chessGame) {
@@ -78,7 +74,7 @@ public class DisplayBoard {
     private static void printSideBarText(Integer squareRow, ChessGame.TeamColor teamColor){
         if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
             out.print(SET_TEXT_COLOR_GREEN);
-            out.print(" "+pos_row+" ");
+            out.print(" "+ posRow +" ");
         }
         else {
             out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
@@ -88,9 +84,9 @@ public class DisplayBoard {
     private static void drawTicTacToeBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
             if (teamColor == ChessGame.TeamColor.BLACK){
-                pos_row = (boardRow + 1);
+                posRow = (boardRow + 1);
             } else {
-                pos_row = (8-boardRow);
+                posRow = (8-boardRow);
             }
             drawRowOfSquares(out, chessGame, teamColor);
         }
@@ -107,13 +103,13 @@ public class DisplayBoard {
                 }
 
                 if (teamColor == ChessGame.TeamColor.BLACK){
-                    pos_col = (8-boardCol);
+                    posCol = (8-boardCol);
                 } else {
-                    pos_col = (boardCol + 1);
+                    posCol = (boardCol + 1);
                 }
 
-                if((boardCol%2 == 0) && (pos_row%2 == 0) ||
-                        (boardCol%2 != 0 && (pos_row%2 != 0))){
+                if((boardCol%2 == 0) && (posRow %2 == 0) ||
+                        (boardCol%2 != 0 && (posRow %2 != 0))){
                     if(teamColor == ChessGame.TeamColor.WHITE) {
                         setWhite(out);
                     } else {
@@ -126,9 +122,9 @@ public class DisplayBoard {
                     int suffixLength = SQUARE_SIZE_IN_CHARS - prefixLength - 1;
 
                     out.print(EMPTY.repeat(prefixLength));
-                    if(chessGame.getBoard().getPiece(new ChessPosition(pos_row,pos_col)) != null) {
-                        printPlayer(out, PieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col))),
-                                chessGame.getBoard().getPiece(new ChessPosition(pos_row, pos_col)).getTeamColor());
+                    if(chessGame.getBoard().getPiece(new ChessPosition(posRow, posCol)) != null) {
+                        printPlayer(out, pieceSymbol(chessGame.getBoard().getPiece(new ChessPosition(posRow, posCol))),
+                                chessGame.getBoard().getPiece(new ChessPosition(posRow, posCol)).getTeamColor());
                     } else {
                         printPlayer(out, "   ", null);
                     }
@@ -144,20 +140,7 @@ public class DisplayBoard {
         }
     }
 
-    private static void drawVerticalLine(PrintStream out) {
-        int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_CHARS +
-                (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_CHARS;
-
-        for (int lineRow = 0; lineRow < LINE_WIDTH_IN_CHARS; ++lineRow) {
-            setRed(out);
-            out.print(EMPTY.repeat(boardSizeInSpaces));
-
-            setBlack(out);
-            out.println();
-        }
-    }
-
-    private static String PieceSymbol(ChessPiece chessPiece){
+    private static String pieceSymbol(ChessPiece chessPiece){
         if (chessPiece == null){
             return "   ";
         } else if(chessPiece.getPieceType() == ChessPiece.PieceType.QUEEN){

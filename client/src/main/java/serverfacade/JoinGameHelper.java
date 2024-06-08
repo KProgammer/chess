@@ -19,12 +19,4 @@ public class JoinGameHelper {
     public ChessGame.TeamColor getPlayerColor() {
         return playerColor;
     }
-
-    public void setGameID(Integer gameID) {
-        this.gameID = gameID;
-    }
-
-    public void setPlayerColor(ChessGame.TeamColor playerColor) {
-        this.playerColor = playerColor;
-    }
 }
