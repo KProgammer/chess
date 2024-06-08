@@ -1,14 +1,17 @@
+import chess.ChessGame;
 import com.google.gson.Gson;
-import spark.Spark;
+import model.Game;
+import requests.LoginRequest;
+import requests.LogoutRequest;
+import requests.RegisterRequest;
+import results.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
+import java.util.Collection;
 
 public class ServerFacade {
     private static URI url;
@@ -17,41 +20,30 @@ public class ServerFacade {
         this.url = url;
     }
 
-    public int run(int desiredPort, String endpoint, URI url) {
-        Spark.port(desiredPort);
-
-        Spark.staticFiles.location("web");
-
-        /* // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", this::clear);
-
-        Spark.post("/user",this::register);
-
-        Spark.post("/session",this::login);
-
-        Spark.delete("/session",this::logout);
-
-        Spark.get("/game",this::listGames);
-
-        Spark.post("/game",this::creategame);
-
-        Spark.put("/game",this::joingame);*/
-
+    //port included in url
+    public Object run(String endpoint, URI url,  String jsonBody, Object response, String key, String value) {
         HttpURLConnection http;
         try {
             // Specify the desired endpoint
-            URI uri = null;
-
-            uri = url; //new URI("http://localhost:8080/name");
-            //http://localhost:8080/db
-            //http://localhost:8080/user
-            //http://localhost:8080/session
-            //http://localhost:8080/game
-
-            //http = null;
+            URI uri;
+            uri = url;
             http = (HttpURLConnection) uri.toURL().openConnection();
-
             http.setRequestMethod(endpoint);
+
+            // Specify that we are going to write out data
+            http.setDoOutput(true);
+
+            if((key != null) && (value != null)) {
+                // Write out a header
+                http.addRequestProperty(key, value);
+            }
+
+            if(jsonBody != null) {
+                // Write out the body
+                try (var outputStream = http.getOutputStream()) {
+                    outputStream.write(jsonBody.getBytes());
+                }
+            }
 
             // Make the request
             http.connect();
@@ -60,43 +52,98 @@ public class ServerFacade {
         }
 
         // Output the response body
+        Object result;
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
+            result = new Gson().fromJson(inputStreamReader, response.getClass());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-
-        Spark.awaitInitialization();
-        return Spark.port();
+        return  result;
     }
 
     public void clear(URI url){
-        run(0,"DELETE", url);
+        run("DELETE", url,null,null, null,null);
     }
 
-    public void createGame(URI url){
-        run(0,"POST", url);
+    public Integer createGame(URI url, String gameName, String authToken){
+        var jsonBody = new Gson().toJson(gameName);
+        CreateGameResult response = null;
+        CreateGameResult result = (CreateGameResult) run("POST", url, jsonBody,response,"authorization",authToken);
+        return result.getGameID();
     }
 
-    public void joinGame(URI url) {
-        run(0,"PUT",url);
+    public void joinGame(URI url, ChessGame.TeamColor playerColor, Integer gameID, String authToken) {
+        var jsonBody = new Gson().toJson(playerColor) + new Gson().toJson(gameID);
+        JoinGameResult response = null;
+        run("POST", url, jsonBody,response,"authorization",authToken);
     }
 
-    public void listGames(URI url){
-        run(0,"GET", url);
+    public Collection<Game> listGames(URI url, String authToken){
+        ListGamesResult response = null;
+        ListGamesResult result =  (ListGamesResult) run("POST", url, null,response,"authorization",authToken);
+        return result.getGames();
     }
 
-    public void  login(URI url){
-        run(0,"POST", url);
+    public LoginResult login(URI url, String username, String password){
+        var jsonBody = new Gson().toJson(new LoginRequest(username,password));
+        LoginResult response = null;
+        LoginResult result = (LoginResult) run("POST", url, jsonBody,response,null,null);
+        return result;
     }
 
-    public void logout(URI url){
-        run(0,"DELETE", url);
+    public void logout(URI url, String authToken){
+        LogoutResult response = null;
+        run("POST", url, null,response,"authorization",authToken);
     }
 
-    public void register(URI url){
-        run(0,"P0ST", url);
+    public  RegisterResult register(URI url, String username, String password, String email){
+        var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
+        RegisterResult response = null;
+        RegisterResult result = (RegisterResult) run("POST", url, jsonBody,response,null,null);
+        return result;
+    }
+
+    /*public RegisterResult register(URI url, String username, String password, String email){
+        HttpURLConnection http;
+        try {
+            // Specify the desired endpoint
+            URI uri;
+            uri = url;
+            http = (HttpURLConnection) uri.toURL().openConnection();
+            http.setRequestMethod("POST");
+
+            // Specify that we are going to write out data
+            http.setDoOutput(true);
+
+            // Write out the body
+            RegisterRequest registerRequest = new RegisterRequest(username,password, email);
+            try (var outputStream = http.getOutputStream()) {
+                var jsonBody = new Gson().toJson(registerRequest);
+                outputStream.write(jsonBody.getBytes());
+            }
+
+            // Make the request
+            http.connect();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        RegisterResult registerResult;
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            registerResult = new Gson().fromJson(inputStreamReader, RegisterResult.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return  registerResult;
+    }*/
+
+    public void observeGame(){
+        new DisplayBoard().main(null, ChessGame.TeamColor.WHITE,new ChessGame());
+        new DisplayBoard().main(null, ChessGame.TeamColor.BLACK,new ChessGame());
     }
 }
