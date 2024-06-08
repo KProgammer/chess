@@ -57,7 +57,12 @@ public class ServerFacade {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             result = new Gson().fromJson(inputStreamReader, response.getClass());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if(e.getMessage().equals("Server returned HTTP response code: 403 for URL: http://localhost:8080/user")){
+                System.out.println("Username already taken.");
+                result = null;
+            } else {
+                throw new RuntimeException(e);
+            }
         }
 
         return  result;
@@ -69,38 +74,38 @@ public class ServerFacade {
 
     public Integer createGame(URI url, String gameName, String authToken){
         var jsonBody = new Gson().toJson(gameName);
-        CreateGameResult response = null;
+        CreateGameResult response = new CreateGameResult(null,null);
         CreateGameResult result = (CreateGameResult) run("POST", url, jsonBody,response,"authorization",authToken);
         return result.getGameID();
     }
 
     public void joinGame(URI url, ChessGame.TeamColor playerColor, Integer gameID, String authToken) {
         var jsonBody = new Gson().toJson(playerColor) + new Gson().toJson(gameID);
-        JoinGameResult response = null;
+        JoinGameResult response = new JoinGameResult(null);
         run("POST", url, jsonBody,response,"authorization",authToken);
     }
 
     public Collection<Game> listGames(URI url, String authToken){
-        ListGamesResult response = null;
+        ListGamesResult response = new ListGamesResult(null,null);
         ListGamesResult result =  (ListGamesResult) run("POST", url, null,response,"authorization",authToken);
         return result.getGames();
     }
 
     public LoginResult login(URI url, String username, String password){
         var jsonBody = new Gson().toJson(new LoginRequest(username,password));
-        LoginResult response = null;
+        LoginResult response = new LoginResult(null,null,null);
         LoginResult result = (LoginResult) run("POST", url, jsonBody,response,null,null);
         return result;
     }
 
     public void logout(URI url, String authToken){
-        LogoutResult response = null;
+        LogoutResult response = new LogoutResult(null);
         run("POST", url, null,response,"authorization",authToken);
     }
 
     public  RegisterResult register(URI url, String username, String password, String email){
         var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
-        RegisterResult response = null;
+        RegisterResult response = new RegisterResult(null,null,null);
         RegisterResult result = (RegisterResult) run("POST", url, jsonBody,response,null,null);
         return result;
     }
