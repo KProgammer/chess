@@ -57,9 +57,13 @@ public class ServerFacade {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             result = new Gson().fromJson(inputStreamReader, response.getClass());
         } catch (IOException e) {
-            if(e.getMessage().equals("Server returned HTTP response code: 403 for URL: http://localhost:8080/user")){
+            result = null;
+            if(e.getMessage().equals("Server returned HTTP response code: 400 for URL: http://localhost:8080/user")){
+                System.out.println("Something was wrong with the http request. Tell Kendall to fix it.");
+            } else if(e.getMessage().equals("Server returned HTTP response code: 401 for URL: http://localhost:8080/user")) {
+                System.out.println("Unauthorized. You must login.");
+            } else if(e.getMessage().equals("Server returned HTTP response code: 403 for URL: http://localhost:8080/user")){
                 System.out.println("Username already taken.");
-                result = null;
             } else {
                 throw new RuntimeException(e);
             }
