@@ -143,7 +143,7 @@ public class ServerFacade {
     }*/
 
     public void observeGame(){
-        new DisplayBoard().main(null, ChessGame.TeamColor.WHITE,new ChessGame());
-        new DisplayBoard().main(null, ChessGame.TeamColor.BLACK,new ChessGame());
+        DisplayBoard.main( ChessGame.TeamColor.WHITE,new ChessGame());
+        DisplayBoard.main( ChessGame.TeamColor.BLACK,new ChessGame());
     }
 }

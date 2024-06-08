@@ -21,7 +21,7 @@ public class DisplayBoard {
     private static Random rand = new Random();
 
 
-    public static void main(String[] args, ChessGame.TeamColor teamColor, ChessGame chessGame) {
+    public static void main(ChessGame.TeamColor teamColor, ChessGame chessGame) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
