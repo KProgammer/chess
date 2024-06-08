@@ -16,12 +16,20 @@ import java.util.Collection;
 public class ServerFacadeTests {
 
     private static Server server;
+    static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade(port);
+    }
+
+    @BeforeEach
+    public void clear()
+    {
+        facade.clear();
     }
 
     @AfterAll
@@ -39,23 +47,21 @@ public class ServerFacadeTests {
     @Order(1)
     @DisplayName("ClearTest")
     public void clearTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        serverFacade.logout(URI.create("http://localhost:8080/session"), result.getAuthToken());
+        LoginResult result = facade.login("Gavin", "password");
+        facade.createGame("game", result.getAuthToken());
+        facade.logout(result.getAuthToken());
 
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
+        facade.clear();
 
-        LoginResult newResult = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
+        LoginResult newResult = facade.login("Gavin", "password");
 
         Assertions.assertEquals(newResult, null, "Clear didn't delete all the users");
 
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
-        LoginResult newNewresult = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
-        ListGamesResult listGames = serverFacade.listGames(URI.create("http://localhost:8080/game"),newNewresult.getAuthToken());
+        facade.register("Gavin","password", "email");
+        LoginResult newNewresult = facade.login("Gavin", "password");
+        ListGamesResult listGames = facade.listGames(newNewresult.getAuthToken());
 
         Assertions.assertEquals(listGames.getGames().size(), 0, "Not all games were deleted.");
     }
@@ -64,13 +70,11 @@ public class ServerFacadeTests {
     @Order(2)
     @DisplayName("createGameTest")
     public void createGameTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        ListGamesResult listGames = serverFacade.listGames(URI.create("http://localhost:8080/game"),result.getAuthToken());
+        LoginResult result = facade.login("Gavin", "password");
+        facade.createGame("game", result.getAuthToken());
+        ListGamesResult listGames = facade.listGames(result.getAuthToken());
 
         ArrayList<Game> listOfGames = (ArrayList<Game>) listGames.getGames();
         Collection<Game> testCollection = new ArrayList<>();
@@ -88,9 +92,7 @@ public class ServerFacadeTests {
     @Order(3)
     @DisplayName("createGameFailTest")
     public void createGameFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        CreateGameResult result = serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", null);
+        CreateGameResult result = facade.createGame("game", null);
 
         Assertions.assertNull(result,"Not null.");
     }
@@ -99,28 +101,21 @@ public class ServerFacadeTests {
     @Order(4)
     @DisplayName("joinGameTest")
     public void joinGameTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
-        serverFacade.register(URI.create("http://localhost:8080/user"),"kendall","kendall", "kendall");
+        facade.register("Gavin","password", "email");
+        facade.register("kendall","kendall", "kendall");
 
-        LoginResult kendallResult = serverFacade.login(URI.create("http://localhost:8080/session"),
-                "kendall", "kendall");
-        LoginResult loginResult = serverFacade.login(URI.create("http://localhost:8080/session"),
-                "Gavin", "password");
+        LoginResult kendallResult = facade.login("kendall", "kendall");
+        LoginResult loginResult = facade.login("Gavin", "password");
 
-        CreateGameResult createGameResult = serverFacade.createGame(URI.create("http://localhost:8080/game"),
-                "game", loginResult.getAuthToken());
+        CreateGameResult createGameResult = facade.createGame("game", loginResult.getAuthToken());
 
-        JoinGameResult joinGameResult = serverFacade.joinGame(URI.create("http://localhost:8080/game"),
-                ChessGame.TeamColor.WHITE, createGameResult.getGameID(), loginResult.getAuthToken());
-        JoinGameResult kendallJoinGameResult = serverFacade.joinGame(URI.create("http://localhost:8080/game"),
-                ChessGame.TeamColor.BLACK, createGameResult.getGameID(), kendallResult.getAuthToken());
+        JoinGameResult joinGameResult = facade.joinGame(ChessGame.TeamColor.WHITE, createGameResult.getGameID(), loginResult.getAuthToken());
+        JoinGameResult kendallJoinGameResult = facade.joinGame(ChessGame.TeamColor.BLACK, createGameResult.getGameID(), kendallResult.getAuthToken());
 
         Assertions.assertNull(joinGameResult.getMessage(),"Gavin didn't successfully join game");
         Assertions.assertNull(kendallJoinGameResult.getMessage(),"Kendall didn't successfully join game");
 
-        ListGamesResult listGames = serverFacade.listGames(URI.create("http://localhost:8080/game"),loginResult.getAuthToken());
+        ListGamesResult listGames = facade.listGames(loginResult.getAuthToken());
         ArrayList<Game> listOfGames = (ArrayList<Game>) listGames.getGames();
 
         Assertions.assertEquals(listOfGames.get(0).whiteUsername(),"Gavin", "Wrong whiteUsername");
@@ -131,23 +126,16 @@ public class ServerFacadeTests {
     @Order(5)
     @DisplayName("joinGameFailTest")
     public void joinGameFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
-        serverFacade.register(URI.create("http://localhost:8080/user"),"kendall","kendall", "kendall");
+        facade.register("Gavin","password", "email");
+        facade.register("kendall","kendall", "kendall");
 
-        LoginResult kendallResult = serverFacade.login(URI.create("http://localhost:8080/session"),
-                "kendall", "kendall");
-        LoginResult loginResult = serverFacade.login(URI.create("http://localhost:8080/session"),
-                "Gavin", "password");
+        LoginResult kendallResult = facade.login("kendall", "kendall");
+        LoginResult loginResult = facade.login("Gavin", "password");
 
-        CreateGameResult createGameResult = serverFacade.createGame(URI.create("http://localhost:8080/game"),
-                "game", loginResult.getAuthToken());
+        CreateGameResult createGameResult = facade.createGame("game", loginResult.getAuthToken());
 
-        JoinGameResult joinGameResult = serverFacade.joinGame(URI.create("http://localhost:8080/game"),
-                ChessGame.TeamColor.WHITE, createGameResult.getGameID(), null);
-        JoinGameResult kendallJoinGameResult = serverFacade.joinGame(URI.create("http://localhost:8080/game"),
-                ChessGame.TeamColor.BLACK, null, kendallResult.getAuthToken());
+        JoinGameResult joinGameResult = facade.joinGame(ChessGame.TeamColor.WHITE, createGameResult.getGameID(), null);
+        JoinGameResult kendallJoinGameResult = facade.joinGame(ChessGame.TeamColor.BLACK, null, kendallResult.getAuthToken());
 
         Assertions.assertNull(joinGameResult,"Gavin's attempt to join should be null");
         Assertions.assertNull(kendallJoinGameResult,"Kendall's attempt to join should be null");
@@ -157,15 +145,13 @@ public class ServerFacadeTests {
     @Order(6)
     @DisplayName("listGamesTest")
     public void listGamesTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        ListGamesResult listGames = serverFacade.listGames(URI.create("http://localhost:8080/game"),result.getAuthToken());
+        LoginResult result = facade.login("Gavin", "password");
+        facade.createGame("game", result.getAuthToken());
+        facade.createGame("game", result.getAuthToken());
+        facade.createGame("game", result.getAuthToken());
+        ListGamesResult listGames = facade.listGames(result.getAuthToken());
 
         ArrayList<Game> listOfGames = (ArrayList<Game>) listGames.getGames();
         Collection<Game> testCollection = new ArrayList<>();
@@ -185,15 +171,13 @@ public class ServerFacadeTests {
     @Order(7)
     @DisplayName("listGamesFailTest")
     public void listGamesFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
-        ListGamesResult listGames = serverFacade.listGames(URI.create("http://localhost:8080/game"),null);
+        LoginResult result = facade.login("Gavin", "password");
+        facade.createGame("game", result.getAuthToken());
+        facade.createGame("game", result.getAuthToken());
+        facade.createGame("game", result.getAuthToken());
+        ListGamesResult listGames = facade.listGames(null);
 
         Assertions.assertNull(listGames, "listGames should be null since it was unauthorized.");
 
@@ -203,11 +187,9 @@ public class ServerFacadeTests {
     @Order(8)
     @DisplayName("loginTest")
     public void loginTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
+        LoginResult result = facade.login("Gavin", "password");
 
         Assertions.assertNotNull(result,"Should not be null");
         Assertions.assertNotNull(result.getAuthToken(),"authToken should not be null.");
@@ -219,14 +201,12 @@ public class ServerFacadeTests {
     @Order(9)
     @DisplayName("loginFailTest")
     public void loginFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),null, "password");
+        LoginResult result = facade.login(null, "password");
         Assertions.assertNull(result, "Should be null.");
 
-        result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", null);
+        result = facade.login("Gavin", null);
         Assertions.assertNull(result, "Should be null.");
     }
 
@@ -234,15 +214,13 @@ public class ServerFacadeTests {
     @Order(10)
     @DisplayName("logoutTest")
     public void logoutTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
+        LoginResult result = facade.login("Gavin", "password");
 
-        serverFacade.logout(URI.create("http://localhost:8080/session"), result.getAuthToken());
+        facade.logout(result.getAuthToken());
 
-        CreateGameResult createGameResult = serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
+        CreateGameResult createGameResult = facade.createGame("game", result.getAuthToken());
         Assertions.assertNull(createGameResult,"Should be null because the user is logged out.");
     }
 
@@ -250,15 +228,13 @@ public class ServerFacadeTests {
     @Order(11)
     @DisplayName("logoutFailTest")
     public void logoutFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        facade.register("Gavin","password", "email");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
+        LoginResult result = facade.login("Gavin", "password");
 
-        serverFacade.logout(URI.create("http://localhost:8080/session"), null);
+        facade.logout(null);
 
-        CreateGameResult createGameResult = serverFacade.createGame(URI.create("http://localhost:8080/game"),"game", result.getAuthToken());
+        CreateGameResult createGameResult = facade.createGame("game", result.getAuthToken());
         Assertions.assertNotNull(createGameResult,"Should not be null because the user is still logged in.");
     }
 
@@ -266,13 +242,11 @@ public class ServerFacadeTests {
     @Order(12)
     @DisplayName("registerTest")
     public void registerTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        RegisterResult registerResult = serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
+        RegisterResult registerResult = facade.register("Gavin","password", "email");
 
         Assertions.assertNull(registerResult.getMessage(),"Should be null if registration was successful.");
 
-        LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),"Gavin", "password");
+        LoginResult result = facade.login("Gavin", "password");
 
         Assertions.assertNotNull(result,"Should not be null if registration was successful.");
     }
@@ -281,11 +255,9 @@ public class ServerFacadeTests {
     @Order(13)
     @DisplayName("registerFailTest")
     public void registerFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        serverFacade.clear(URI.create("http://localhost:8080/db"));
-        RegisterResult registerResult = serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
-        RegisterResult secondRegisterResult = serverFacade.register(URI.create("http://localhost:8080/user"),"Gavin","password", "email");
-        RegisterResult thirdRegisterResult = serverFacade.register(URI.create("http://localhost:8080/user"),null,"password", "email");
+        RegisterResult registerResult = facade.register("Gavin","password", "email");
+        RegisterResult secondRegisterResult = facade.register("Gavin","password", "email");
+        RegisterResult thirdRegisterResult = facade.register(null,"password", "email");
 
         Assertions.assertNull(secondRegisterResult,"Should be null if registration was unsuccessful.");
         Assertions.assertNull(thirdRegisterResult,"Should be null if registration was unsuccessful.");
@@ -295,8 +267,7 @@ public class ServerFacadeTests {
     @Order(14)
     @DisplayName("observeGameTest")
     public void observeGameTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        Assertions.assertTrue(serverFacade.observeGame(1111),"Should display two chessboards from" +
+        Assertions.assertTrue(facade.observeGame(1111),"Should display two chessboards from" +
                 "different color positions.");
     }
 
@@ -304,8 +275,7 @@ public class ServerFacadeTests {
     @Order(15)
     @DisplayName("observeGameFailTest")
     public void observeGameFailTest(){
-        ServerFacade serverFacade = new ServerFacade();
-        Assertions.assertFalse(serverFacade.observeGame(null),"Should not display two chessboards from" +
+        Assertions.assertFalse(facade.observeGame(null),"Should not display two chessboards from" +
                 "different color positions.");
 
     }

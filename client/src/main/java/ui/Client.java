@@ -17,7 +17,7 @@ public class Client {
         boolean loggedIn = false;
         ServerFacade serverFacade;
         String authToken = null;
-        serverFacade = new ServerFacade();
+        serverFacade = new ServerFacade(8080);
 
         while(true){
             String line = readIn();
@@ -39,12 +39,12 @@ public class Client {
                 
             } else if (line.equals("quit")) {
                 if(loggedIn){
-                    serverFacade.logout(URI.create("http://localhost:8080/session"),authToken);
+                    serverFacade.logout(authToken);
                     System.out.println("Logged out.");
                 }
 
                 loggedIn = false;
-                serverFacade.clear(URI.create("http://localhost:8080/db"));
+                serverFacade.clear();
                 System.out.println("All users and games deleted.");
                 System.out.println("Shutting down.");
                 break;
@@ -56,7 +56,7 @@ public class Client {
                 System.out.println("Type in your password");
                 String password = readIn();
 
-                LoginResult result = serverFacade.login(URI.create("http://localhost:8080/session"),username, password);
+                LoginResult result = serverFacade.login(username, password);
 
                 if(result == null){
                     System.out.println("Login unsuccessful. Try again.");
@@ -76,7 +76,7 @@ public class Client {
                 System.out.println("Type in your email");
                 String email = readIn();
 
-                RegisterResult result = serverFacade.register(URI.create("http://localhost:8080/user"), username, password, email);
+                RegisterResult result = serverFacade.register(username, password, email);
 
                 if(result != null){
                     System.out.println("Registration successful!");
@@ -84,7 +84,7 @@ public class Client {
                     System.out.println("Registration unsuccessful.");
                 }
             } else if (line.equals("logout")) {
-                LogoutResult result = serverFacade.logout(URI.create("http://localhost:8080/session"),authToken);
+                LogoutResult result = serverFacade.logout(authToken);
 
                 if(result == null){
                     System.out.println("Unable to logout. If unauthorized error above, you may already be logged out.");
@@ -99,23 +99,23 @@ public class Client {
                 String gameName = readIn();
 
                 System.out.println("Creating game...");
-                CreateGameResult result = serverFacade.createGame(URI.create("http://localhost:8080/game"),gameName,authToken);
+                CreateGameResult result = serverFacade.createGame(gameName,authToken);
 
                 if(result == null){
                     System.out.println("Error creating game. See error messages above.");
                 } else {
-                    int gameID = (serverFacade.createGame(URI.create("http://localhost:8080/game"), gameName, authToken)).getGameID();
+                    int gameID = (serverFacade.createGame(gameName, authToken)).getGameID();
                     System.out.println("Game created! gameID is: " + gameID);
                 }
 
             } else if ((line.equals("listgames")) && (loggedIn)) {
-                ListGamesResult result = serverFacade.listGames(URI.create("http://localhost:8080/game"),authToken);
+                ListGamesResult result = serverFacade.listGames(authToken);
 
                 if(result == null){
                     System.out.println("Could not access games. See errors above.");
                 } else {
                     System.out.println("List of games:");
-                    ArrayList<Game> listGames = (ArrayList<Game>) (serverFacade.listGames(URI.create("http://localhost:8080/game"), authToken)).getGames();
+                    ArrayList<Game> listGames = (ArrayList<Game>) (serverFacade.listGames(authToken)).getGames();
 
                     for (var i = 0; i < listGames.size(); i++) {
                         //System.out.printf("%d. %s%n", i+1, listGames.get(i));
@@ -136,7 +136,7 @@ public class Client {
                     teamColor = ChessGame.TeamColor.BLACK;
                 }
 
-                JoinGameResult result = serverFacade.joinGame(URI.create("http://localhost:8080/game"),teamColor,gameID,authToken);
+                JoinGameResult result = serverFacade.joinGame(teamColor,gameID,authToken);
 
                 if(result == null){
                     System.out.println("Unable to join game "+gameID+" as "+color+".");
