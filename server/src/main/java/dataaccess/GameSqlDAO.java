@@ -30,8 +30,8 @@ public class GameSqlDAO implements GameDAO{
     }
 
     @Override
-    public Game getGame(int gameID) throws Exception{
-        int storedGameID = 0;
+    public Game getGame(Integer gameID) throws Exception{
+        Integer storedGameID = 0;
         String whiteUsername = null;
         String blackUsername = null;
         String gameName = null;
@@ -126,7 +126,7 @@ public class GameSqlDAO implements GameDAO{
     }
 
     @Override
-    public int getGameID(String gameName) throws Exception{
+    public Integer getGameID(String gameName) throws Exception{
         int gameID = 0;
 
         if(gameName == null){

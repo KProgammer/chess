@@ -16,7 +16,8 @@ public class JoinGameService {
                     (authorizationObject.getAuth(request.getAuthToken()).username() == null)){
                 return new JoinGameResult("Error: unauthorized");
             } else if (request.getPlayerColor() == null ||
-                        request.getGameID() == null) {
+                        request.getGameID() == null ||
+                    (gameObject.getGame(request.getGameID()) == null)) {
                 return new JoinGameResult("Error: bad request");
             } else if((request.getPlayerColor().equals(ChessGame.TeamColor.BLACK) &&
                     gameObject.getGame(request.getGameID()).blackUsername() != null) ||

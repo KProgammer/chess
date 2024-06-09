@@ -130,14 +130,13 @@ public class ServerFacade {
     }
 
     public  RegisterResult register(String username, String password, String email){
-                var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
+        var jsonBody = new Gson().toJson(new RegisterRequest(username,password,email));
         RegisterResult response = new RegisterResult(null,null,null);
         return (RegisterResult) run("POST", URI.create("http://localhost:"+port+"/user"), jsonBody,response,null,null);
     }
 
     public Boolean observeGame(Integer gameID){
-        if((gameID == null) ||
-                ((gameID < 999) || (gameID > 10000))){
+        if((gameID == null)){
             System.out.println("Not a valid gameID.");
             return false;
         } else {

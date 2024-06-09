@@ -12,7 +12,7 @@ public interface GameDAO extends DAO{
 
     void createGame(Integer gameID, String gameName) throws Exception;
 
-    Game getGame(int gameID) throws Exception;
+    Game getGame(Integer gameID) throws Exception;
 
     Collection<Game> listGames() throws Exception;
 
@@ -22,7 +22,7 @@ public interface GameDAO extends DAO{
 
     void updateGame(Integer gameID, ChessGame newGame) throws Exception;
 
-    int getGameID(String gameName) throws Exception;
+    Integer getGameID(String gameName) throws Exception;
 
     void clear() throws Exception;
 }

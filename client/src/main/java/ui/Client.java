@@ -6,12 +6,15 @@ import results.*;
 import serverfacade.ServerFacade;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Client {
     private static boolean loggedIn = false;
     private static final ServerFacade SERVER_FACADE = new ServerFacade(8080);
     private static String authToken = null;
+    private static Map<Integer, Game> gameMap = new HashMap<Integer, Game>();
 
     public void run(){
         System.out.println("Welcome to Kendall's CS240 chess project! To get started type 'help'.");
@@ -22,16 +25,17 @@ public class Client {
             if(line.equals("help")){
                 helpCommand();
                 
-            } else if (line.equals("quit")) {
+            } else if (line.equals("quit") && !loggedIn) {
                 quitCommand();
                 break;
                 
-            } else if (line.equals("login")) {
+            } else if (line.equals("login") && !loggedIn) {
                 loginCommand();
-            } else if (line.equals("register")) {
+
+            } else if (line.equals("register") && !loggedIn) {
                 registerCommand();
 
-            } else if (line.equals("logout")) {
+            } else if (line.equals("logout") && loggedIn) {
                 logoutCommand();
 
             } else if ((line.equals("creategame")) && (loggedIn)) {
@@ -76,7 +80,6 @@ public class Client {
         System.out.println("list games-> lists all the games that currently exist on the server.");
         System.out.println("play game-> prompts user for the gameID of the desired game and the desired team color");
         System.out.println("observe game-> prompts user for the gameID of the desired game and lets the user observe this game.");
-        System.out.println("quit-> exits the program");
     }
 
     private void loggedOutPrompts(){
@@ -86,11 +89,6 @@ public class Client {
     }
 
     private void quitCommand(){
-        if(loggedIn){
-            SERVER_FACADE.logout(authToken);
-            System.out.println("Logged out.");
-        }
-
         loggedIn = false;
         SERVER_FACADE.clear();
         System.out.println("All users and games deleted.");
@@ -125,12 +123,18 @@ public class Client {
         System.out.println("Type in your email");
         String email = readIn();
 
-        RegisterResult result = SERVER_FACADE.register(username, password, email);
-
-        if(result != null){
-            System.out.println("Registration successful!");
+        if(username.isEmpty() || password.isEmpty() || email.isEmpty()){
+            System.out.println("You are not registered. You must type something for your email, password, or username.");
         } else {
-            System.out.println("Registration unsuccessful.");
+            RegisterResult result = SERVER_FACADE.register(username, password, email);
+
+            if (result != null) {
+                authToken = result.getAuthToken();
+                System.out.println("Registration successful!");
+                loggedIn = true;
+            } else {
+                System.out.println("Registration unsuccessful.");
+            }
         }
     }
 
@@ -150,14 +154,19 @@ public class Client {
         System.out.println("Enter the name of chess game");
         String gameName = readIn();
 
+        for(int game : gameMap.keySet()){
+            if(gameMap.get(game).gameName().equals(gameName)){
+                System.out.println("Sorry, that name is already taken.");
+            }
+        }
+
         System.out.println("Creating game...");
         CreateGameResult result = SERVER_FACADE.createGame(gameName,authToken);
 
         if(result == null){
             System.out.println("Error creating game. See error messages above.");
         } else {
-            int gameID = (SERVER_FACADE.createGame(gameName, authToken)).getGameID();
-            System.out.println("Game created! gameID is: " + gameID);
+            System.out.println("Game created!");
         }
     }
 
@@ -170,16 +179,19 @@ public class Client {
             System.out.println("List of games:");
             ArrayList<Game> listGames = (ArrayList<Game>) (SERVER_FACADE.listGames(authToken)).getGames();
 
+            Game currentGame;
             for (var i = 0; i < listGames.size(); i++) {
-                //System.out.printf("%d. %s%n", i+1, listGames.get(i));
-                System.out.println(listGames.get(i));
+                currentGame = listGames.get(i);
+                gameMap.put((i+1),currentGame);
+                System.out.println((i+1)+".  Name: "+currentGame.gameName()+"\n White Player: "+currentGame.whiteUsername()+
+                        "\n Black Player: "+currentGame.blackUsername());
             }
         }
     }
 
     private void playGamesCommand(){
-        System.out.println("Type in the gameID of the desired game.");
-        int gameID = Integer.parseInt(readIn());
+        System.out.println("Type in the number of the desired game.");
+        int gameNum = Integer.parseInt(readIn());
 
         System.out.println("Type in team color you wish to play.");
         String color = readIn();
@@ -191,19 +203,19 @@ public class Client {
             teamColor = ChessGame.TeamColor.BLACK;
         }
 
-        JoinGameResult result = SERVER_FACADE.joinGame(teamColor,gameID,authToken);
+        JoinGameResult result = SERVER_FACADE.joinGame(teamColor,gameMap.get(gameNum).gameID(),authToken);
 
         if(result == null){
-            System.out.println("Unable to join game "+gameID+" as "+color+".");
+            System.out.println("Unable to join game "+gameNum+" as "+color+".");
         } else {
-            System.out.println("Successfully joined game "+gameID+" as "+color+".");
+            System.out.println("Successfully joined game "+gameNum+" as "+color+".");
         }
     }
 
     private void observeGameCommand(){
-        System.out.println("Type in the gameID of the desired game.");
-        int gameID = Integer.parseInt(readIn());
+        System.out.println("Type in the number of the desired game.");
+        int gameNum = Integer.parseInt(readIn());
 
-        SERVER_FACADE.observeGame(gameID);
+        SERVER_FACADE.observeGame(gameNum);
     }
 }

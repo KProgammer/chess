@@ -18,7 +18,7 @@ public class CreateGamesService {
                     (authorizationObject.getAuth(request.getAuthToken()).authToken() == null) ||
                     (authorizationObject.getAuth(request.getAuthToken()).username() == null)) {
                 return new CreateGameResult(null, "Error: unauthorized");
-            } else if (request.getGameName() == null) {
+            } else if ((request.getGameName() == null)){// || (gameObject.getGameID(request.getGameName()) != null)) {
                 return new CreateGameResult(null, "Error: bad request");
             }
 
@@ -28,7 +28,7 @@ public class CreateGamesService {
                 return new CreateGameResult(null, "Error: bad request");
             }
 
-            int gameID = createGameID();
+            Integer gameID = createGameID();
             gameObject.createGame(gameID, request.getGameName());
 
             return new CreateGameResult(gameID, request.getGameName());
@@ -38,7 +38,7 @@ public class CreateGamesService {
         return null;
     }
 
-    private int createGameID() {
+    private Integer createGameID() {
         Random rand = new Random();
         int min = 1000;
         int max = 10000;

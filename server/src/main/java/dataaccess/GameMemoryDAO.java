@@ -5,7 +5,7 @@ import model.Game;
 
 import java.util.*;
 
-public class GameMemoryDAO implements GameDAO {
+public abstract class GameMemoryDAO implements GameDAO {
 
     @Override
     public void createGame(Integer gameID, String gameName ){
@@ -13,7 +13,7 @@ public class GameMemoryDAO implements GameDAO {
     }
 
     @Override
-    public Game getGame(int gameID){
+    public Game getGame(Integer gameID){
         return LIST_OF_GAMES.get(gameID);
     }
 
@@ -54,7 +54,7 @@ public class GameMemoryDAO implements GameDAO {
     }
 
     @Override
-    public int getGameID(String gameName){
+    public Integer getGameID(String gameName){
         for(int game : LIST_OF_GAMES.keySet()){
             if(Objects.equals(LIST_OF_GAMES.get(game).gameName(), gameName)){
                 return LIST_OF_GAMES.get(game).gameID();
