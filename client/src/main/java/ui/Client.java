@@ -20,7 +20,7 @@ public class Client {
         System.out.println("Welcome to Kendall's CS240 chess project! To get started type 'help'.");
 
         while(true){
-            String line = readIn();
+            String line = readIn(true);
             
             if(line.equals("help")){
                 helpCommand();
@@ -56,12 +56,15 @@ public class Client {
         }
     }
 
-    private String readIn(){
+    private String readIn(Boolean modify){
         System.out.printf("%n>>> ");
         Scanner scanner = new Scanner(System.in);
         String line = scanner.nextLine();
-        line = line.toLowerCase();
-        line = line.replaceAll("\\s","");
+
+        if(modify) {
+            line = line.toLowerCase();
+            line = line.replaceAll("\\s", "");
+        }
 
         return line;
     }
@@ -90,17 +93,17 @@ public class Client {
 
     private void quitCommand(){
         loggedIn = false;
-        SERVER_FACADE.clear();
+        /*SERVER_FACADE.clear();
         System.out.println("All users and games deleted.");
-        System.out.println("Shutting down.");
+        System.out.println("Shutting down.");*/
     }
 
     private void loginCommand(){
         System.out.println("Type in your username");
-        String username = readIn();
+        String username = readIn(false);
 
         System.out.println("Type in your password");
-        String password = readIn();
+        String password = readIn(false);
 
         LoginResult result = SERVER_FACADE.login(username, password);
 
@@ -115,13 +118,13 @@ public class Client {
 
     private void registerCommand(){
         System.out.println("Type in your username");
-        String username = readIn();
+        String username = readIn(false);
 
         System.out.println("Type in your password");
-        String password = readIn();
+        String password = readIn(false);
 
         System.out.println("Type in your email");
-        String email = readIn();
+        String email = readIn(false);
 
         if(username.isEmpty() || password.isEmpty() || email.isEmpty()){
             System.out.println("You are not registered. You must type something for your email, password, or username.");
@@ -152,7 +155,7 @@ public class Client {
 
     private void createGameCommand(){
         System.out.println("Enter the name of chess game");
-        String gameName = readIn();
+        String gameName = readIn(false);
 
         for(int game : gameMap.keySet()){
             if(gameMap.get(game).gameName().equals(gameName)){
@@ -191,30 +194,38 @@ public class Client {
 
     private void playGamesCommand(){
         System.out.println("Type in the number of the desired game.");
-        int gameNum = Integer.parseInt(readIn());
+        int gameNum = Integer.parseInt(readIn(true));
 
         System.out.println("Type in team color you wish to play.");
-        String color = readIn();
+        String color = readIn(true);
 
-        ChessGame.TeamColor teamColor = ChessGame.TeamColor.BLACK;
+        ChessGame.TeamColor teamColor = null;
         if(color.equals("white")){
             teamColor = ChessGame.TeamColor.WHITE;
         } else if (color.equals("black")){
             teamColor = ChessGame.TeamColor.BLACK;
+        } else {
+            System.out.println("Team color invalid. Unable to join game " + gameNum + " as " + color + ".");
+            return;
         }
 
-        JoinGameResult result = SERVER_FACADE.joinGame(teamColor,gameMap.get(gameNum).gameID(),authToken);
-
-        if(result == null){
-            System.out.println("Unable to join game "+gameNum+" as "+color+".");
+        Game gameOfInterest = gameMap.get(gameNum);
+        if(gameOfInterest == null){
+            System.out.println("This game doesn't exist.");
         } else {
-            System.out.println("Successfully joined game "+gameNum+" as "+color+".");
+            JoinGameResult result = SERVER_FACADE.joinGame(teamColor, gameMap.get(gameNum).gameID(), authToken);
+
+            if (result == null) {
+                System.out.println("Unable to join game " + gameNum + " as " + color + ".");
+            } else {
+                System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
+            }
         }
     }
 
     private void observeGameCommand(){
         System.out.println("Type in the number of the desired game.");
-        int gameNum = Integer.parseInt(readIn());
+        int gameNum = Integer.parseInt(readIn(true));
 
         SERVER_FACADE.observeGame(gameNum);
     }
