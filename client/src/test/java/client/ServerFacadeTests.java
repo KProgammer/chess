@@ -2,13 +2,11 @@ package client;
 
 import chess.ChessGame;
 import model.Game;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.*;
 import results.*;
 import server.Server;
-import serverfacade.ServerFacade;
+import serverfacade.ServerFacadeHttp;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,14 +14,14 @@ import java.util.Collection;
 public class ServerFacadeTests {
 
     private static Server server;
-    static ServerFacade facade;
+    static ServerFacadeHttp facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(port);
+        facade = new ServerFacadeHttp(port);
     }
 
     @BeforeEach

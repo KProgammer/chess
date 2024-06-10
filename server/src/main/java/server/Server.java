@@ -1,5 +1,8 @@
 package server;
 
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.*;
 import requests.*;
 import results.*;
 import com.google.gson.Gson;
@@ -26,6 +29,8 @@ public class Server {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
+        Spark.webSocket("/ws", Server.class);
+        Spark.get("/echo/:msg",(req,res) -> "HTTP response: " + req.params(":msg"));
 
         Spark.staticFiles.location("web");
 
@@ -46,6 +51,11 @@ public class Server {
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) throws Exception {
+        session.getRemote().sendString("WebSocket response: " + message);
     }
 
     public void stop() {

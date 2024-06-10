@@ -13,11 +13,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
-public class ServerFacade {
+public class ServerFacadeHttp {
 
     private final int port;
 
-    public ServerFacade(int port){
+    public ServerFacadeHttp(int port){
 
         this.port = port;
     }

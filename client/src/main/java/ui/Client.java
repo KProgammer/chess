@@ -3,7 +3,8 @@ package ui;
 import chess.ChessGame;
 import model.Game;
 import results.*;
-import serverfacade.ServerFacade;
+import serverfacade.ServerFacadeHttp;
+import serverfacade.ServerFacadeWS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +13,20 @@ import java.util.Scanner;
 
 public class Client {
     private static boolean loggedIn = false;
-    private static final ServerFacade SERVER_FACADE = new ServerFacade(8080);
+    private static final ServerFacadeHttp SERVER_FACADE_HTTP = new ServerFacadeHttp(8080);
+    private static final ServerFacadeWS SERVER_FACADE_WS;
     private static String authToken = null;
     private static Map<Integer, Game> gameMap = new HashMap<Integer, Game>();
+
+    static {
+        try {
+            SERVER_FACADE_WS = new ServerFacadeWS(8080);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     public void run(){
         System.out.println("Welcome to Kendall's CS240 chess project! To get started type 'help'.");
@@ -107,7 +119,7 @@ public class Client {
         System.out.println("Type in your password");
         String password = readIn(false);
 
-        LoginResult result = SERVER_FACADE.login(username, password);
+        LoginResult result = SERVER_FACADE_HTTP.login(username, password);
 
         if(result == null){
             System.out.println("Login unsuccessful. Try again.");
@@ -131,7 +143,7 @@ public class Client {
         if(username.isEmpty() || password.isEmpty() || email.isEmpty()){
             System.out.println("You are not registered. You must type something for your email, password, or username.");
         } else {
-            RegisterResult result = SERVER_FACADE.register(username, password, email);
+            RegisterResult result = SERVER_FACADE_HTTP.register(username, password, email);
 
             if (result != null) {
                 authToken = result.getAuthToken();
@@ -144,7 +156,7 @@ public class Client {
     }
 
     private void logoutCommand(){
-        LogoutResult result = SERVER_FACADE.logout(authToken);
+        LogoutResult result = SERVER_FACADE_HTTP.logout(authToken);
 
         if(result == null){
             System.out.println("Unable to logout. If unauthorized error above, you may already be logged out.");
@@ -166,7 +178,7 @@ public class Client {
         }
 
         System.out.println("Creating game...");
-        CreateGameResult result = SERVER_FACADE.createGame(gameName,authToken);
+        CreateGameResult result = SERVER_FACADE_HTTP.createGame(gameName,authToken);
 
         if(result == null){
             System.out.println("Error creating game. See error messages above.");
@@ -176,13 +188,13 @@ public class Client {
     }
 
     private void listGamesCommand(){
-        ListGamesResult result = SERVER_FACADE.listGames(authToken);
+        ListGamesResult result = SERVER_FACADE_HTTP.listGames(authToken);
 
         if(result == null){
             System.out.println("Could not access games. See errors above.");
         } else {
             System.out.println("List of games:");
-            ArrayList<Game> listGames = (ArrayList<Game>) (SERVER_FACADE.listGames(authToken)).getGames();
+            ArrayList<Game> listGames = (ArrayList<Game>) (SERVER_FACADE_HTTP.listGames(authToken)).getGames();
 
             Game currentGame;
             for (var i = 0; i < listGames.size(); i++) {
@@ -215,7 +227,7 @@ public class Client {
         if(gameOfInterest == null){
             System.out.println("This game doesn't exist.");
         } else {
-            JoinGameResult result = SERVER_FACADE.joinGame(teamColor, gameMap.get(gameNum).gameID(), authToken);
+            JoinGameResult result = SERVER_FACADE_HTTP.joinGame(teamColor, gameMap.get(gameNum).gameID(), authToken);
 
             if (result == null) {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
@@ -229,6 +241,6 @@ public class Client {
         System.out.println("Type in the number of the desired game.");
         int gameNum = Integer.parseInt(readIn(true));
 
-        SERVER_FACADE.observeGame(gameNum);
+        SERVER_FACADE_HTTP.observeGame(gameNum);
     }
 }
