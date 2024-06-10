@@ -50,14 +50,15 @@ public class Client {
             } else if ((line.equals("observegame")) && (loggedIn)) {
                 observeGameCommand();
             } else {
-                System.out.println("Error: Didn't recognize command. Try again.");
+                System.out.println("Error: Didn't recognize command. Type in 'help' for a list of commands.");
             }
             //var words = line.split(" ");
         }
     }
 
     private String readIn(Boolean modify){
-        System.out.printf("%n>>> ");
+        //System.out.printf("%n>>> ");
+        System.out.print(">>> ");
         Scanner scanner = new Scanner(System.in);
         String line = scanner.nextLine();
 
@@ -93,6 +94,7 @@ public class Client {
 
     private void quitCommand(){
         loggedIn = false;
+        //Use this to clear the server when you want to.
         /*SERVER_FACADE.clear();
         System.out.println("All users and games deleted.");
         System.out.println("Shutting down.");*/
