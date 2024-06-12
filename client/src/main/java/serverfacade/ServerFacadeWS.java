@@ -2,6 +2,10 @@ package serverfacade;
 
 //import org.eclipse.jetty.websocket.api.Session;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import com.google.gson.Gson;
+
 import javax.websocket.*;
 import java.net.URI;
 
@@ -28,24 +32,36 @@ public class ServerFacadeWS {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void move(){
-
-    }
-
     public void redrawChessBoard(){
-
+        try {
+            send("redraw");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void leave() {
-
+        try {
+            send("leave");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void makeMove() {
-
+    public void makeMove(ChessMove chessMove) {
+        try {
+            send(new Gson().toJson(chessMove));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void resign(){
-
+        try {
+            send("resign");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

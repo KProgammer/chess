@@ -9,4 +9,12 @@ public class ResignCommand extends UserGameCommand{
         this.gameID = gameID;
         this.isForfeit = isForfeit;
     }
+
+    public Integer getGameID() {
+        return gameID;
+    }
+
+    public static Boolean getIsForfeit() {
+        return isForfeit;
+    }
 }

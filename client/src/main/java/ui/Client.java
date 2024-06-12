@@ -252,6 +252,7 @@ public class Client {
                 System.out.println("Resign->User forfeits the game.");
                 System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
             } else if (line.equals("redrawchessboard")) {
+
                 DisplayBoard.main(ChessGame.TeamColor.WHITE,new ChessGame());
                 DisplayBoard.main(ChessGame.TeamColor.BLACK,new ChessGame());
 
