@@ -74,7 +74,7 @@ public class Server {
 
             String username = authorizationObject.getAuth(command.getAuthString()).username();
 
-            //saveSession(command.getGameID(), session);
+            saveSession(session, username);
 
             switch (command.getCommandType()){
                 case CONNECT -> connect(session, username, (ConnectCommand) command);
@@ -167,10 +167,10 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    public void saveSession(Integer gameID, Session session, String authToken){
-        gameMap.computeIfAbsent(gameID, k -> new ArrayList<>());
-        gameMap.get(gameID).add(authToken);
-        sessionMap.put(authToken, session);
+    public void saveSession(Session session, String username){
+        //gameMap.computeIfAbsent(gameID, k -> new ArrayList<>());
+        //gameMap.get(gameID).add(username);
+        sessionMap.put(username, session);
     }
 
     public void connect(Session session, String username, ConnectCommand command) {
