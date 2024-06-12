@@ -1,7 +1,6 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.Game;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;

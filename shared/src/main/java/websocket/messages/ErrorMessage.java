@@ -1,9 +1,9 @@
 package websocket.messages;
 
 public class ErrorMessage {
-    public String message;
+    public String errorMessage;
 
-    public ErrorMessage(String s) {
-        message = s;
+    public ErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

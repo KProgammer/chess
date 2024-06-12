@@ -8,7 +8,6 @@ import chess.ChessGame;
 import model.Game;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
