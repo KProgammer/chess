@@ -32,12 +32,13 @@ public class ServerFacadeWS {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void redrawChessBoard(){
+    public ChessGame redrawChessBoard(){
         try {
             send("redraw");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return new ChessGame();
     }
 
     public void leave() {

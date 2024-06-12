@@ -1,15 +1,15 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.Game;
 import results.*;
 import serverfacade.ServerFacadeHttp;
 import serverfacade.ServerFacadeWS;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
     private static boolean loggedIn = false;
@@ -234,11 +234,12 @@ public class Client {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
                 System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
+                gamePlay(teamColor, gameOfInterest.game());
             }
         }
     }
 
-    private void gamePlay(ChessGame.TeamColor teamColor){
+    private void gamePlay(ChessGame.TeamColor teamColor, ChessGame chessGame){
         String line;
 
         isInGame = true;
@@ -252,17 +253,38 @@ public class Client {
                 System.out.println("Resign->User forfeits the game.");
                 System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
             } else if (line.equals("redrawchessboard")) {
+                ChessGame newChessGame = SERVER_FACADE_WS.redrawChessBoard();
 
-                DisplayBoard.main(ChessGame.TeamColor.WHITE,new ChessGame());
-                DisplayBoard.main(ChessGame.TeamColor.BLACK,new ChessGame());
+                DisplayBoard.main(ChessGame.TeamColor.WHITE, newChessGame);
+                DisplayBoard.main(ChessGame.TeamColor.BLACK, newChessGame);
 
             } else if (line.equals("leave")) {
                 isInGame = false;
+                SERVER_FACADE_WS.leave();
 
             } else if (line.equals("makemove")){
+                System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
+                line = readIn(true);
+
+                int col = getColumn(line);
+                int row = Integer.valueOf(line.charAt(1));
+                ChessPosition startPos = new ChessPosition(row,col);
+
+
+                System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
+                line = readIn(true);
+
+                col = getColumn(line);
+                row = Integer.valueOf(line.charAt(1));
+                ChessPosition secondMove = new ChessPosition(row,col);
+
+
+
+                //SERVER_FACADE_WS.makeMove(new ChessMove());
                 
             } else if (line.equals("resign")){
                 isInGame = false;
+                SERVER_FACADE_WS.resign();
                 
             } else if (line.equals("highlightlegalmoves")) {
                 
@@ -270,6 +292,43 @@ public class Client {
                 System.out.println("Not a valid command.");
             }
         }
+    }
+
+    private Integer getColumn(String input){
+        String firstChar = String.valueOf(input.charAt(0));
+        if(firstChar == "a"){
+            return 1;
+        } else if (firstChar == "b") {
+            return 2;
+        } else if (firstChar == "c") {
+            return 3;
+        } else if (firstChar == "d") {
+            return 4;
+        } else if (firstChar == "e") {
+            return 5;
+        } else if (firstChar == "f") {
+            return 6;
+        } else if (firstChar == "g") {
+            return 7;
+        } else if (firstChar == "h") {
+            return 8;
+        } else {
+            return null;
+        }
+    }
+
+    private ChessMove validMoves(ChessMove chessMove, ChessGame chessGame) {
+        ChessPiece pieceOfInterest = chessGame.getBoard().getPiece(chessMove.getStartPosition());
+
+        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) chessGame.validMoves(chessMove.getStartPosition());
+
+        /*for(validMoves : ChessMove move = null){
+            if(move.getEndPosition() == chessMove.getEndPosition()){
+                return move;
+            }
+        }*/
+
+        return chessMove;
     }
 
     private void observeGameCommand(){
