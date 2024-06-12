@@ -17,6 +17,7 @@ public class Client {
     private static final ServerFacadeWS SERVER_FACADE_WS;
     private static String authToken = null;
     private static Map<Integer, Game> gameMap = new HashMap<Integer, Game>();
+    private static boolean isInGame = false;
 
     static {
         try {
@@ -57,7 +58,7 @@ public class Client {
                 listGamesCommand();
 
             } else if ((line.equals("playgame")) && (loggedIn)) {
-                playGamesCommand();
+                playGameCommand();
 
             } else if ((line.equals("observegame")) && (loggedIn)) {
                 observeGameCommand();
@@ -206,7 +207,7 @@ public class Client {
         }
     }
 
-    private void playGamesCommand(){
+    private void playGameCommand(){
         System.out.println("Type in the number of the desired game.");
         int gameNum = Integer.parseInt(readIn(true));
 
@@ -233,6 +234,39 @@ public class Client {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
                 System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
+            }
+        }
+    }
+
+    private void gamePlay(ChessGame.TeamColor teamColor){
+        String line;
+
+        isInGame = true;
+        while(isInGame){
+            line = readIn(true);
+
+            if(line.equals("help")){
+                System.out.println("Redraw Chess Board->Redraws the chess board");
+                System.out.println("Leave->Removes user from the game, but doesn't forfeit the game.");
+                System.out.println("Make Move->Makes a move.");
+                System.out.println("Resign->User forfeits the game.");
+                System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
+            } else if (line.equals("redrawchessboard")) {
+                DisplayBoard.main(ChessGame.TeamColor.WHITE,new ChessGame());
+                DisplayBoard.main(ChessGame.TeamColor.BLACK,new ChessGame());
+
+            } else if (line.equals("leave")) {
+                isInGame = false;
+
+            } else if (line.equals("makemove")){
+                
+            } else if (line.equals("resign")){
+                isInGame = false;
+                
+            } else if (line.equals("highlightlegalmoves")) {
+                
+            } else {
+                System.out.println("Not a valid command.");
             }
         }
     }

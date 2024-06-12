@@ -27,4 +27,25 @@ public class ServerFacadeWS {
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
+
+    public void move(){
+
+    }
+
+    public void redrawChessBoard(){
+
+    }
+
+    public void leave() {
+
+    }
+
+    public void makeMove() {
+
+    }
+
+    public void resign(){
+
+    }
+
 }
