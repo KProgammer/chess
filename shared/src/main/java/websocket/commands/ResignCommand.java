@@ -4,7 +4,7 @@ public class ResignCommand extends UserGameCommand{
     private final Integer gameID;
     public static Boolean isForfeit;
 
-    public ResignCommand(String authToken, Integer gameID, Boolean isForfeit) {
+    public ResignCommand(String authToken, Integer gameID) {
         super(authToken);
         this.gameID = gameID;
         this.commandType = CommandType.RESIGN;

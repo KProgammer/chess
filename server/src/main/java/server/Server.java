@@ -1,9 +1,6 @@
 package server;
 
-import chess.ChessGame;
-import com.sun.jdi.Value;
 import model.Game;
-import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -78,15 +75,16 @@ public class Server {
         try{
             UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-            String username = authorizationObject.getAuth(command.getAuthString()).username();
+            //String username = authorizationObject.getAuth(command.getAuthString()).username();
+            String authToken = command.getAuthString();
 
-            saveSession(session, username);
+            saveSession(session, authToken);
 
             switch (command.getCommandType()){
-                case CONNECT -> connect(session, username, (ConnectCommand) command);
-                case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
-                case LEAVE -> leaveGame(session, username, (ResignCommand) command);
-                case RESIGN -> resign(session, username, (ResignCommand) command);
+                case CONNECT -> connect(session, authToken, (ConnectCommand) command);
+                case MAKE_MOVE -> makeMove(session, authToken, (MakeMoveCommand) command);
+                case LEAVE -> leaveGame(session, authToken, (ResignCommand) command);
+                case RESIGN -> resign(session, authToken, (ResignCommand) command);
             }
         } /*catch (UnauthorizedException ex) {
             sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
@@ -195,9 +193,9 @@ public class Server {
             gameMap.computeIfAbsent(command.getGameID(), k -> new ArrayList<>());
             gameMap.get(command.getGameID()).add(username);
 
-            if(gameOfInterest.whiteUsername() == username){
+            if(gameOfInterest.whiteUsername().equals(username)){
                 message = username+"has joined as the white team.";
-            } else if (gameOfInterest.blackUsername() == username) {
+            } else if (gameOfInterest.blackUsername().equals(username)) {
                 message = username+"has joined as the black team.";
             } else {
                 message = username+"has joined as an observer.";
@@ -217,7 +215,7 @@ public class Server {
         }
 
         try {
-            sendMessage(session.getRemote(), new LoadGameMessage(gameObject.getGame(command.getGameID()).game()));
+            sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(), gameObject.getGame(command.getGameID()).game()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

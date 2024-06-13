@@ -16,8 +16,9 @@ public class Client {
     private static final ServerFacadeHttp SERVER_FACADE_HTTP = new ServerFacadeHttp(8080);
     private static final ServerFacadeWS SERVER_FACADE_WS;
     private static String authToken = null;
-    private static Map<Integer, Game> gameMap = new HashMap<Integer, Game>();
+    public static Map<Integer, Game> gameMap = new HashMap<Integer, Game>();
     private static boolean isInGame = false;
+    //private static ChessGame currentChessGame;
 
     static {
         try {
@@ -234,12 +235,12 @@ public class Client {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
                 System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
-                gamePlay(teamColor, gameOfInterest.game());
+                gamePlay(teamColor, gameOfInterest);
             }
         }
     }
 
-    private void gamePlay(ChessGame.TeamColor teamColor, ChessGame chessGame){
+    private void gamePlay(ChessGame.TeamColor teamColor, Game gameOfInterest){
         String line;
 
         isInGame = true;
@@ -253,14 +254,14 @@ public class Client {
                 System.out.println("Resign->User forfeits the game.");
                 System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
             } else if (line.equals("redrawchessboard")) {
-                ChessGame newChessGame = SERVER_FACADE_WS.redrawChessBoard();
+                //ChessGame newChessGame = SERVER_FACADE_WS.redrawChessBoard();
 
-                DisplayBoard.main(ChessGame.TeamColor.WHITE, newChessGame);
-                DisplayBoard.main(ChessGame.TeamColor.BLACK, newChessGame);
+                DisplayBoard.main(ChessGame.TeamColor.WHITE, gameOfInterest.game());
+                DisplayBoard.main(ChessGame.TeamColor.BLACK, gameOfInterest.game());
 
             } else if (line.equals("leave")) {
                 isInGame = false;
-                SERVER_FACADE_WS.leave();
+                SERVER_FACADE_WS.leave(authToken,gameOfInterest.gameID());
 
             } else if (line.equals("makemove")){
                 System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
@@ -284,7 +285,7 @@ public class Client {
                 
             } else if (line.equals("resign")){
                 isInGame = false;
-                SERVER_FACADE_WS.resign();
+                SERVER_FACADE_WS.resign(authToken, gameOfInterest.gameID());
                 
             } else if (line.equals("highlightlegalmoves")) {
                 
@@ -296,25 +297,17 @@ public class Client {
 
     private Integer getColumn(String input){
         String firstChar = String.valueOf(input.charAt(0));
-        if(firstChar == "a"){
-            return 1;
-        } else if (firstChar == "b") {
-            return 2;
-        } else if (firstChar == "c") {
-            return 3;
-        } else if (firstChar == "d") {
-            return 4;
-        } else if (firstChar == "e") {
-            return 5;
-        } else if (firstChar == "f") {
-            return 6;
-        } else if (firstChar == "g") {
-            return 7;
-        } else if (firstChar == "h") {
-            return 8;
-        } else {
-            return null;
-        }
+        return switch (firstChar) {
+            case "a" -> 1;
+            case "b" -> 2;
+            case "c" -> 3;
+            case "d" -> 4;
+            case "e" -> 5;
+            case "f" -> 6;
+            case "g" -> 7;
+            case "h" -> 8;
+            default -> null;
+        };
     }
 
     private ChessMove validMoves(ChessMove chessMove, ChessGame chessGame) {
