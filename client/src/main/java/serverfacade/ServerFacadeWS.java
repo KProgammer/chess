@@ -5,11 +5,13 @@ package serverfacade;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import websocket.commands.ResignCommand;
+import websocket.messages.LoadGameMessage;
 
 import javax.websocket.*;
 import java.net.URI;
 
-public class ServerFacadeWS {
+public class ServerFacadeWS extends Endpoint {
 
     public javax.websocket.Session session;
 
@@ -41,9 +43,9 @@ public class ServerFacadeWS {
         return new ChessGame();
     }
 
-    public void leave() {
+    public void leave(String authToken, Integer gameID) {
         try {
-            send("leave");
+            send(new Gson().toJson(new ResignCommand(authToken,gameID,false)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
