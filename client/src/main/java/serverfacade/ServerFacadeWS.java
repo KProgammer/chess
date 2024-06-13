@@ -94,11 +94,14 @@ public class ServerFacadeWS extends Endpoint {
 
     public void error(String message){
         ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+        System.out.println(errorMessage.getErrorMessage());
 
     }
 
     public void notification(String message){
         NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+
+        System.out.println(notificationMessage.getMessage());
     }
 
 }
