@@ -27,9 +27,13 @@ public class DisplayBoard {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         if(piecePos != null &&
-        chessGame.getBoard().getPiece(piecePos) != null) {
+        chessGame.getBoard().getPiece(piecePos) != null  &&
+                chessGame.getBoard().getPiece(piecePos).getTeamColor() == teamColor) {
             squaresToHighLight = (ArrayList<ChessMove>) chessGame.validMoves(piecePos);
             startPosition = piecePos;
+        } else {
+            System.out.println("Can only show legal moves of the player whose turn it currently is.");
+            return;
         }
 
         out.print(ERASE_SCREEN);

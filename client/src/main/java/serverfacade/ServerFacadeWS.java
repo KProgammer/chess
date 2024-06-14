@@ -49,6 +49,14 @@ public class ServerFacadeWS extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
+    public void connect(String authToken, Integer gameID){
+        try {
+            send(new Gson().toJson(new ConnectCommand(authToken, gameID)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void leave(String authToken, Integer gameID) {
         try {
             send(new Gson().toJson(new LeaveCommand(authToken,gameID)));
@@ -89,6 +97,18 @@ public class ServerFacadeWS extends Endpoint {
         }
 
     }
+
+    /*public Boolean observeGame(Integer gameID){
+
+        if((gameID == null)){
+            System.out.println("Not a valid gameID.");
+            return false;
+        } else {
+            DisplayBoard.main(ChessGame.TeamColor.WHITE, ga);
+            DisplayBoard.main(ChessGame.TeamColor.BLACK, new ChessGame());
+            return true;
+        }
+    }*/
 
     public void error(String message){
         ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);

@@ -228,7 +228,7 @@ public class Client {
             System.out.println("This game doesn't exist.");
         } else {
             JoinGameResult result = SERVER_FACADE_HTTP.joinGame(teamColor, gameMap.get(gameNum).gameID(), authToken);
-
+            SERVER_FACADE_WS.connect(authToken, gameMap.get(gameNum).gameID());
             if (result == null) {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
@@ -310,6 +310,7 @@ public class Client {
                 SERVER_FACADE_WS.resign(authToken, gameOfInterest.gameID());
                 
             } else if (line.equals("highlightlegalmoves")) {
+                highlightLegalMoves(gameOfInterest);
                 
             } else {
                 System.out.println("Not a valid command.");
@@ -334,28 +335,45 @@ public class Client {
         };
     }
 
-    private ChessMove validMoves(ChessMove chessMove, ChessGame chessGame) {
-        ChessPiece pieceOfInterest = chessGame.getBoard().getPiece(chessMove.getStartPosition());
-
-        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) chessGame.validMoves(chessMove.getStartPosition());
-
-        /*for(validMoves : ChessMove move = null){
-            if(move.getEndPosition() == chessMove.getEndPosition()){
-                return move;
-            }
-        }*/
-
-        return chessMove;
-    }
-
     private void observeGameCommand(){
         System.out.println("Type in the number of the desired game.");
         int gameNum = Integer.parseInt(readIn(true));
 
-        SERVER_FACADE_HTTP.observeGame(gameNum);
+        SERVER_FACADE_WS.connect(authToken,gameMap.get(gameNum).gameID());
+
+        String line;
+        boolean isInGame = true;
+        while(isInGame){
+            line = readIn(true);
+            Game gameOfInterest = gameMap.get(gameNum);
+
+            if(line.equals("help")){
+                System.out.println("Redraw Chess Board->Redraws the chess board");
+                System.out.println("Leave->Removes user from the game, but doesn't forfeit the game.");
+                System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
+            } else if (line.equals("redrawchessboard")) {
+                DisplayBoard.main(gameOfInterest.game().getTeamTurn(), gameOfInterest.game(), null);
+            } else if (line.equals("leave")) {
+                isInGame = false;
+                SERVER_FACADE_WS.leave(authToken,gameOfInterest.gameID());
+
+            } else if (line.equals("highlightlegalmoves")) {
+                highlightLegalMoves(gameOfInterest);
+            } else {
+                System.out.println("Not a valid command.");
+            }
+        }
     }
 
-    private void drawChessBoard(ChessGame.TeamColor teamColor){
+    private void highlightLegalMoves(Game gameOfInterest){
+        String line;
+        System.out.println("Please enter the location of the piece you wish to see possible moves for (e.g. b4).");
+        line = readIn(true);
 
+        int col = getColumn(line);
+        int row = Integer.valueOf(line.charAt(1));
+        ChessPosition posOfInterest = new ChessPosition(row,col);
+
+        DisplayBoard.main(gameOfInterest.game().getTeamTurn(),gameOfInterest.game(),posOfInterest);
     }
 }

@@ -224,6 +224,13 @@ public class Server {
                 username = authorizationObject.getAuth(authToken).username();
                 gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
 
+                for (String user : users) {
+                    session = sessionMap.get(user);
+                    sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " +
+                            command.getChessMove().getStartPosition() +
+                            " to " + command.getChessMove().getEndPosition()));
+                }
+
                 ChessGame.TeamColor teamColor = null;
                 if(gameObject.getGame(command.getGameID()).blackUsername().equals(username)){
                     teamColor = ChessGame.TeamColor.BLACK;
@@ -232,21 +239,17 @@ public class Server {
                 }
 
                 if(gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)){
-                    sendMessage(session.getRemote(), new NotificationMessage(username+"has lost."));
+                    sendMessageToAll(users,username+"is in checkmate.");
                 } else if (!gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)) {
-                    sendMessage(session.getRemote(), new NotificationMessage(username+"has won."));
+                    sendMessageToAll(users, username+"has won.");
                 } else if (gameObject.getGame(command.getGameID()).game().isInCheck(teamColor)) {
-                    sendMessage(session.getRemote(), new NotificationMessage(username+"is in check."));
+                    sendMessageToAll(users, username+"is in check.");
                 } else {
-                    sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
-                            gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
-                }
-
-                for (String user : users) {
-                    session = sessionMap.get(user);
-                    sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " +
-                            command.getChessMove().getStartPosition() +
-                            " to " + command.getChessMove().getEndPosition()));
+                    for (String user : users) {
+                        session = sessionMap.get(user);
+                        sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
+                                gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
+                    }
                 }
 
             } catch (Exception ex) {
@@ -302,6 +305,14 @@ public class Server {
             remoteEndpoint.sendString(new Gson().toJson(message));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void sendMessageToAll(ArrayList<String> users, String message){
+        Session session;
+        for (String user : users) {
+            session = sessionMap.get(user);
+            sendMessage(session.getRemote(), new NotificationMessage(message));
         }
     }
 
