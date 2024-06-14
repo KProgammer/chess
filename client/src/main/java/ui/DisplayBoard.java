@@ -1,11 +1,13 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import static java.lang.System.out;
 import static ui.EscapeSequences.*;
@@ -14,19 +16,27 @@ public class DisplayBoard {
     private static final int BOARD_SIZE_IN_SQUARES = 8;
     private static final int SQUARE_SIZE_IN_CHARS = 3;
     private static final int LINE_WIDTH_IN_CHARS = 1;
+    private static ArrayList<ChessMove> squaresToHighLight = new ArrayList<>();
     private static int posRow = 1;
     private static int posCol = 1;
     private static final String EMPTY = "   ";
+    private static ChessPosition startPosition = null;
 
 
-    public static void main(ChessGame.TeamColor teamColor, ChessGame chessGame) {
+    public static void main(ChessGame.TeamColor teamColor, ChessGame chessGame, ChessPosition piecePos) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        if(piecePos != null &&
+        chessGame.getBoard().getPiece(piecePos) != null) {
+            squaresToHighLight = (ArrayList<ChessMove>) chessGame.validMoves(piecePos);
+            startPosition = piecePos;
+        }
 
         out.print(ERASE_SCREEN);
 
         drawHeaders(out, teamColor);
 
-        drawTicTacToeBoard(out, chessGame, teamColor);
+        drawChessBoard(out, chessGame, teamColor);
 
         drawHeaders(out, teamColor);
 
@@ -81,7 +91,7 @@ public class DisplayBoard {
         }
     }
 
-    private static void drawTicTacToeBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
+    private static void drawChessBoard(PrintStream out, ChessGame chessGame, ChessGame.TeamColor teamColor) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
             if (teamColor == ChessGame.TeamColor.BLACK){
                 posRow = (boardRow + 1);
@@ -114,6 +124,14 @@ public class DisplayBoard {
                         setWhite(out);
                     } else {
                         setBlack(out);
+                    }
+                }
+
+                for(ChessMove move : squaresToHighLight){
+                    if (move.getEndPosition().equals(new ChessPosition(posRow,posCol)) ||
+                    startPosition.equals(new ChessPosition(posRow,posCol))){
+                        setYellow(out);
+                        break;
                     }
                 }
 
@@ -166,6 +184,11 @@ public class DisplayBoard {
     private static void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setYellow(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
+        //out.print(SET_TEXT_COLOR_BLACK);
     }
 
     private static void printPlayer(PrintStream out, String player, ChessGame.TeamColor teamColor) {

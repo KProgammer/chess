@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.Game;
 import results.*;
 import serverfacade.ServerFacadeHttp;
@@ -235,18 +232,21 @@ public class Client {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
                 System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
-                gamePlay(teamColor, gameNum);
+                gamePlay(teamColor, gameOfInterest.gameID());
             }
         }
     }
 
-    private void gamePlay(ChessGame.TeamColor teamColor, Integer gameNum){
+    private void gamePlay(ChessGame.TeamColor teamColor, Integer gameID){
         String line;
+        ChessPiece promotionPiece = null;
+
+        DisplayBoard.main(teamColor,gameMap.get(gameID).game(),null);
 
         isInGame = true;
         while(isInGame){
             line = readIn(true);
-            Game gameOfInterest = gameMap.get(gameNum);
+            Game gameOfInterest = gameMap.get(gameID);
 
             if(line.equals("help")){
                 System.out.println("Redraw Chess Board->Redraws the chess board");
@@ -255,8 +255,7 @@ public class Client {
                 System.out.println("Resign->User forfeits the game.");
                 System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
             } else if (line.equals("redrawchessboard")) {
-                DisplayBoard.main(ChessGame.TeamColor.WHITE, gameOfInterest.game());
-                DisplayBoard.main(ChessGame.TeamColor.BLACK, gameOfInterest.game());
+                DisplayBoard.main(teamColor, gameOfInterest.game(), null);
 
             } else if (line.equals("leave")) {
                 isInGame = false;
@@ -278,9 +277,32 @@ public class Client {
                 row = Integer.valueOf(line.charAt(1));
                 ChessPosition secondMove = new ChessPosition(row,col);
 
+                ArrayList<ChessMove> movesThatMatch = new ArrayList<>();
+                ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) gameOfInterest.game().validMoves(startPos);
+                for(ChessMove move : validMoves){
+                    if(move.getStartPosition() == startPos &&
+                    move.getEndPosition() == secondMove){
+                        movesThatMatch.add(move);
+                    }
+                }
 
+                if (movesThatMatch.size() > 1){
+                    System.out.println("Please enter the piece you wish to promote your pawn to move (e.g. queen)." +
+                            "If you do not enter a piece, it will be automatically promoted to a queen.");
+                    line = readIn(true);
+                    switch (line){
+                        case "rook" -> promotionPiece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+                        case "knight" -> promotionPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+                        case "bishop" -> promotionPiece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+                        default ->  promotionPiece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
 
-                //SERVER_FACADE_WS.makeMove(new ChessMove());
+                    }
+                } else if(movesThatMatch.isEmpty()){
+                    System.out.println("Invalid move. Use the 'highlight legal moves' command to see possible moves");
+                    break;
+                }
+
+                SERVER_FACADE_WS.makeMove(authToken, gameID, new ChessMove(startPos,secondMove, promotionPiece.getPieceType()));
                 
             } else if (line.equals("resign")){
                 isInGame = false;
@@ -291,6 +313,8 @@ public class Client {
             } else {
                 System.out.println("Not a valid command.");
             }
+
+            promotionPiece = null;
         }
     }
 
@@ -328,5 +352,9 @@ public class Client {
         int gameNum = Integer.parseInt(readIn(true));
 
         SERVER_FACADE_HTTP.observeGame(gameNum);
+    }
+
+    private void drawChessBoard(ChessGame.TeamColor teamColor){
+
     }
 }
