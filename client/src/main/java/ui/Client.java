@@ -1,6 +1,7 @@
 package ui;
 
 import chess.*;
+import model.Authorization;
 import model.Game;
 import results.*;
 import serverfacade.ServerFacadeHttp;

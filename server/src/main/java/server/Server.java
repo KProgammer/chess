@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import model.Game;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
@@ -219,8 +220,24 @@ public class Server {
             try {
                 username = authorizationObject.getAuth(authToken).username();
                 gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
-                sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
-                        gameObject.getGame(command.getGameID()).game()));
+
+                ChessGame.TeamColor teamColor = null;
+                if(gameObject.getGame(command.getGameID()).blackUsername().equals(username)){
+                    teamColor = ChessGame.TeamColor.BLACK;
+                } else {
+                    teamColor = ChessGame.TeamColor.WHITE;
+                }
+
+                if(gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)){
+                    sendMessage(session.getRemote(), new NotificationMessage(username+"has lost."));
+                } else if (!gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)) {
+                    sendMessage(session.getRemote(), new NotificationMessage(username+"has won."));
+                } else if (gameObject.getGame(command.getGameID()).game().isInCheck(teamColor)) {
+                    sendMessage(session.getRemote(), new NotificationMessage(username+"is in check."));
+                } else {
+                    sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
+                            gameObject.getGame(command.getGameID()).game()));
+                }
             } catch (Exception ex) {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }

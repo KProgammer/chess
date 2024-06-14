@@ -81,6 +81,21 @@ public class ServerFacadeWS extends Endpoint {
 
         gameMap.put(loadGameMessage.getGameID(),gameOfInterest);
 
+        if(gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+            try {
+                send(new Gson().toJson(new NotificationMessage("has won")));
+                send(new Gson().toJson(new NotificationMessage("has won")));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else if (gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+
+        } else if (gameOfInterest.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+
+        } else if (gameOfInterest.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+
+        }
+
     }
 
     public void error(String message){
