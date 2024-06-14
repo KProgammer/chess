@@ -48,15 +48,6 @@ public class ServerFacadeWS extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    /*public ChessGame redrawChessBoard() {
-        try {
-            send(new Gson().toJson(""));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return new ChessGame();
-    }*/
-
     public void leave(String authToken, Integer gameID) {
         try {
             send(new Gson().toJson(new LeaveCommand(authToken,gameID)));

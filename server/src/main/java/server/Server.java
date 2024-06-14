@@ -86,9 +86,9 @@ public class Server {
                 case LEAVE -> leaveGame(session, authToken, (ResignCommand) command);
                 case RESIGN -> resign(session, authToken, (ResignCommand) command);
             }
-        } /*catch (UnauthorizedException ex) {
+        } catch (UnauthorizedException ex) {
             sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
-        }*/ catch (Exception ex) {
+        } catch (Exception ex) {
             sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
         }
     }
@@ -170,84 +170,108 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    public void saveSession(Session session, String username){
-        //gameMap.computeIfAbsent(gameID, k -> new ArrayList<>());
-        //gameMap.get(gameID).add(username);
-        sessionMap.put(username, session);
+    public void saveSession(Session session, String authToken) throws UnauthorizedException {
+        if (authorized(authToken)) {
+            sessionMap.put(authToken, session);
+        }
     }
 
-    public void connect(Session session, String username, ConnectCommand command) {
-        String message;
-        Game gameOfInterest;
+    public void connect(Session session, String authToken, ConnectCommand command) {
+        if(authorized(authToken)) {
+            String message = "";
+            Game gameOfInterest = null;
 
-        try {
-            gameOfInterest = gameObject.getGame(command.getGameID());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        if(gameOfInterest == null){
-            message = "Error: Game doesn't exist.";
-            sendMessage(session.getRemote(), new ErrorMessage(message));
-        } else {
-            gameMap.computeIfAbsent(command.getGameID(), k -> new ArrayList<>());
-            gameMap.get(command.getGameID()).add(username);
-
-            if(gameOfInterest.whiteUsername().equals(username)){
-                message = username+"has joined as the white team.";
-            } else if (gameOfInterest.blackUsername().equals(username)) {
-                message = username+"has joined as the black team.";
-            } else {
-                message = username+"has joined as an observer.";
+            try {
+                gameOfInterest = gameObject.getGame(command.getGameID());
+            } catch (Exception ex) {
+                sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
-            sendMessage(session.getRemote(), new NotificationMessage(message));
+
+            if (gameOfInterest == null) {
+                message = "Error: Game doesn't exist.";
+                sendMessage(session.getRemote(), new ErrorMessage(message));
+            } else {
+                gameMap.computeIfAbsent(command.getGameID(), k -> new ArrayList<>());
+                gameMap.get(command.getGameID()).add(authToken);
+
+                try {
+                    if (authorizationObject.getAuth(authToken).username().equals(gameOfInterest.whiteUsername())) {
+                        message = authorizationObject.getAuth(authToken).username() + "has joined as the white team.";
+                    } else if (authorizationObject.getAuth(authToken).username().equals(gameOfInterest.blackUsername())) {
+                        message = authorizationObject.getAuth(authToken).username() + "has joined as the black team.";
+                    } else {
+                        message = authorizationObject.getAuth(authToken).username() + "has joined as an observer.";
+                    }
+                } catch (Exception ex) {
+                    sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+                }
+                sendMessage(session.getRemote(), new NotificationMessage(message));
+            }
         }
     }
 
-    public void makeMove(Session session, String username, MakeMoveCommand command){
-        ArrayList<String> users = gameMap.get(command.getGameID());
-        session = sessionMap.get(username);
+    public void makeMove(Session session, String authToken, MakeMoveCommand command){
+        if(authorized(authToken)) {
+            ArrayList<String> users = gameMap.get(command.getGameID());
+            session = sessionMap.get(authToken);
 
-        try {
-            gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            String username = null;
+            try {
+                username = authorizationObject.getAuth(authToken).username();
+                gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
+                sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
+                        gameObject.getGame(command.getGameID()).game()));
+            } catch (Exception ex) {
+                sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+            }
 
-        try {
-            sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(), gameObject.getGame(command.getGameID()).game()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        for (String user : users) {
-            session = sessionMap.get(user);
-            sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " + command.getChessMove().getStartPosition() +
-                    " to " + command.getChessMove().getEndPosition()));
+            for (String user : users) {
+                session = sessionMap.get(user);
+                sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " +
+                        command.getChessMove().getStartPosition() +
+                        " to " + command.getChessMove().getEndPosition()));
+            }
         }
     }
 
-    public void leaveGame(Session session, String username, ResignCommand command){
-        sessionMap.remove(username);
-        ArrayList<String> users = gameMap.get(command.getGameID());
+    public void leaveGame(Session session, String authToken, ResignCommand command){
+        if(authorized(authToken)) {
+            sessionMap.remove(authToken);
+            ArrayList<String> users = gameMap.get(command.getGameID());
 
-        for (String user : users) {
-            session = sessionMap.get(user);
-            sendMessage(session.getRemote(), new NotificationMessage(username + "has left the game."));
+            String username = "";
+
+            try {
+                username = authorizationObject.getAuth(authToken).username();
+            } catch (Exception ex) {
+                sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+            }
+
+            for (String user : users) {
+                session = sessionMap.get(user);
+                sendMessage(session.getRemote(), new NotificationMessage(username + "has left the game."));
+            }
         }
 
     }
 
-    public void resign(Session session, String username, ResignCommand command){
-        sessionMap.remove(username);
-        ArrayList<String> users = gameMap.get(command.getGameID());
+    public void resign(Session session, String authToken, ResignCommand command){
+        if(authorized(authToken)) {
+            sessionMap.remove(authToken);
+            ArrayList<String> users = gameMap.get(command.getGameID());
 
-        for (String user : users) {
-            session = sessionMap.get(user);
-            sendMessage(session.getRemote(), new NotificationMessage(username + "has forfeit the game."));
+            for (String user : users) {
+                session = sessionMap.get(user);
+                try {
+                    sendMessage(session.getRemote(),
+                            new NotificationMessage(authorizationObject.getAuth(authToken).username() + "has forfeit the game."));
+                } catch (Exception ex) {
+                    sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+                }
+            }
+
+            gameMap.remove(command.getGameID());
         }
-
-        gameMap.remove(command.getGameID());
     }
 
     public void sendMessage(RemoteEndpoint remoteEndpoint, Object message){
@@ -256,5 +280,26 @@ public class Server {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private class UnauthorizedException extends Exception {
+        private UnauthorizedException(){
+            super();
+        }
+    }
+
+    private boolean authorized(String authToken){
+
+        try {
+            if(authorizationObject.getAuth(authToken) == null ||
+                    authorizationObject.getAuth(authToken).username() == null ||
+                    authorizationObject.getAuth(authToken).authToken() == null){
+                throw new UnauthorizedException();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return true;
     }
 }

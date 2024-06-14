@@ -235,17 +235,18 @@ public class Client {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
                 System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
-                gamePlay(teamColor, gameOfInterest);
+                gamePlay(teamColor, gameNum);
             }
         }
     }
 
-    private void gamePlay(ChessGame.TeamColor teamColor, Game gameOfInterest){
+    private void gamePlay(ChessGame.TeamColor teamColor, Integer gameNum){
         String line;
 
         isInGame = true;
         while(isInGame){
             line = readIn(true);
+            Game gameOfInterest = gameMap.get(gameNum);
 
             if(line.equals("help")){
                 System.out.println("Redraw Chess Board->Redraws the chess board");
@@ -254,8 +255,6 @@ public class Client {
                 System.out.println("Resign->User forfeits the game.");
                 System.out.println("Highlight Legal Moves->Shows the possible moves of the selected piece.");
             } else if (line.equals("redrawchessboard")) {
-                //ChessGame newChessGame = SERVER_FACADE_WS.redrawChessBoard();
-
                 DisplayBoard.main(ChessGame.TeamColor.WHITE, gameOfInterest.game());
                 DisplayBoard.main(ChessGame.TeamColor.BLACK, gameOfInterest.game());
 
