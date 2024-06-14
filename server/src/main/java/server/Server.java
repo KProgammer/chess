@@ -216,6 +216,9 @@ public class Server {
             ArrayList<String> users = gameMap.get(command.getGameID());
             session = sessionMap.get(authToken);
 
+            boolean whiteHasWon = false;
+            boolean blackHasWon = false;
+
             String username = null;
             try {
                 username = authorizationObject.getAuth(authToken).username();
@@ -236,18 +239,21 @@ public class Server {
                     sendMessage(session.getRemote(), new NotificationMessage(username+"is in check."));
                 } else {
                     sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
-                            gameObject.getGame(command.getGameID()).game()));
+                            gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
                 }
+
+                for (String user : users) {
+                    session = sessionMap.get(user);
+                    sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " +
+                            command.getChessMove().getStartPosition() +
+                            " to " + command.getChessMove().getEndPosition()));
+                }
+
             } catch (Exception ex) {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
 
-            for (String user : users) {
-                session = sessionMap.get(user);
-                sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " +
-                        command.getChessMove().getStartPosition() +
-                        " to " + command.getChessMove().getEndPosition()));
-            }
+
         }
     }
 

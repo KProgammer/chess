@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import model.Game;
+import ui.DisplayBoard;
 import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
@@ -81,18 +82,9 @@ public class ServerFacadeWS extends Endpoint {
 
         gameMap.put(loadGameMessage.getGameID(),gameOfInterest);
 
-        if(gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            try {
-                send(new Gson().toJson(new NotificationMessage("has won")));
-                send(new Gson().toJson(new NotificationMessage("has won")));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else if (gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+        DisplayBoard.main(loadGameMessage.getTeamColor(),gameMap.get(loadGameMessage.getGameID()).game(),null);
 
-        } else if (gameOfInterest.game().isInCheck(ChessGame.TeamColor.BLACK)) {
-
-        } else if (gameOfInterest.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+        if(loadGameMessage.getBlackHasWon() || loadGameMessage.getWhiteHasWon()){
 
         }
 
