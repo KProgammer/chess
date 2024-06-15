@@ -1,6 +1,8 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import model.Game;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
@@ -12,10 +14,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import service.*;
 import spark.*;
-import websocket.commands.ConnectCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.ResignCommand;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -84,7 +83,7 @@ public class Server {
             switch (command.getCommandType()){
                 case CONNECT -> connect(session, authToken, (ConnectCommand) command);
                 case MAKE_MOVE -> makeMove(session, authToken, (MakeMoveCommand) command);
-                case LEAVE -> leaveGame(session, authToken, (ResignCommand) command);
+                case LEAVE -> leaveGame(session, authToken, (LeaveCommand) command);
                 case RESIGN -> resign(session, authToken, (ResignCommand) command);
             }
         } catch (UnauthorizedException ex) {
@@ -196,6 +195,13 @@ public class Server {
                 gameMap.get(command.getGameID()).add(authToken);
 
                 try {
+                    ChessGame.TeamColor teamColor = determineTeamColor(gameOfInterest.whiteUsername(),
+                            gameOfInterest.blackUsername(), authorizationObject.getAuth(authToken).username());
+
+                    sendMessage(session.getRemote(),new LoadGameMessage(gameOfInterest.gameID(), gameOfInterest.game(),
+                            gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.BLACK),
+                            gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE),teamColor));
+
                     if (authorizationObject.getAuth(authToken).username().equals(gameOfInterest.whiteUsername())) {
                         message = authorizationObject.getAuth(authToken).username() + "has joined as the white team.";
                     } else if (authorizationObject.getAuth(authToken).username().equals(gameOfInterest.blackUsername())) {
@@ -206,7 +212,8 @@ public class Server {
                 } catch (Exception ex) {
                     sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
                 }
-                sendMessage(session.getRemote(), new NotificationMessage(message));
+                ArrayList<String> users = gameMap.get(command.getGameID());
+                sendMessageToAll(users, message);
             }
         }
     }
@@ -215,14 +222,58 @@ public class Server {
         if(authorized(authToken)) {
             ArrayList<String> users = gameMap.get(command.getGameID());
             session = sessionMap.get(authToken);
+            String messageToAllUsers = "";
 
             boolean whiteHasWon = false;
             boolean blackHasWon = false;
 
             String username = null;
             try {
+                if(gameIsWon(gameObject.getGame(command.getGameID()))                ) {
+                    sendMessage(session.getRemote(), new NotificationMessage("Error: Game is done."));
+                    return;
+                }
+
+
                 username = authorizationObject.getAuth(authToken).username();
-                gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
+
+                try {
+                    gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
+                } catch (InvalidMoveException exception){
+                    sendMessage(session.getRemote(), new NotificationMessage("This is an invalid move."));
+                    return;
+                }
+
+                ChessGame.TeamColor teamColor = null;
+                ChessGame.TeamColor oppTeamColor = null;
+                if(gameObject.getGame(command.getGameID()).blackUsername().equals(username)){
+                    teamColor = ChessGame.TeamColor.BLACK;
+                    oppTeamColor = ChessGame.TeamColor.WHITE;
+                } else {
+                    teamColor = ChessGame.TeamColor.WHITE;
+                    oppTeamColor = ChessGame.TeamColor.BLACK;
+                }
+
+                if(gameObject.getGame(command.getGameID()).game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+                    whiteHasWon = true;
+                } else if (gameObject.getGame(command.getGameID()).game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                    blackHasWon = true;
+                }
+
+                if(gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)){
+                    messageToAllUsers = teamColor+"is in checkmate."+oppTeamColor+"has won!";
+                } else if (gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.BLACK) ||
+                gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.WHITE)) {
+                    messageToAllUsers = "Stalemate.";
+                }  else if (gameObject.getGame(command.getGameID()).game().isInCheck(teamColor)) {
+                    messageToAllUsers = username+"has won.";
+                }
+
+                for (String user : users) {
+                    session = sessionMap.get(user);
+                    sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
+                            gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
+                }
 
                 for (String user : users) {
                     session = sessionMap.get(user);
@@ -231,27 +282,7 @@ public class Server {
                             " to " + command.getChessMove().getEndPosition()));
                 }
 
-                ChessGame.TeamColor teamColor = null;
-                if(gameObject.getGame(command.getGameID()).blackUsername().equals(username)){
-                    teamColor = ChessGame.TeamColor.BLACK;
-                } else {
-                    teamColor = ChessGame.TeamColor.WHITE;
-                }
-
-                if(gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)){
-                    sendMessageToAll(users,username+"is in checkmate.");
-                } else if (!gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)) {
-                    sendMessageToAll(users, username+"has won.");
-                } else if (gameObject.getGame(command.getGameID()).game().isInCheck(teamColor)) {
-                    sendMessageToAll(users, username+"is in check.");
-                } else {
-                    for (String user : users) {
-                        session = sessionMap.get(user);
-                        sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
-                                gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
-                    }
-                }
-
+                sendMessageToAll(users,messageToAllUsers);
             } catch (Exception ex) {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
@@ -260,10 +291,16 @@ public class Server {
         }
     }
 
-    public void leaveGame(Session session, String authToken, ResignCommand command){
+    public void leaveGame(Session session, String authToken, LeaveCommand command) throws UnauthorizedException {
         if(authorized(authToken)) {
-            sessionMap.remove(authToken);
-            ArrayList<String> users = gameMap.get(command.getGameID());
+            Game gameOfInterest = new Game(0,null,null,"fail", new ChessGame());
+
+            try {
+                gameOfInterest = gameObject.getGame(command.getGameID());
+            } catch (Exception exception){
+                System.out.println("Error: the LeaveCommand had a game ID that didn't exist.");
+                throw new RuntimeException(exception.getMessage());
+            }
 
             String username = "";
 
@@ -273,10 +310,25 @@ public class Server {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
 
-            for (String user : users) {
-                session = sessionMap.get(user);
-                sendMessage(session.getRemote(), new NotificationMessage(username + "has left the game."));
+            if(gameOfInterest.blackUsername().equals(username)){
+                try {
+                    gameObject.updateGame(gameOfInterest.gameID(), null, ChessGame.TeamColor.BLACK);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else if(gameOfInterest.whiteUsername().equals(username)){
+                try {
+                    gameObject.updateGame(gameOfInterest.gameID(), null, ChessGame.TeamColor.WHITE);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
+
+            sessionMap.remove(authToken);
+            ArrayList<String> users = gameMap.get(command.getGameID());
+            users.remove(authToken);
+
+            sendMessageToAll(users,username+"has left the game");
         }
 
     }
@@ -284,7 +336,10 @@ public class Server {
     public void resign(Session session, String authToken, ResignCommand command){
         if(authorized(authToken)) {
             sessionMap.remove(authToken);
+
             ArrayList<String> users = gameMap.get(command.getGameID());
+
+            gameMap.remove(command.getGameID());
 
             for (String user : users) {
                 session = sessionMap.get(user);
@@ -296,7 +351,7 @@ public class Server {
                 }
             }
 
-            gameMap.remove(command.getGameID());
+
         }
     }
 
@@ -314,6 +369,16 @@ public class Server {
             session = sessionMap.get(user);
             sendMessage(session.getRemote(), new NotificationMessage(message));
         }
+    }
+
+    public ChessGame.TeamColor determineTeamColor(String whiteUsername, String blackUsername, String username){
+        ChessGame.TeamColor teamColor = null;
+        if(blackUsername.equals(username)){
+            teamColor = ChessGame.TeamColor.BLACK;
+        } else if (whiteUsername.equals(username)){
+            teamColor = ChessGame.TeamColor.WHITE;
+        }
+        return teamColor;
     }
 
     private class UnauthorizedException extends Exception {
@@ -335,5 +400,12 @@ public class Server {
         }
 
         return true;
+    }
+
+    private boolean gameIsWon(Game gameOfInterest){
+        return gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.BLACK) ||
+                gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE) ||
+                gameOfInterest.game().isInStalemate(ChessGame.TeamColor.BLACK) ||
+                gameOfInterest.game().isInStalemate(ChessGame.TeamColor.WHITE);
     }
 }
