@@ -332,13 +332,15 @@ public class Server {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
 
-            if(gameOfInterest.blackUsername().equals(username)){
+            if(gameOfInterest.blackUsername() != null &&
+                    gameOfInterest.blackUsername().equals(username)){
                 try {
                     gameObject.updateGame(gameOfInterest.gameID(), null, ChessGame.TeamColor.BLACK);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            } else if(gameOfInterest.whiteUsername().equals(username)){
+            } else if(gameOfInterest.whiteUsername() != null
+                    && gameOfInterest.whiteUsername().equals(username)){
                 try {
                     gameObject.updateGame(gameOfInterest.gameID(), null, ChessGame.TeamColor.WHITE);
                 } catch (Exception e) {

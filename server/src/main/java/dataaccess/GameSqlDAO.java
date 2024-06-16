@@ -73,7 +73,7 @@ public class GameSqlDAO implements GameDAO{
     @Override
     public void updateGame(Integer gameID, String username, ChessGame.TeamColor teamColor) throws Exception{
         if((gameID == null) ||
-                (username == null) ||
+                //(username == null) ||
                 (teamColor == null)){
             throw new Exception("Invalid input.");
         }
