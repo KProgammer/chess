@@ -134,4 +134,16 @@ public class ServerFacadeHttp {
         RegisterResult response = new RegisterResult(null,null,null);
         return (RegisterResult) run("POST", URI.create("http://localhost:"+port+"/user"), jsonBody,response,null,null);
     }
+
+    public Boolean observeGame(Integer gameID) {
+
+        if ((gameID == null)) {
+            System.out.println("Not a valid gameID.");
+            return false;
+        } else {
+            DisplayBoard.main(ChessGame.TeamColor.WHITE, new ChessGame(), null);
+            DisplayBoard.main(ChessGame.TeamColor.BLACK, new ChessGame(),null);
+            return true;
+        }
+    }
 }

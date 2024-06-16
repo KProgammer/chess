@@ -98,18 +98,6 @@ public class ServerFacadeWS extends Endpoint {
 
     }
 
-    /*public Boolean observeGame(Integer gameID){
-
-        if((gameID == null)){
-            System.out.println("Not a valid gameID.");
-            return false;
-        } else {
-            DisplayBoard.main(ChessGame.TeamColor.WHITE, ga);
-            DisplayBoard.main(ChessGame.TeamColor.BLACK, new ChessGame());
-            return true;
-        }
-    }*/
-
     public void error(String message){
         ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
         System.out.println(errorMessage.getErrorMessage());

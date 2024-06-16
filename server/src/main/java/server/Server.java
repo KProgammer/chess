@@ -81,10 +81,10 @@ public class Server {
             saveSession(session, authToken);
 
             switch (command.getCommandType()){
-                case CONNECT -> connect(session, authToken, (ConnectCommand) command);
-                case MAKE_MOVE -> makeMove(session, authToken, (MakeMoveCommand) command);
-                case LEAVE -> leaveGame(session, authToken, (LeaveCommand) command);
-                case RESIGN -> resign(session, authToken, (ResignCommand) command);
+                case CONNECT -> connect(session, authToken, message);
+                case MAKE_MOVE -> makeMove(session, authToken, message);
+                case LEAVE -> leaveGame(session, authToken, message);
+                case RESIGN -> resign(session, authToken, message);
             }
         } catch (UnauthorizedException ex) {
             sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
@@ -176,7 +176,9 @@ public class Server {
         }
     }
 
-    public void connect(Session session, String authToken, ConnectCommand command) {
+    public void connect(Session session, String authToken, String jsonCommand) {
+        ConnectCommand command = new Gson().fromJson(jsonCommand, ConnectCommand.class);
+
         if(authorized(authToken)) {
             String message = "";
             Game gameOfInterest = null;
@@ -213,12 +215,16 @@ public class Server {
                     sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
                 }
                 ArrayList<String> users = gameMap.get(command.getGameID());
+                users.remove(authToken);
                 sendMessageToAll(users, message);
+                users.add(authToken);
             }
         }
     }
 
-    public void makeMove(Session session, String authToken, MakeMoveCommand command){
+    public void makeMove(Session session, String authToken, String jsonCommand){
+        MakeMoveCommand command = new Gson().fromJson(jsonCommand, MakeMoveCommand.class);
+
         if(authorized(authToken)) {
             ArrayList<String> users = gameMap.get(command.getGameID());
             session = sessionMap.get(authToken);
@@ -291,7 +297,9 @@ public class Server {
         }
     }
 
-    public void leaveGame(Session session, String authToken, LeaveCommand command) throws UnauthorizedException {
+    public void leaveGame(Session session, String authToken, String jsonCommand) throws UnauthorizedException {
+        LeaveCommand command = new Gson().fromJson(jsonCommand, LeaveCommand.class);
+
         if(authorized(authToken)) {
             Game gameOfInterest = new Game(0,null,null,"fail", new ChessGame());
 
@@ -333,7 +341,9 @@ public class Server {
 
     }
 
-    public void resign(Session session, String authToken, ResignCommand command){
+    public void resign(Session session, String authToken, String jsonCommand){
+        ResignCommand command = new Gson().fromJson(jsonCommand, ResignCommand.class);
+
         if(authorized(authToken)) {
             sessionMap.remove(authToken);
 

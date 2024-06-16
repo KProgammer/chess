@@ -2,16 +2,17 @@ package websocket.messages;
 
 import chess.ChessGame;
 
-public class LoadGameMessage {
+public class LoadGameMessage extends ServerMessage {
     private final Integer gameID;
-    public static ChessGame game;
+    public final ChessGame game;
     private final Boolean blackHasWon;
     private final Boolean whiteHasWon;
     private final ChessGame.TeamColor teamColor;
 
-    public LoadGameMessage(Integer gameID, ChessGame chessGame, Boolean blackHasWon, Boolean whiteHasWon, ChessGame.TeamColor teamColor){
+    public LoadGameMessage(Integer gameID, ChessGame game, Boolean blackHasWon, Boolean whiteHasWon, ChessGame.TeamColor teamColor){
+        super(ServerMessageType.LOAD_GAME);
         this.gameID = gameID;
-        this.game = chessGame;
+        this.game = game;
         this.blackHasWon = blackHasWon;
         this.whiteHasWon = whiteHasWon;
         this.teamColor = teamColor;
@@ -21,7 +22,7 @@ public class LoadGameMessage {
         return gameID;
     }
 
-    public static ChessGame getGame() {
+    public ChessGame getGame() {
         return game;
     }
 
