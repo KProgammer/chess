@@ -189,7 +189,8 @@ public class Server {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
 
-            if (gameOfInterest == null) {
+            if (gameOfInterest == null ||
+            gameOfInterest.gameID() == 0) {
                 message = "Error: Game doesn't exist.";
                 sendMessage(session.getRemote(), new ErrorMessage(message));
             } else {
