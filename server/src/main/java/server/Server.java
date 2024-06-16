@@ -359,7 +359,18 @@ public class Server {
         ResignCommand command = new Gson().fromJson(jsonCommand, ResignCommand.class);
 
         if(authorized(authToken)) {
-            sessionMap.remove(authToken);
+            try {
+                if(determineTeamColor(gameObject.getGame(command.getGameID()).whiteUsername(),
+                        gameObject.getGame(command.getGameID()).blackUsername(),
+                        authorizationObject.getAuth(authToken).username()) == null){
+                    sendMessage(session.getRemote(), new ErrorMessage("You are an observer and cannot resign from the " +
+                            "game. You may use the leave the command instead. "));
+                    return;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
 
             ArrayList<String> users = gameMap.get(command.getGameID());
 
@@ -374,6 +385,9 @@ public class Server {
                     sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
                 }
             }
+
+            sessionMap.remove(authToken);
+            users.remove(authToken);
 
 
         }
