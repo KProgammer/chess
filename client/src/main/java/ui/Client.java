@@ -209,7 +209,7 @@ public class Client {
 
     private void playGameCommand(){
         System.out.println("Type in the number of the desired game.");
-        int gameNum = Integer.parseInt(readIn(true));
+        int gameNum = getGameNumberFromUser(readIn(true));
 
         System.out.println("Type in team color you wish to play.");
         String color = readIn(true);
@@ -267,23 +267,18 @@ public class Client {
                 System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
                 line = readIn(true);
 
-                int col = getColumn(line);
-                int row = Integer.valueOf(line.charAt(1));
-                ChessPosition startPos = new ChessPosition(row,col);
-
+                ChessPosition startPos = getChessPositionFromUser(line);
 
                 System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
                 line = readIn(true);
 
-                col = getColumn(line);
-                row = Integer.valueOf(line.charAt(1));
-                ChessPosition secondMove = new ChessPosition(row,col);
+                ChessPosition secondMove = getChessPositionFromUser(line);
 
                 ArrayList<ChessMove> movesThatMatch = new ArrayList<>();
                 ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) gameOfInterest.game().validMoves(startPos);
                 for(ChessMove move : validMoves){
-                    if(move.getStartPosition() == startPos &&
-                    move.getEndPosition() == secondMove){
+                    if(Objects.equals(move.getStartPosition(), startPos) &&
+                    Objects.equals(move.getEndPosition(), secondMove)) {
                         movesThatMatch.add(move);
                     }
                 }
@@ -301,7 +296,7 @@ public class Client {
                     }
                 } else if(movesThatMatch.isEmpty()){
                     System.out.println("Invalid move. Use the 'highlight legal moves' command to see possible moves");
-                    break;
+                    continue;
                 }
 
                 SERVER_FACADE_WS.makeMove(authToken, gameID, new ChessMove(startPos,secondMove, promotionPiece.getPieceType()));
@@ -332,7 +327,7 @@ public class Client {
             case "f" -> 6;
             case "g" -> 7;
             case "h" -> 8;
-            default -> null;
+            default -> 0;
         };
     }
 
@@ -390,16 +385,36 @@ public class Client {
         System.out.println("Please enter the location of the piece you wish to see possible moves for (e.g. b4).");
         line = readIn(true);
 
-        while (getColumn(line) == null &&
-                !Character.isDigit(line.charAt(1))){
-            System.out.println("Invalid input, try again.");
-            line = readIn(true);
-        }
-
-        int col = getColumn(line);
-        int row = Integer.parseInt(String.valueOf(line.charAt(1)));
-        ChessPosition posOfInterest = new ChessPosition(row,col);
+        ChessPosition posOfInterest = getChessPositionFromUser(line);
 
         DisplayBoard.main(gameOfInterest.game().getTeamTurn(),gameOfInterest.game(),posOfInterest);
+    }
+
+    private ChessPosition getChessPositionFromUser(String input){
+        while ((getColumn(input) == 0) && (!Character.isDigit(input.charAt(1)))) {
+            System.out.println("Invalid input, try again.");
+            input = readIn(true);
+        }
+
+        int col = getColumn(input);
+        int row = Integer.parseInt(String.valueOf(input.charAt(1)));
+
+        return new ChessPosition(row,col);
+    }
+
+    private int getGameNumberFromUser(String input){
+        boolean isInt = false;
+        while (!isInt) {
+            try {
+                isInt = true;
+                Integer.parseInt(input);
+            } catch (NumberFormatException e){
+                System.out.println("Invalid input, try again.");
+                input = readIn(true);
+                isInt = false;
+            }
+        }
+        return Integer.parseInt(input);
+
     }
 }

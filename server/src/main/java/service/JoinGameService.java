@@ -26,7 +26,7 @@ public class JoinGameService {
                     !Objects.equals(gameObject.getGame(request.getGameID()).blackUsername(), authorizationObject.getAuth(request.getAuthToken()).username())) ||
                     ((request.getPlayerColor().equals(ChessGame.TeamColor.WHITE) &&
                             gameObject.getGame(request.getGameID()).whiteUsername() != null) &&
-                            !Objects.equals(gameObject.getGame(request.getGameID()).blackUsername(), authorizationObject.getAuth(request.getAuthToken()).username()))) {
+                            !Objects.equals(gameObject.getGame(request.getGameID()).whiteUsername(), authorizationObject.getAuth(request.getAuthToken()).username()))) {
                 return new JoinGameResult("Error: already taken");
             }
 
