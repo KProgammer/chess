@@ -234,21 +234,21 @@ public class Client {
                 System.out.println("Unable to join game " + gameNum + " as " + color + ".");
             } else {
                 System.out.println("Successfully joined game " + gameNum + " as " + color + ".");
-                gamePlay(teamColor, gameOfInterest.gameID());
+                gamePlay(teamColor, gameOfInterest.gameID(), gameNum);
             }
         }
     }
 
-    private void gamePlay(ChessGame.TeamColor teamColor, Integer gameID){
+    private void gamePlay(ChessGame.TeamColor teamColor, Integer gameID, Integer gameListNum){
         String line;
         ChessPiece promotionPiece = null;
 
-        DisplayBoard.main(teamColor,gameMap.get(gameID).game(),null);
+        //DisplayBoard.main(teamColor,gameMap.get(gameListNum).game(),null);
 
         isInGame = true;
         while(isInGame){
             line = readIn(true);
-            Game gameOfInterest = gameMap.get(gameID);
+            Game gameOfInterest = gameMap.get(gameListNum);
 
             if(line.equals("help")){
                 System.out.println("Redraw Chess Board->Redraws the chess board");
@@ -261,6 +261,7 @@ public class Client {
 
             } else if (line.equals("leave")) {
                 leaveGameCommand(gameOfInterest.gameID());
+                isInGame = false;
 
             } else if (line.equals("makemove")){
                 System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
@@ -349,7 +350,7 @@ public class Client {
         if (gameMap.get(gameNum) != null) {
             SERVER_FACADE_WS.connect(authToken, gameMap.get(gameNum).gameID());
         } else {
-            System.out.println("Not a valid game. Use the list games command to either find the correct number or" +
+            System.out.println("Not a valid game. Use the list games command to either find the correct number or " +
                     "refresh the list of commands.");
             return;
         }
@@ -369,6 +370,7 @@ public class Client {
                 DisplayBoard.main(gameOfInterest.game().getTeamTurn(), gameOfInterest.game(), null);
             } else if (line.equals("leave")) {
                 leaveGameCommand(gameOfInterest.gameID());
+                isInGame = false;
 
             } else if (line.equals("highlightlegalmoves")) {
                 highlightLegalMoves(gameOfInterest);
@@ -379,7 +381,6 @@ public class Client {
     }
 
     private void leaveGameCommand(int gameID){
-        isInGame = false;
         SERVER_FACADE_WS.leave(authToken, gameID);
         System.out.println("You have left the game.");
     }

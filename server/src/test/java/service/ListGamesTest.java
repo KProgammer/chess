@@ -8,9 +8,7 @@ import chess.ChessGame;
 import model.Game;
 import org.junit.jupiter.api.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static server.Server.authorizationObject;
 import static server.Server.gameObject;
@@ -49,17 +47,13 @@ public class ListGamesTest {
             mapGameList.put(ivansGameID, new Game(ivansGameID, "Ivan", "practice", "IvansGame", new ChessGame()));
 
             Collection<Game> gameList = new ListGamesService().makeList(new ListGamesRequest(authToken)).getGames();
-            int counter = 0;
-
-            for (int gameid : mapGameList.keySet()) {
-                for(Game game : gameList) {
-                    if (game.equals(mapGameList.get(gameid))){
-                        counter += 1;
-                    }
-                }
+            Map<Integer, Game> compareGameList = new HashMap<>();
+            for (Game game : gameList){
+                compareGameList.put(game.gameID(),game);
             }
 
-            Assertions.assertEquals(counter ,3, "Not all games listed.");
+
+            Assertions.assertTrue(compareGameList.equals(mapGameList), "Not all games listed.");
             Assertions.assertEquals(gameList.size(),3, "More or less games than should be listed.");
         } catch (Exception e){
             System.out.println("Threw Runtime Error in successListGameTest");

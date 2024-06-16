@@ -145,7 +145,7 @@ public class DisplayBoard {
                         break;
                     } else if (startPosition != null &&
                             startPosition.equals(new ChessPosition(posRow, posCol))){
-                        setRed(out);
+                        setGreen(out);
                         break;
                     }
                 }
@@ -205,8 +205,8 @@ public class DisplayBoard {
         out.print(SET_BG_COLOR_YELLOW);
     }
 
-    private static void setRed(PrintStream out) {
-        out.print(SET_BG_COLOR_RED);
+    private static void setGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
     }
 
     private static void printPlayer(PrintStream out, String player, ChessGame.TeamColor teamColor) {
