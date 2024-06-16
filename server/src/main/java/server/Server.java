@@ -242,27 +242,31 @@ public class Server {
 
                 username = authorizationObject.getAuth(authToken).username();
 
-
-
-                try {
-                    gameObject.getGame(command.getGameID()).game().makeMove(command.getMove());
-                } catch (InvalidMoveException exception){
-                    sendMessage(session.getRemote(), new ErrorMessage("This is an invalid move."));
-                    return;
-                }
-
                 ChessGame.TeamColor teamColor = null;
                 ChessGame.TeamColor oppTeamColor = null;
                 if(gameObject.getGame(command.getGameID()).blackUsername().equals(username)){
                     teamColor = ChessGame.TeamColor.BLACK;
                     oppTeamColor = ChessGame.TeamColor.WHITE;
-                } else {
+                } else if(gameObject.getGame(command.getGameID()).whiteUsername().equals(username))  {
                     teamColor = ChessGame.TeamColor.WHITE;
                     oppTeamColor = ChessGame.TeamColor.BLACK;
+                } else {
+                    sendMessage(session.getRemote(), new ErrorMessage("You are an observer, you may not participate."));
+                    return;
                 }
 
                 if(gameObject.getGame(command.getGameID()).game().getTeamTurn() != teamColor){
                     sendMessage(session.getRemote(), new ErrorMessage("It's not your turn!"));
+                    return;
+                }
+
+                ChessGame chessGameOfInterest = gameObject.getGame(command.getGameID()).game();
+
+                try {
+                    chessGameOfInterest.makeMove(command.getMove());
+                    gameObject.updateGame(command.getGameID(),chessGameOfInterest);
+                } catch (InvalidMoveException exception){
+                    sendMessage(session.getRemote(), new ErrorMessage("This is an invalid move."));
                     return;
                 }
 
