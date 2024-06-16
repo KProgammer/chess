@@ -240,8 +240,9 @@ public class Server {
                     return;
                 }
 
-
                 username = authorizationObject.getAuth(authToken).username();
+
+
 
                 try {
                     gameObject.getGame(command.getGameID()).game().makeMove(command.getMove());
@@ -258,6 +259,11 @@ public class Server {
                 } else {
                     teamColor = ChessGame.TeamColor.WHITE;
                     oppTeamColor = ChessGame.TeamColor.BLACK;
+                }
+
+                if(gameObject.getGame(command.getGameID()).game().getTeamTurn() != teamColor){
+                    sendMessage(session.getRemote(), new ErrorMessage("It's not your turn!"));
+                    return;
                 }
 
                 if(gameObject.getGame(command.getGameID()).game().isInCheckmate(ChessGame.TeamColor.BLACK)){
