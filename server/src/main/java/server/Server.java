@@ -204,9 +204,11 @@ public class Server {
                             gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.BLACK),
                             gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE),teamColor));
 
-                    if (authorizationObject.getAuth(authToken).username().equals(gameOfInterest.whiteUsername())) {
+                    if (authorizationObject.getAuth(authToken).username() != null &&
+                            authorizationObject.getAuth(authToken).username().equals(gameOfInterest.whiteUsername())) {
                         message = authorizationObject.getAuth(authToken).username() + "has joined as the white team.";
-                    } else if (authorizationObject.getAuth(authToken).username().equals(gameOfInterest.blackUsername())) {
+                    } else if (authorizationObject.getAuth(authToken).username() != null &&
+                            authorizationObject.getAuth(authToken).username().equals(gameOfInterest.blackUsername())) {
                         message = authorizationObject.getAuth(authToken).username() + "has joined as the black team.";
                     } else {
                         message = authorizationObject.getAuth(authToken).username() + "has joined as an observer.";
@@ -413,9 +415,14 @@ public class Server {
 
     public ChessGame.TeamColor determineTeamColor(String whiteUsername, String blackUsername, String username){
         ChessGame.TeamColor teamColor = null;
-        if(blackUsername.equals(username)){
+
+        if(username == null){
+            return teamColor;
+        } else if(blackUsername != null &&
+                blackUsername.equals(username)){
             teamColor = ChessGame.TeamColor.BLACK;
-        } else if (whiteUsername.equals(username)){
+        } else if (whiteUsername != null &&
+                whiteUsername.equals(username)){
             teamColor = ChessGame.TeamColor.WHITE;
         }
         return teamColor;

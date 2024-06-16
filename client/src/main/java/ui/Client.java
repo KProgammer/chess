@@ -337,9 +337,23 @@ public class Client {
 
     private void observeGameCommand(){
         System.out.println("Type in the number of the desired game.");
-        int gameNum = Integer.parseInt(readIn(true));
 
-        SERVER_FACADE_WS.connect(authToken,gameMap.get(gameNum).gameID());
+        int gameNum;
+        try {
+            gameNum = Integer.parseInt(readIn(true));
+        } catch (NumberFormatException numberFormatException){
+            System.out.println("Invalid input.");
+            return;
+        }
+
+        if (gameMap.get(gameNum) != null) {
+            SERVER_FACADE_WS.connect(authToken, gameMap.get(gameNum).gameID());
+        } else {
+            System.out.println("Not a valid game. Use the list games command to either find the correct number or" +
+                    "refresh the list of commands.");
+            return;
+        }
+
 
         String line;
         boolean isInGame = true;

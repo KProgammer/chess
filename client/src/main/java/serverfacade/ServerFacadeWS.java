@@ -16,6 +16,7 @@ import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.net.URI;
+import java.util.ArrayList;
 
 import static ui.Client.gameMap;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -85,19 +86,39 @@ public class ServerFacadeWS extends Endpoint {
 
     public void loadGame(String message){
         LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-        Game gameOfInterest = gameMap.get(loadGameMessage.getGameID());
 
-        gameOfInterest = new Game(gameOfInterest.gameID(),gameOfInterest.whiteUsername(),gameOfInterest.blackUsername(),
-                gameOfInterest.gameName(),loadGameMessage.getGame());
+        Game gameOfInterest = null;
 
-        gameMap.put(loadGameMessage.getGameID(),gameOfInterest);
+        int refNum = 0;
 
-        DisplayBoard.main(loadGameMessage.getTeamColor(),gameMap.get(loadGameMessage.getGameID()).game(),null);
+        for(int gameNum : gameMap.keySet()){
+            if(gameMap.get(gameNum).gameID() != null &&
+                    gameMap.get(gameNum).gameID().equals(loadGameMessage.getGameID())){
 
-        if(loadGameMessage.getBlackHasWon() || loadGameMessage.getWhiteHasWon()){
-
+                gameOfInterest = gameMap.get(gameNum);
+                refNum = gameNum;
+            }
         }
 
+        if(gameOfInterest == null &&
+                refNum == 0){
+            System.out.println("LoadGameMessage gave us a game that doesn't exist");
+            return;
+        }
+
+        try {
+            gameMap.put(refNum, new Game(gameOfInterest.gameID(),gameOfInterest.whiteUsername(),gameOfInterest.blackUsername(),
+                    gameOfInterest.gameName(),loadGameMessage.getGame()));
+
+            if(loadGameMessage.getTeamColor() == null) {
+                DisplayBoard.main(ChessGame.TeamColor.BLACK, gameMap.get(refNum).game(), null);
+            } else {
+                DisplayBoard.main(loadGameMessage.getTeamColor(), gameMap.get(refNum).game(), null);
+            }
+
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public void error(String message){
