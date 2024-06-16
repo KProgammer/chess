@@ -1,7 +1,6 @@
 package server;
 
 import chess.ChessGame;
-import chess.ChessMove;
 import chess.InvalidMoveException;
 import model.Game;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
@@ -229,7 +228,7 @@ public class Server {
         if(authorized(authToken)) {
             ArrayList<String> users = gameMap.get(command.getGameID());
             session = sessionMap.get(authToken);
-            String messageToAllUsers = "";
+            String messageToAllUsers = null;
 
             boolean whiteHasWon = false;
             boolean blackHasWon = false;
@@ -245,7 +244,7 @@ public class Server {
                 username = authorizationObject.getAuth(authToken).username();
 
                 try {
-                    gameObject.getGame(command.getGameID()).game().makeMove(command.getChessMove());
+                    gameObject.getGame(command.getGameID()).game().makeMove(command.getMove());
                 } catch (InvalidMoveException exception){
                     sendMessage(session.getRemote(), new NotificationMessage("This is an invalid move."));
                     return;
@@ -282,14 +281,18 @@ public class Server {
                             gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
                 }
 
+                users.remove(authToken);
                 for (String user : users) {
                     session = sessionMap.get(user);
                     sendMessage(session.getRemote(), new NotificationMessage(username + "has moved from " +
-                            command.getChessMove().getStartPosition() +
-                            " to " + command.getChessMove().getEndPosition()));
+                            command.getMove().getStartPosition() +
+                            " to " + command.getMove().getEndPosition()));
                 }
+                users.add(authToken);
 
-                sendMessageToAll(users,messageToAllUsers);
+                if (messageToAllUsers != null){
+                    sendMessageToAll(users,messageToAllUsers);
+                }
             } catch (Exception ex) {
                 sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
             }
