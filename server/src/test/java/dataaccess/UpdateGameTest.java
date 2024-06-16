@@ -79,7 +79,7 @@ public class UpdateGameTest {
             gameObject.clear();
             gameObject.createGame(8888,"RandomGame");
 
-            gameObject.updateGame(8888,null, ChessGame.TeamColor.WHITE);
+            gameObject.updateGame(8888,null, null);
 
             Assertions.fail();
         } catch (Exception e) {

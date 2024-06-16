@@ -30,9 +30,10 @@ public class ServerFacadeWS extends Endpoint {
         this.session = container.connectToServer(this, uri);
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
             public void onMessage(String message) {
                 ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                //ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+
                 switch (serverMessage.getServerMessageType()){
                     case LOAD_GAME -> loadGame(message);
                     case ERROR -> error(message);
@@ -46,6 +47,7 @@ public class ServerFacadeWS extends Endpoint {
         this.session.getBasicRemote().sendText(msg);
     }
 
+    @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
