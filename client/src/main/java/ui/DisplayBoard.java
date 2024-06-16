@@ -35,6 +35,9 @@ public class DisplayBoard {
                 System.out.println("Can only show legal moves of the player whose turn it currently is.");
                 return;
             }
+        } else {
+            squaresToHighLight.clear();
+            startPosition = null;
         }
 
         out.print(ERASE_SCREEN);
@@ -133,9 +136,12 @@ public class DisplayBoard {
                 }
 
                 for(ChessMove move : squaresToHighLight){
-                    if (move.getEndPosition().equals(new ChessPosition(posRow,posCol)) ||
-                    startPosition.equals(new ChessPosition(posRow,posCol))){
+                    if (move.getEndPosition().equals(new ChessPosition(posRow,posCol))){
                         setYellow(out);
+                        break;
+                    } else if (startPosition != null &&
+                            startPosition.equals(new ChessPosition(posRow, posCol))){
+                        setRed(out);
                         break;
                     }
                 }
@@ -193,7 +199,10 @@ public class DisplayBoard {
 
     private static void setYellow(PrintStream out) {
         out.print(SET_BG_COLOR_YELLOW);
-        //out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setRed(PrintStream out) {
+        out.print(SET_BG_COLOR_RED);
     }
 
     private static void printPlayer(PrintStream out, String player, ChessGame.TeamColor teamColor) {

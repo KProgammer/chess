@@ -7,6 +7,7 @@ import results.*;
 import serverfacade.ServerFacadeHttp;
 import serverfacade.ServerFacadeWS;
 
+import javax.print.DocFlavor;
 import java.util.*;
 
 public class Client {
@@ -259,8 +260,7 @@ public class Client {
                 DisplayBoard.main(teamColor, gameOfInterest.game(), null);
 
             } else if (line.equals("leave")) {
-                isInGame = false;
-                SERVER_FACADE_WS.leave(authToken,gameOfInterest.gameID());
+                leaveGameCommand(gameOfInterest.gameID());
 
             } else if (line.equals("makemove")){
                 System.out.println("Please enter the location of the piece you want to move (e.g. b4).");
@@ -368,8 +368,7 @@ public class Client {
             } else if (line.equals("redrawchessboard")) {
                 DisplayBoard.main(gameOfInterest.game().getTeamTurn(), gameOfInterest.game(), null);
             } else if (line.equals("leave")) {
-                isInGame = false;
-                SERVER_FACADE_WS.leave(authToken,gameOfInterest.gameID());
+                leaveGameCommand(gameOfInterest.gameID());
 
             } else if (line.equals("highlightlegalmoves")) {
                 highlightLegalMoves(gameOfInterest);
@@ -379,13 +378,21 @@ public class Client {
         }
     }
 
+    private void leaveGameCommand(int gameID){
+        isInGame = false;
+        SERVER_FACADE_WS.leave(authToken, gameID);
+        System.out.println("You have left the game.");
+    }
+
     private void highlightLegalMoves(Game gameOfInterest){
         String line;
         System.out.println("Please enter the location of the piece you wish to see possible moves for (e.g. b4).");
         line = readIn(true);
 
+        char[] moveString = line.toCharArray();
+
         int col = getColumn(line);
-        int row = Integer.valueOf(line.charAt(1));
+        int row = Integer.parseInt(String.valueOf(line.charAt(1)));
         ChessPosition posOfInterest = new ChessPosition(row,col);
 
         DisplayBoard.main(gameOfInterest.game().getTeamTurn(),gameOfInterest.game(),posOfInterest);

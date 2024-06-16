@@ -50,6 +50,7 @@ public class ServerFacadeWS extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+
     }
 
     public void connect(String authToken, Integer gameID){
@@ -111,7 +112,7 @@ public class ServerFacadeWS extends Endpoint {
                     gameOfInterest.gameName(),loadGameMessage.getGame()));
 
             if(loadGameMessage.getTeamColor() == null) {
-                DisplayBoard.main(ChessGame.TeamColor.BLACK, gameMap.get(refNum).game(), null);
+                DisplayBoard.main(loadGameMessage.getGame().getTeamTurn(), gameMap.get(refNum).game(), null);
             } else {
                 DisplayBoard.main(loadGameMessage.getTeamColor(), gameMap.get(refNum).game(), null);
             }
