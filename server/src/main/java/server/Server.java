@@ -236,7 +236,7 @@ public class Server {
             String username = null;
             try {
                 if(gameIsWon(gameObject.getGame(command.getGameID()))                ) {
-                    sendMessage(session.getRemote(), new NotificationMessage("Error: Game is done."));
+                    sendMessage(session.getRemote(), new ErrorMessage("Error: Game is done."));
                     return;
                 }
 
@@ -246,7 +246,7 @@ public class Server {
                 try {
                     gameObject.getGame(command.getGameID()).game().makeMove(command.getMove());
                 } catch (InvalidMoveException exception){
-                    sendMessage(session.getRemote(), new NotificationMessage("This is an invalid move."));
+                    sendMessage(session.getRemote(), new ErrorMessage("This is an invalid move."));
                     return;
                 }
 
