@@ -27,7 +27,11 @@ public class DisplayBoard {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         if(piecePos != null) {
-            if (chessGame.getBoard().getPiece(piecePos) != null &&
+            if(chessGame.getBoard().getPiece(piecePos) == null){
+                System.out.println("Cannot show legal moves for blank squares.");
+                return;
+            }
+            else if (chessGame.getBoard().getPiece(piecePos) != null &&
                     chessGame.getBoard().getPiece(piecePos).getTeamColor() == teamColor) {
                 squaresToHighLight = (ArrayList<ChessMove>) chessGame.validMoves(piecePos);
                 startPosition = piecePos;

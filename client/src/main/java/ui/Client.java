@@ -389,7 +389,11 @@ public class Client {
         System.out.println("Please enter the location of the piece you wish to see possible moves for (e.g. b4).");
         line = readIn(true);
 
-        char[] moveString = line.toCharArray();
+        while (getColumn(line) == null &&
+                !Character.isDigit(line.charAt(1))){
+            System.out.println("Invalid input, try again.");
+            line = readIn(true);
+        }
 
         int col = getColumn(line);
         int row = Integer.parseInt(String.valueOf(line.charAt(1)));
