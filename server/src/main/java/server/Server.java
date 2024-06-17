@@ -203,7 +203,9 @@ public class Server {
 
                     sendMessage(session.getRemote(),new LoadGameMessage(gameOfInterest.gameID(), gameOfInterest.game(),
                             gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.BLACK),
-                            gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE),teamColor));
+                            gameOfInterest.game().isInCheckmate(ChessGame.TeamColor.WHITE),
+                            (gameOfInterest.game().isInStalemate(ChessGame.TeamColor.BLACK) || gameOfInterest.game().isInStalemate(ChessGame.TeamColor.WHITE))
+                            ,teamColor));
 
                     if (authorizationObject.getAuth(authToken).username() != null &&
                             authorizationObject.getAuth(authToken).username().equals(gameOfInterest.whiteUsername())) {
@@ -215,12 +217,16 @@ public class Server {
                         message = authorizationObject.getAuth(authToken).username() + "has joined as an observer.";
                     }
                 } catch (Exception ex) {
-                    sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+                    sendMessage(session.getRemote(), new ErrorMessage("Error in connect: " + ex.getMessage()));
                 }
                 ArrayList<String> users = gameMap.get(command.getGameID());
                 users.remove(authToken);
                 sendMessageToAll(users, message);
                 users.add(authToken);
+
+                if(finishedGamesMap.get(gameOfInterest.gameID()) != null){
+                    sendMessageToAll(users, "Game is done.");
+                }
             }
         }
     }
@@ -235,6 +241,7 @@ public class Server {
 
             boolean whiteHasWon = false;
             boolean blackHasWon = false;
+            boolean stalemate = false;
 
             String username = null;
             try {
@@ -280,10 +287,15 @@ public class Server {
                 } else if (gameObject.getGame(command.getGameID()).game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
                     blackHasWon = true;
                     finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
+                } else if(gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.BLACK) ||
+                        gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.WHITE)){
+                    finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
                 }
 
                 if(gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)){
                     messageToAllUsers = teamColor+"is in checkmate."+oppTeamColor+"has won!";
+                } else if(gameObject.getGame(command.getGameID()).game().isInCheckmate(oppTeamColor)){
+                    messageToAllUsers = oppTeamColor+"is in checkmate."+teamColor+"has won!";
                 } else if (gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.BLACK) ||
                 gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.WHITE)) {
                     messageToAllUsers = "Stalemate.";
@@ -295,7 +307,7 @@ public class Server {
                 for (String user : users) {
                     session = sessionMap.get(user);
                     sendMessage(session.getRemote(), new LoadGameMessage(command.getGameID(),
-                            gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, teamColor));
+                            gameObject.getGame(command.getGameID()).game(), blackHasWon, whiteHasWon, stalemate, teamColor));
                 }
 
                 users.remove(authToken);
@@ -311,7 +323,7 @@ public class Server {
                     sendMessageToAll(users,messageToAllUsers);
                 }
             } catch (Exception ex) {
-                sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+                sendMessage(session.getRemote(), new ErrorMessage("Error in makeMove: " + ex.getMessage()));
             }
 
 
@@ -336,7 +348,7 @@ public class Server {
             try {
                 username = authorizationObject.getAuth(authToken).username();
             } catch (Exception ex) {
-                sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+                sendMessage(session.getRemote(), new ErrorMessage("Error in leaveGame: " + ex.getMessage()));
             }
 
             if(gameOfInterest.blackUsername() != null &&
@@ -357,9 +369,13 @@ public class Server {
 
             sessionMap.remove(authToken);
             ArrayList<String> users = gameMap.get(command.getGameID());
-            users.remove(authToken);
+            if (users != null) {
+                users.remove(authToken);
+            }
 
-            sendMessageToAll(users,username+"has left the game");
+            if(!users.isEmpty()){
+                sendMessageToAll(users,username+" has left the game");
+            }
         }
 
     }
@@ -397,7 +413,7 @@ public class Server {
                     sendMessage(session.getRemote(),
                             new NotificationMessage(authorizationObject.getAuth(authToken).username() + " has forfeit the game."));
                 } catch (Exception ex) {
-                    sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+                    sendMessage(session.getRemote(), new ErrorMessage("Error in resign: " + ex.getMessage()));
                 }
             }
 

@@ -243,8 +243,6 @@ public class Client {
         String line;
         ChessPiece promotionPiece = null;
 
-        //DisplayBoard.main(teamColor,gameMap.get(gameListNum).game(),null);
-
         isInGame = true;
         while(isInGame){
             line = readIn(true);
@@ -431,6 +429,5 @@ public class Client {
             }
         }
         return Integer.parseInt(input);
-
     }
 }

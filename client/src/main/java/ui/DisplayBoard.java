@@ -41,7 +41,7 @@ public class DisplayBoard {
             }
         } else {
             squaresToHighLight.clear();
-            startPosition = null;
+            startPosition = piecePos;
         }
 
         out.print(ERASE_SCREEN);
@@ -143,12 +143,15 @@ public class DisplayBoard {
                     if (move.getEndPosition().equals(new ChessPosition(posRow,posCol))){
                         setYellow(out);
                         break;
-                    } else if (startPosition != null &&
-                            startPosition.equals(new ChessPosition(posRow, posCol))){
-                        setGreen(out);
-                        break;
                     }
                 }
+
+                if (startPosition != null &&
+                        startPosition.equals(new ChessPosition(posRow, posCol))){
+                    setGreen(out);
+                    //continue;
+                }
+
 
                 if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
                     int prefixLength = SQUARE_SIZE_IN_CHARS / 2;
