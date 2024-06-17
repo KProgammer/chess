@@ -117,14 +117,6 @@ public class ServerFacadeWS extends Endpoint {
                 DisplayBoard.main(loadGameMessage.getTeamColor(), gameMap.get(refNum).game(), null);
             }
 
-            /*if(loadGameMessage.getBlackHasWon()){
-                System.out.println("Black has won!");
-            } else if(loadGameMessage.getWhiteHasWon()){
-                System.out.println("White has won!");
-            } else if(loadGameMessage.getStalemate()){
-                System.out.println("Stalemate");
-            }*/
-
         } catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
