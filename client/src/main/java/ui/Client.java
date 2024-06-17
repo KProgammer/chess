@@ -276,6 +276,12 @@ public class Client {
 
                 ArrayList<ChessMove> movesThatMatch = new ArrayList<>();
                 ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) gameOfInterest.game().validMoves(startPos);
+
+                if(validMoves == null){
+                    System.out.println("Invalid move.");
+                    continue;
+                }
+
                 for(ChessMove move : validMoves){
                     if(Objects.equals(move.getStartPosition(), startPos) &&
                     Objects.equals(move.getEndPosition(), secondMove)) {
@@ -299,11 +305,21 @@ public class Client {
                     continue;
                 }
 
-                SERVER_FACADE_WS.makeMove(authToken, gameID, new ChessMove(startPos,secondMove, promotionPiece.getPieceType()));
+                if(promotionPiece != null) {
+                    SERVER_FACADE_WS.makeMove(authToken, gameID, new ChessMove(startPos, secondMove, promotionPiece.getPieceType()));
+                } else {
+                    SERVER_FACADE_WS.makeMove(authToken, gameID, new ChessMove(startPos, secondMove, null));
+                }
                 
             } else if (line.equals("resign")){
-                isInGame = false;
-                SERVER_FACADE_WS.resign(authToken, gameOfInterest.gameID());
+                System.out.println("Are you sure you want to forfeit? Y/N");
+                line = readIn(true);
+
+                if(line.equals("y")) {
+                    SERVER_FACADE_WS.resign(authToken, gameOfInterest.gameID());
+                } else {
+                    System.out.println("Okay! Resume playing. You got this!");
+                }
                 
             } else if (line.equals("highlightlegalmoves")) {
                 highlightLegalMoves(gameOfInterest);
@@ -391,8 +407,8 @@ public class Client {
     }
 
     private ChessPosition getChessPositionFromUser(String input){
-        while ((getColumn(input) == 0) && (!Character.isDigit(input.charAt(1)))) {
-            System.out.println("Invalid input, try again.");
+        while ((getColumn(input) == 0) || (!Character.isDigit(input.charAt(1)))) {
+            System.out.println("Invalid input, the format is column and then row. (e.g. b4)");
             input = readIn(true);
         }
 

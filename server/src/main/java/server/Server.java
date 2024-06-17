@@ -32,6 +32,7 @@ public class Server {
     public static AuthorizationDAO authorizationObject;
     public static Map<Integer, ArrayList<String>> gameMap = new HashMap<>();
     public static Map<String, Session> sessionMap = new HashMap<>();
+    public static Map<Integer, Game> finishedGamesMap = new HashMap<>();
 
     static {
         try {
@@ -237,7 +238,8 @@ public class Server {
 
             String username = null;
             try {
-                if(gameIsWon(gameObject.getGame(command.getGameID()))                ) {
+                if(gameIsWon(gameObject.getGame(command.getGameID())) ||
+                        (finishedGamesMap.get(command.getGameID()) != null)) {
                     sendMessage(session.getRemote(), new ErrorMessage("Error: Game is done."));
                     return;
                 }
@@ -246,10 +248,10 @@ public class Server {
 
                 ChessGame.TeamColor teamColor = null;
                 ChessGame.TeamColor oppTeamColor = null;
-                if(gameObject.getGame(command.getGameID()).blackUsername().equals(username)){
+                if(Objects.equals(gameObject.getGame(command.getGameID()).blackUsername(),username)){
                     teamColor = ChessGame.TeamColor.BLACK;
                     oppTeamColor = ChessGame.TeamColor.WHITE;
-                } else if(gameObject.getGame(command.getGameID()).whiteUsername().equals(username))  {
+                } else if(Objects.equals(gameObject.getGame(command.getGameID()).whiteUsername(), username))  {
                     teamColor = ChessGame.TeamColor.WHITE;
                     oppTeamColor = ChessGame.TeamColor.BLACK;
                 } else {
@@ -274,8 +276,10 @@ public class Server {
 
                 if(gameObject.getGame(command.getGameID()).game().isInCheckmate(ChessGame.TeamColor.BLACK)){
                     whiteHasWon = true;
+                    finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
                 } else if (gameObject.getGame(command.getGameID()).game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
                     blackHasWon = true;
+                    finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
                 }
 
                 if(gameObject.getGame(command.getGameID()).game().isInCheckmate(teamColor)){
@@ -283,6 +287,7 @@ public class Server {
                 } else if (gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.BLACK) ||
                 gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.WHITE)) {
                     messageToAllUsers = "Stalemate.";
+                    finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
                 }  else if (gameObject.getGame(command.getGameID()).game().isInCheck(teamColor)) {
                     messageToAllUsers = username+"has won.";
                 }
@@ -380,11 +385,17 @@ public class Server {
 
             gameMap.remove(command.getGameID());
 
+            try {
+                finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             for (String user : users) {
                 session = sessionMap.get(user);
                 try {
                     sendMessage(session.getRemote(),
-                            new NotificationMessage(authorizationObject.getAuth(authToken).username() + "has forfeit the game."));
+                            new NotificationMessage(authorizationObject.getAuth(authToken).username() + " has forfeit the game."));
                 } catch (Exception ex) {
                     sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
                 }
@@ -392,8 +403,6 @@ public class Server {
 
             sessionMap.remove(authToken);
             users.remove(authToken);
-
-
         }
     }
 
