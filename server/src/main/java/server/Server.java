@@ -300,8 +300,10 @@ public class Server {
                 gameObject.getGame(command.getGameID()).game().isInStalemate(ChessGame.TeamColor.WHITE)) {
                     messageToAllUsers = "Stalemate.";
                     finishedGamesMap.put(command.getGameID(),gameObject.getGame(command.getGameID()));
-                }  else if (gameObject.getGame(command.getGameID()).game().isInCheck(teamColor)) {
-                    messageToAllUsers = username+"has won.";
+                }  else if (gameObject.getGame(command.getGameID()).game().isInCheck(ChessGame.TeamColor.BLACK)) {
+                    messageToAllUsers = "Black is in check.";
+                }  else if (gameObject.getGame(command.getGameID()).game().isInCheck(ChessGame.TeamColor.WHITE)) {
+                    messageToAllUsers = "White is in check.";
                 }
 
                 for (String user : users) {
@@ -371,11 +373,12 @@ public class Server {
             ArrayList<String> users = gameMap.get(command.getGameID());
             if (users != null) {
                 users.remove(authToken);
+                if(!users.isEmpty()){
+                    sendMessageToAll(users,username+" has left the game");
+                }
             }
 
-            if(!users.isEmpty()){
-                sendMessageToAll(users,username+" has left the game");
-            }
+
         }
 
     }

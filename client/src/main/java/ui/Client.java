@@ -108,7 +108,7 @@ public class Client {
     private void quitCommand(){
         loggedIn = false;
         //Use this to clear the server when you want to.
-        /*SERVER_FACADE.clear();
+        /*SERVER_FACADE_HTTP.clear();
         System.out.println("All users and games deleted.");
         System.out.println("Shutting down.");*/
     }
